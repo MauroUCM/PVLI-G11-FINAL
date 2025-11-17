@@ -8,7 +8,6 @@ export class StateMachine{
         this._name;
         this._currentState = null;
         this._context = null;
-        // this.transition = this.transition();
     }
 
     /**

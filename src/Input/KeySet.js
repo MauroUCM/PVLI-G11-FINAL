@@ -9,14 +9,12 @@ export class KeySet{
 
     enable(){
         this.keys.forEach(key =>{
-            // key.on("down");
             key.enabled = true;
         })
     }
 
     disable(){
         this.keys.forEach(key =>{
-            // key.off("down");
             key.enabled = false;
         })
     }

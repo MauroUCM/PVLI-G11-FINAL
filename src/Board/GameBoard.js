@@ -9,6 +9,8 @@ import { ResourceManager_Complete } from "../Resources/ResourceManager.js";
 // import { SubmarineInventory } from "../SubmarineInventory.js";
 import { SubmarineHUD } from "../Submarine/SubmarineHUD.js";
 
+import config from "./config.json" with {type:'json'}
+
 export default class GameBoard extends Phaser.GameObjects.Container {
     /**
      * @param {*} scene El nombre de la escena
@@ -27,20 +29,21 @@ export default class GameBoard extends Phaser.GameObjects.Container {
         this.GRAPHIC = scene.add.graphics({ lineStyle: { width: 1, color: 0x00ff00 } });
         this.add(this.GRAPHIC)
 
-        this.data = {
-            x: x,
-            y: y,
-            boardWidth: boardWidth,
-            boardHeight: boardHeight,
-            cellSize: cellSize,
-            submarineLimit: {
-                x: Math.round(boardWidth / 2),
-                y: Math.round(boardHeight / 2),
-            }
-        }
+        this.config = config;
+        // this.data = {
+        //     x: x,
+        //     y: y,
+        //     boardWidth: boardWidth,
+        //     boardHeight: boardHeight,
+        //     cellSize: cellSize,
+        //     submarineLimit: {
+        //         x: Math.round(boardWidth / 2),
+        //         y: Math.round(boardHeight / 2),
+        //     }
+        // }
 
         this.matrix = {
-            logic: new LogicBoard(boardWidth, boardHeight),
+            logic: new LogicBoard(config.boardWidth, config.boardHeight),
             graphic: null
         }
 
@@ -94,6 +97,8 @@ export default class GameBoard extends Phaser.GameObjects.Container {
             if(direction == 0) player.moveFront();
             if(direction == 90) player.moveRight();
             if(direction == -90) player.moveLeft();
+            this.resourceManager.checkAndCollectResource(player);
+            this.huds[this.currentTurn].update();
         })
 
         // EventDispatch.on(Event.MOVE,(direction,player)=>{
