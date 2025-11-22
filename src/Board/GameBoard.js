@@ -88,7 +88,7 @@ export default class GameBoard extends Phaser.GameObjects.Container {
 
 
         //Esto fuera，o no, depende
-        EventDispatch.on(Event.SHOOT, () => {
+        EventDispatch.on(Event.SHOO, () => {
             const attacker = this.submarines[this.currentTurn];
             const target = this.currentTurn === "red" ? this.submarines.blue : this.submarines.red;
             

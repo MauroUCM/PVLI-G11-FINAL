@@ -1,4 +1,4 @@
-import GameBoard from "../Board/GameBoard.js";
+    import GameBoard from "../Board/GameBoard.js";
 import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 import EventDispatch from "../Event/EventDispatch.js";
 import Event from "../Event/Event.js";
@@ -9,6 +9,9 @@ import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMa
 // import { ResourceManager } from "../Resources/ResourceManager.js";
 // import { SubmarineInventory } from "../Resources/SubmarineInventory.js";
 
+
+//TODO
+// - Arreglar tween
 export class GameScreen extends Phaser.Scene{
 
     chain
@@ -48,7 +51,7 @@ export class GameScreen extends Phaser.Scene{
         this.tablero = new GameBoard(this);
         this.inputManager = new InputManager(this, this.tablero.submarines.red, this.tablero.submarines.blue,this.gameloopMachine,this.playerActionMachine);
 
-        this.chain.play();
+        // this.chain.play();
 
         // this.leftAnimation.play();
 
@@ -69,7 +72,7 @@ export class GameScreen extends Phaser.Scene{
             let text = `Round ${round}`
             roundText.setText(text)
             this.roundTextAnimation.setText(text);
-            this.chain.play();
+            this.chain.restart();
         })
 
         EventDispatch.on(Event.UPDATE_PLAYER_TEXT,(player)=>{

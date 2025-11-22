@@ -58,21 +58,22 @@ export class FireState extends State{
             this.right = this.stateMachine.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         }
 
+        this.createEvent();
+
         this.up.on("down",()=>{
             EventDispatch.emit(Event.SHOOT);
-            this.transition();
         })
         this.down.on("down",()=>{
             EventDispatch.emit(Event.SHOOT);
-            this.transition();
+            // this.transition();
         })
         this.left.on("down",()=>{
             EventDispatch.emit(Event.SHOOT);
-            this.transition();
+            // this.transition();
         })
         this.right.on("down",()=>{
             EventDispatch.emit(Event.SHOOT);
-            this.transition();
+            // this.transition();
         })
     }
 
@@ -87,7 +88,17 @@ export class FireState extends State{
         this.stateMachine.transition(this.stateMachine.stateList.airAttackState)
     }
 
-    shoot(){
-        
+    createEvent(){
+        EventDispatch.on(Event.SHOOT,()=>{
+            this.scene.scene.pause();
+
+            this.scene.scene.launch("fireStateWindow",{width:100,height:200,miCallback: (algo)=>this.shoot(algo)})
+            console.log("Launching fire window")
+        })
+    }
+
+    shoot(algo){
+        console.log(algo);
+        this.transition();
     }
 }
