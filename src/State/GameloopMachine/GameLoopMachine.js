@@ -11,7 +11,7 @@ export class GameLoopMachine extends StateMachine{
         this._player2 = new Player2(this,2);
         this._checkState = new CheckState(this);
 
-        this._currentState = this._player1;
+        this._currentState = this._checkState;
         this._currentState.onStateEnter();
     }
 

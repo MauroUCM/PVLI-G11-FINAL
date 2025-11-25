@@ -84,19 +84,21 @@ export default class GameBoard extends Phaser.GameObjects.Container {
 
         this.toggleKey.on("down",()=>{
             this.refresh();
-        })
+        }) 
 
 
-        //Esto fuera，o no, depende
         EventDispatch.on(Event.SHOO, () => {
+
             const attacker = this.submarines[this.currentTurn];
             const target = this.currentTurn === "red" ? this.submarines.blue : this.submarines.red;
             
+
             let isTarget1 = attacker.isTarget(target.position.x, target.position.y, 1)
             let isTarget2 = attacker.isTarget(target.position.x, target.position.y, 2)
 
             if (isTarget1 || isTarget2) console.log("Target!");
 
+            //WTF
             this.showShootPopup(attacker, target, (direction, distance) => {
                 if (!direction) {
                     console.log("No disparó");

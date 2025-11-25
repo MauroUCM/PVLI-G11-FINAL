@@ -100,6 +100,12 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
                 this.container.huds[this.container.currentTurn].update()
             }
         })
+
+        EventDispatch.on(Event.GET_SUBMARINE,(name,callback)=>{
+            if(this.name == name){
+                callback.callBack(this);
+            }
+        })
     }
 
     // ========== GETTERS ==========

@@ -21,6 +21,6 @@ export class CheckState extends State{
 
     transition(){
         this.stateMachine.transition(this.stateMachine.stateList.player1)
-        return this.stateMachine.stateList.player1;
+        // return this.stateMachine.stateList.player1;
     }
 }

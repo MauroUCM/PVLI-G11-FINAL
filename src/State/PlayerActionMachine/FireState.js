@@ -61,18 +61,18 @@ export class FireState extends State{
         this.createEvent();
 
         this.up.on("down",()=>{
-            EventDispatch.emit(Event.SHOOT);
+            EventDispatch.emit(Event.SHOOT,currentPlayer,0);
         })
         this.down.on("down",()=>{
-            EventDispatch.emit(Event.SHOOT);
-            // this.transition();
+            // EventDispatch.emit(Event.SHOOT);
+            this.transition();
         })
         this.left.on("down",()=>{
-            EventDispatch.emit(Event.SHOOT);
+            EventDispatch.emit(Event.SHOOT,currentPlayer,-90);
             // this.transition();
         })
         this.right.on("down",()=>{
-            EventDispatch.emit(Event.SHOOT);
+            EventDispatch.emit(Event.SHOOT,currentPlayer,90);
             // this.transition();
         })
     }
@@ -89,16 +89,26 @@ export class FireState extends State{
     }
 
     createEvent(){
-        EventDispatch.on(Event.SHOOT,()=>{
+        EventDispatch.on(Event.SHOOT,(player,direction)=>{
             this.scene.scene.pause();
-
-            this.scene.scene.launch("fireStateWindow",{width:100,height:200,miCallback: (algo)=>this.shoot(algo)})
+            this.scene.scene.launch("fireStateWindow",{
+                player:player, //Teclas del jugador correspondiente
+                //cuando ya sabe la distancia que quiere disparar
+                distanceCallback: (distance)=>{
+                    console.log(`Shoot distance: ${distance}`);
+                    this.distance = distance;
+                    this.shoot("despues")
+                }
+            })
             console.log("Launching fire window")
+            EventDispatch.emit(Event.SUBMARINE,"blue",{callBack:(sub)=>{this.blue = this.getSubmarine(sub)}})
+            EventDispatch.emit(Event.SUBMARINE,"red",{callBack:(sub)=>{this.red = this.getSubmarine(sub)}})
         })
     }
 
     shoot(algo){
+        this.distance = algo;
         console.log(algo);
-        this.transition();
+        // this.transition();
     }
 }
