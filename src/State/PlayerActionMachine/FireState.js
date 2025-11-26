@@ -52,26 +52,28 @@ export class FireState extends State{
             this.right = this.stateMachine.scene.input.keyboard.addKey('D');
         }
         else if(currentPlayer== 2){
-            this.up = this.stateMachine.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+            this.up = this.stateMachine.scene.input.keyboard.addKey("UP");
             this.down = this.stateMachine.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
             this.left = this.stateMachine.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
             this.right = this.stateMachine.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         }
 
-        this.createEvent();
+        this.confirmButton = [this.left.keyCode,this.right.keyCode];
+        this.setEvent();
+        // console.log(this.left);
 
         this.up.on("down",()=>{
-            EventDispatch.emit(Event.SHOOT,currentPlayer,0);
+            EventDispatch.emit(Event.SHOOT,this.confirmButton,0);
         })
         this.down.on("down",()=>{
             // EventDispatch.emit(Event.SHOOT);
             this.transition();
         })
         this.left.on("down",()=>{
-            EventDispatch.emit(Event.SHOOT,currentPlayer,-90);
+            EventDispatch.emit(Event.SHOOT,this.confirmButton,-90);
         })
         this.right.on("down",()=>{
-            EventDispatch.emit(Event.SHOOT,currentPlayer,90);
+            EventDispatch.emit(Event.SHOOT,this.confirmButton,90);
         })
     }
 
@@ -86,21 +88,22 @@ export class FireState extends State{
         this.stateMachine.transition(this.stateMachine.stateList.airAttackState)
     }
 
-    createEvent(){
+    setEvent(){
         EventDispatch.on(Event.SHOOT,(player,direction)=>{
             this.scene.scene.pause();
             this.scene.scene.launch("fireStateWindow",{
-                player:player, //Teclas del jugador correspondiente
+                confirmButton:player, //Teclas del jugador correspondiente
                 //cuando ya sabe la distancia que quiere disparar
                 distanceCallback: (distance)=>{
                     console.log(`Shoot distance: ${distance}`);
                     let range = distance;
                     this.shoot(range,direction);
-                }
+                },
+                currentPlayer:this.stateMachine.context.currentState.id
             })
-            console.log("Launching fire window")
-            EventDispatch.emit(Event.GET_SUBMARINE,"blue",{callBack:(sub)=>{this.blue = sub}})
-            EventDispatch.emit(Event.GET_SUBMARINE,"red",{callBack:(sub)=>{this.red = sub}})
+            // console.log("Launching fire window")
+            // EventDispatch.emit(Event.GET_SUBMARINE,"blue",{callBack:(sub)=>{this.blue = sub}})
+            // EventDispatch.emit(Event.GET_SUBMARINE,"red",{callBack:(sub)=>{this.red = sub}})
         })
     }
 
