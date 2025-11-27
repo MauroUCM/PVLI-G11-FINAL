@@ -16,7 +16,33 @@ let config = {
 	scale: {
 		autoCenter: Phaser.Scale.CENTER_HORIZONTALLY
 	},
+		physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 0 },
+            debug: false
+        }
+    },
 	scene: [Menu, Submarine_View, GameScreen, Flappy_Dragon],
 };
 
 new Phaser.Game(config);
+
+// Escuchar la tecla P globalmente
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'p' || event.key === 'P') {
+        console.log("Tecla P presionada - Iniciando minijuego");
+        
+        // Obtener la escena activa actual
+        const activeScenes = game.scene.getScenes(true);
+        
+        if (activeScenes.length > 0) {
+            const currentScene = activeScenes[0];
+            
+            // Si NO estamos ya en el minijuego
+            if (currentScene.scene.key !== 'FlappyDragon') {
+                currentScene.scene.start('FlappyDragon');
+            }
+        }
+    }
+});

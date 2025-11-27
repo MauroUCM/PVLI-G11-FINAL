@@ -74,14 +74,14 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         // Configuración visual
         this.texture = "Submarine";
         container.add(this);
-        this.setScale(0.1);
+        this.setScale(0.2);
         this.setOrigin(0.5, 0.5);
         this.updateSprite();
 
         console.log("Submarine created at", this.position);
     }
 
-    // ========== GETTERS ==========
+    // GETTERS 
     get X() {
         return this.position.x;
     }
@@ -98,15 +98,15 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         return this.maxHP;
     }
 
-    // ========== ACTUALIZACIÓN VISUAL ==========
+    //ACTUALIZACIÓN VISUAL
     updateSprite() {
         const cellSize = this.container.data.cellSize;
         this.setPosition(this.position.x * cellSize, this.position.y * cellSize);
-        this.setAngle(this.orientation -90); 
+        this.setAngle(this.orientation); 
         this.positionReferenceCheck();
     }
 
-    // ========== MOVIMIENTO ==========
+    //MOVIMIENTO
     canMoveTo(newX, newY) {
         return (
             newX >= 0 &&
@@ -233,8 +233,7 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         }
     }
 
-    // ========== SISTEMA DE COMBATE ==========
-    
+    //SISTEMA DE COMBATE 
     /**
      * Verifica si hay munición disponible
      */
@@ -319,8 +318,7 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         return false;
     }
 
-    // ========== SISTEMA DE VIDA ==========
-    
+    //SISTEMA DE VIDA
     /**
      * Recibe daño
      */
@@ -373,8 +371,7 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         }
     }
 
-    // ========== SISTEMA DE ATAQUE AÉREO ==========
-    
+    //SISTEMA DE ATAQUE AÉREO 
     /**
      * Verifica si el ataque aéreo está disponible
      */
@@ -413,8 +410,7 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         }
     }
 
-    // ========== SISTEMA DE INVENTARIO ==========
-    
+    //SISTEMA DE INVENTARIO
     /**
      * Añade munición al inventario
      */
@@ -522,8 +518,7 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         }
     }
 
-    // ========== ACTUALIZACIÓN DE TURNO ==========
-    
+    //ACTUALIZACIÓN DE TURNO 
     /**
      * Método llamado al final de cada turno
      */
@@ -533,8 +528,7 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         this.updateMovementRestrictions();
     }
 
-    // ========== UTILIDADES ==========
-    
+    //UTILIDADES
     /**
      * Muestra el estado del inventario
      */

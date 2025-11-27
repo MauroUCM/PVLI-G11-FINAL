@@ -34,6 +34,20 @@ export class Menu extends Phaser.Scene {
 			// this.scene.start('Submarine_View');
 			this.scene.start('GameScreen');
 		});
+
+		// TECLA P para iniciar el minijuego
+		this.input.keyboard.on('keydown-P', () => {
+			console.log("Iniciando Flappy Dragon...");
+			this.scene.start('FlappyDragon');
+		});
+		
+		// Texto de ayuda 
+		this.add.text(10, 10, 'Presiona P para jugar Flappy Dragon', {
+			fontSize: '16px',
+			fill: '#ffff00',
+			backgroundColor: '#000000',
+			padding: { x: 5, y: 3 }
+		});
 		
 	}
 
