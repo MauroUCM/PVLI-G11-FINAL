@@ -1,5 +1,6 @@
 import {GameScreen} from "./Scene/GameScreen.js";
 import { Menu } from "./Scene/Menu.js";	
+import { Menu2 } from "./Scene/MenuV2.js";
 import { Submarine_View } from "./Scene/Submarine_View.js";
 import Container_Scene from "./Container_test/Container_Scene.js";
 import { Flappy_Dragon } from "./Minigames/MGFlappyDragon.js";
@@ -13,6 +14,7 @@ let config = {
 	width:  800,
 	height: 600,
 	pixelArt: true,
+    //backgroundColor: '#ebeb34',
 	scale: {
 		autoCenter: Phaser.Scale.CENTER_HORIZONTALLY
 	},
@@ -23,7 +25,7 @@ let config = {
             debug: false
         }
     },
-	scene: [Menu, Submarine_View, GameScreen, Flappy_Dragon],
+	scene: [Menu2, Submarine_View, GameScreen, Flappy_Dragon],
 };
 
 new Phaser.Game(config);
