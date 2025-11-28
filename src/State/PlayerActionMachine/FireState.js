@@ -89,7 +89,7 @@ export class FireState extends State{
     }
 
     transition(){
-        this.stateMachine.transition(this.stateMachine.stateList.airAttackState)
+        this.stateMachine.transition(this.stateMachine.stateList.endState)
     }
 
     setEvent(){
