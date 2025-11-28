@@ -4,10 +4,13 @@ import { GraphicSquare } from "../Board/GraphicSquare.js";
 import EventDispatch from "../Event/EventDispatch.js"
 import { SubmarineComplete} from "../Submarine/SubmarineComplete.js";
 import Event from "../Event/Event.js";
-// import { Orientation } from "../Submarine/Orientation.js";
 import { ResourceManager_Complete } from "../Resources/ResourceManager.js";
-// import { SubmarineInventory } from "../SubmarineInventory.js";
 import { SubmarineHUD } from "../Submarine/SubmarineHUD.js";
+import { Dragon } from "../Dragon/Dragon.js";
+import config from "./config.json" with {type:"json"}
+
+//TODO
+//Hacer limpieza del los eventos, ir poniendo comentarios a las cosas
 
 export default class GameBoard extends Phaser.GameObjects.Container {
     /**
@@ -20,37 +23,34 @@ export default class GameBoard extends Phaser.GameObjects.Container {
      * @param {Number} cellSize El tamaño de la celda
      */
     constructor(scene, boardWidth, boardHeight, x, y, texture, cellSize) {
-        super(scene, x, y);
+        super(scene, config.x, config.y);
+
+        this.scene = scene;
         this.active = true;
         
         this.texture = texture
         this.GRAPHIC = scene.add.graphics({ lineStyle: { width: 1, color: 0x00ff00 } });
         this.add(this.GRAPHIC)
 
-        this.data = {
-            x: x,
-            y: y,
-            boardWidth: boardWidth,
-            boardHeight: boardHeight,
-            cellSize: cellSize,
-            submarineLimit: {
-                x: Math.round(boardWidth / 2),
-                y: Math.round(boardHeight / 2),
-            }
-        }
+        this.toggleKey = this.scene.input.keyboard.addKey('M');
+
+        this.config = config;
 
         this.matrix = {
-            logic: new LogicBoard(boardWidth, boardHeight),
+            logic: new LogicBoard(config.boardWidth*2-1, config.boardHeight*2-1),
             graphic: null
         }
 
-        this.matrix.graphic = this.graphicMatrixInitialize(boardWidth, boardHeight, this.matrix.logic)
+        this.matrix.graphic = this.graphicMatrixInitialize(config.boardWidth*2-1, config.boardHeight*2-1, this.matrix.logic)
 
         // Crear submarinos con la nueva clase
         this.submarines = {
-            blue: new SubmarineComplete(scene, 3, 3, this.matrix.logic, this),   
-            red:  new SubmarineComplete(scene, 2, 2, this.matrix.logic, this)  
+            blue: new SubmarineComplete(scene, 3, 3, this.matrix.logic, this,"blue",2),   
+            red:  new SubmarineComplete(scene, 2, 2, this.matrix.logic, this,"red",1)  
         };
+
+        //Crear el dragon
+        this.dragon = new Dragon(this,true);
 
         this.submarines.blue.setTint(0x00aaff);
         this.submarines.red.setTint(0xff4444);
@@ -85,81 +85,24 @@ export default class GameBoard extends Phaser.GameObjects.Container {
     }
 
     setupEvents() {
-        EventDispatch.on(Event.TOGGLE_MAP, () => {
+
+        this.toggleKey.on("down",()=>{
             this.refresh();
-            console.log("Refreshed");
+        }) 
+
+        EventDispatch.on(Event.GET_GAMEBOARD,(callback)=>{
+            callback.boardCallback(this);
         })
 
-        EventDispatch.on(Event.MOVE_RIGHT, () => {
-            const submarine = this.submarines[this.currentTurn];
-            if (submarine.moveRight()) {
-                this.resourceManager.checkAndCollectResource(submarine);
-                this.huds[this.currentTurn].update();
-            }
+        EventDispatch.on(Event.END_TURN,()=>{
+            this.endTurn();
         })
 
-        EventDispatch.on(Event.MOVE_FRONT, () => {
-            const submarine = this.submarines[this.currentTurn];
-            if (submarine.moveFront()) {
-                this.resourceManager.checkAndCollectResource(submarine);
-                this.huds[this.currentTurn].update();
-            }
+        EventDispatch.on(Event.UPDATE_MAP,()=>{
+            this.render();
         })
 
-        EventDispatch.on(Event.MOVE_LEFT, () => {
-            const submarine = this.submarines[this.currentTurn];
-            if (submarine.moveLeft()) {
-                this.resourceManager.checkAndCollectResource(submarine);
-                this.huds[this.currentTurn].update();
-            }
-        })
-
-        EventDispatch.on(Event.SHOOT, () => {
-            const attacker = this.submarines[this.currentTurn];
-            const target = this.currentTurn === "red" ? this.submarines.blue : this.submarines.red;
-            
-            let isTarget1 = attacker.isTarget(target.position.x, target.position.y, 1)
-            let isTarget2 = attacker.isTarget(target.position.x, target.position.y, 2)
-
-            if (isTarget1 || isTarget2) console.log("Target!");
-
-            this.showShootPopup(attacker, target, (direction, distance) => {
-                if (!direction) {
-                    console.log("No disparó");
-                    return;
-                }
-
-                console.log("Disparo:", direction, "Distancia:", distance);
-                
-                let isTargetDir1 = isTarget1 && 
-                    attacker.isTargetDir(target.position.x, target.position.y, 1, direction) && 
-                    attacker.canShoot(distance);
-                    
-                let isTargetDir2 = isTarget2 && 
-                    attacker.isTargetDir(target.position.x, target.position.y, 2, direction) && 
-                    attacker.canShoot(distance);
-
-                if (distance == 1) {
-                    attacker.shoot(distance);
-                    if (isTargetDir1) {
-                        target.loseHealth(5);
-                        console.log("¡Impacto! -5 HP");
-                    }
-                }
-                if (distance == 2) {
-                    attacker.shoot(distance);
-                    if (isTargetDir2 || isTargetDir1) {
-                        target.loseHealth(2);
-                        console.log("¡Impacto! -2 HP");
-                    }
-                }
-
-                // Actualizar ambos HUDs
-                this.huds[this.currentTurn].update();
-                const targetColor = this.currentTurn === "red" ? "blue" : "red";
-                this.huds[targetColor].update();
-            });
-        });
+        
     }
 
     render() {
@@ -189,13 +132,13 @@ export default class GameBoard extends Phaser.GameObjects.Container {
     }
 
     initializeBackground(x, y, image) {
-        let centerX = ((this.data.boardWidth - 1) * this.data.cellSize) / 2
-        let centerY = ((this.data.boardHeight - 1) * this.data.cellSize) / 2  
+        let centerX = (((this.config.boardWidth*2-2) ) * this.config.cellSize) / 2
+        let centerY = (((this.config.boardHeight*2-2) ) * this.config.cellSize) / 2  
         this.background_image = new Phaser.GameObjects.Image(this.scene, 0, 0, image);
         this.background_image.setPosition(centerX, centerY)
 
-        let width = ((this.data.boardWidth - 1) * this.data.cellSize);
-        let height = ((this.data.boardHeight - 1) * this.data.cellSize);
+        let width = ((this.config.boardWidth*2 -2) * this.config.cellSize);
+        let height = ((this.config.boardHeight*2 -2) * this.config.cellSize);
         this.background_image.setDisplaySize(width, height)
         this.scene.add.existing(this.background_image);
         this.background_image.setAlpha(0.2);
@@ -206,10 +149,10 @@ export default class GameBoard extends Phaser.GameObjects.Container {
 
     createGraphicPoint(m, i, j, logic) {
         if ((i % 2 === 0) && (j % 2 === 0)) {
-            m[i][j] = new GraphicVertex(this.scene, this.GRAPHIC, this.data.cellSize, logic.matrix[i][j], this.data.x, this.data.y);
+            m[i][j] = new GraphicVertex(this.scene, this.GRAPHIC, this.config.cellSize, logic.matrix[i][j], this.config.x, this.config.y);
         }
         else if ((i % 2 === 1) && (j % 2 === 1)) {
-            m[i][j] = new GraphicSquare(this.scene, logic.matrix[i][j], "Square", this.data.cellSize, this.data.x, this.data.y);
+            m[i][j] = new GraphicSquare(this.scene, logic.matrix[i][j], "Square", this.config.cellSize, this.config.x, this.config.y);
             this.add(m[i][j])
         }
         else {
@@ -244,65 +187,67 @@ export default class GameBoard extends Phaser.GameObjects.Container {
         console.log(`Turno de: ${this.currentTurn}`);
     }
 
-    showShootPopup(attacker, target, callback) {
-        const scene = this.scene; 
-        let popup2 = null;
+    //Esto ya no se utiliza
 
-        const overlay = scene.add.rectangle(400, 300, 800, 600, 0x000000, 0.6)
-            .setScrollFactor(0)
-            .setDepth(1000);
+    // showShootPopup(attacker, target, callback) {
+    //     const scene = this.scene; 
+    //     let popup2 = null;
 
-        const panel = scene.add.rectangle(400, 300, 300, 220, 0xffffff, 1)
-            .setStrokeStyle(2, 0x000000)
-            .setScrollFactor(0)
-            .setDepth(1001);
+    //     const overlay = scene.add.rectangle(400, 300, 800, 600, 0x000000, 0.6)
+    //         .setScrollFactor(0)
+    //         .setDepth(1000);
 
-        const popup = scene.add.container(0, 0, [overlay, panel]).setDepth(1002);
+    //     const panel = scene.add.rectangle(400, 300, 300, 220, 0xffffff, 1)
+    //         .setStrokeStyle(2, 0x000000)
+    //         .setScrollFactor(0)
+    //         .setDepth(1001);
 
-        const boton = (text, y, action) => {
-            const btn = scene.add.text(400, y, text, { fontSize: '20px', color: '#000' })
-                .setOrigin(0.5)
-                .setScrollFactor(0)
-                .setInteractive({ useHandCursor: true })
-                .setDepth(1003)
-                .on("pointerdown", () => action());
-            popup.add(btn);
-        };
+    //     const popup = scene.add.container(0, 0, [overlay, panel]).setDepth(1002);
 
-        boton("Derecha", 260, () => choose("right"));
-        boton("Izquierda", 290, () => choose("left"));
-        boton("Delante", 320, () => choose("front"));
-        boton("No disparar", 350, () => close(null, null));
+    //     const boton = (text, y, action) => {
+    //         const btn = scene.add.text(400, y, text, { fontSize: '20px', color: '#000' })
+    //             .setOrigin(0.5)
+    //             .setScrollFactor(0)
+    //             .setInteractive({ useHandCursor: true })
+    //             .setDepth(1003)
+    //             .on("pointerdown", () => action());
+    //         popup.add(btn);
+    //     };
 
-        const choose = (direction) => {
-            popup.removeAll(true);
-            popup.destroy(true); 
+    //     boton("Derecha", 260, () => choose("right"));
+    //     boton("Izquierda", 290, () => choose("left"));
+    //     boton("Delante", 320, () => choose("front"));
+    //     boton("No disparar", 350, () => close(null, null));
 
-            const overlay2 = scene.add.rectangle(400, 300, 800, 600, 0x000000, 0.6).setDepth(1000);
-            const panel2 = scene.add.rectangle(400, 300, 300, 160, 0xffffff, 1).setStrokeStyle(2, 0x000000).setDepth(1001);
+    //     const choose = (direction) => {
+    //         popup.removeAll(true);
+    //         popup.destroy(true); 
 
-            popup2 = scene.add.container(0, 0, [overlay2, panel2]).setDepth(1002);
+    //         const overlay2 = scene.add.rectangle(400, 300, 800, 600, 0x000000, 0.6).setDepth(1000);
+    //         const panel2 = scene.add.rectangle(400, 300, 300, 160, 0xffffff, 1).setStrokeStyle(2, 0x000000).setDepth(1001);
 
-            const boton2 = (label, y, dist) => {
-                const btn = scene.add.text(400, y, label, { fontSize: "20px", color: "#000" })
-                    .setOrigin(0.5)
-                    .setInteractive({ useHandCursor: true })
-                    .setDepth(1003)
-                    .on("pointerdown", () => close(direction, dist));
+    //         popup2 = scene.add.container(0, 0, [overlay2, panel2]).setDepth(1002);
 
-                popup2.add(btn);
-            };
+    //         const boton2 = (label, y, dist) => {
+    //             const btn = scene.add.text(400, y, label, { fontSize: "20px", color: "#000" })
+    //                 .setOrigin(0.5)
+    //                 .setInteractive({ useHandCursor: true })
+    //                 .setDepth(1003)
+    //                 .on("pointerdown", () => close(direction, dist));
 
-            boton2("Distancia 1", 290, 1);
-            boton2("Distancia 2", 330, 2);
-        };
+    //             popup2.add(btn);
+    //         };
 
-        const close = (direction, distance) => {
-            if (popup) popup.destroy(true);
-            if (popup2) popup2.destroy(true); 
-            callback(direction, distance);
-        };
-    }
+    //         boton2("Distancia 1", 290, 1);
+    //         boton2("Distancia 2", 330, 2);
+    //     };
+
+    //     const close = (direction, distance) => {
+    //         if (popup) popup.destroy(true);
+    //         if (popup2) popup2.destroy(true); 
+    //         callback(direction, distance);
+    //     };
+    // }
 
     /**
      * Update llamado cada frame
@@ -314,5 +259,13 @@ export default class GameBoard extends Phaser.GameObjects.Container {
         
         // Actualizar recursos
         this.resourceManager.update();
+    }
+
+    get player1(){
+        return this.submarines.red;
+    }
+
+    get player2(){
+        return this.submarines.blue;
     }
 }

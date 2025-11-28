@@ -1,4 +1,9 @@
 import { Position } from "../Board/Position.js";
+import EventDispatch from "../Event/EventDispatch.js";
+import Event from "../Event/Event.js";
+
+// TODO
+// - al crear submarino hacer "enter" a la casilla
 
 /**
  * Orientaciones del submarino
@@ -31,8 +36,12 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
      * @param {LogicBoard} board - Tablero del juego
      * @param {Phaser.GameObjects.Container} container - Contenedor del tablero
      */
-    constructor(scene, x, y, board, container) {
+    constructor(scene, x, y, board, container, name,id) {
         super(scene, 100, 100, "Submarine", 0);
+
+        // Nombre(color) del submarino
+        this.name = name
+        this.id = id;
 
         // Referencias externas
         this.container = container;
@@ -40,6 +49,7 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
 
         // Posición en la matriz del tablero
         this.position = this.board.matrix[x * 2][y * 2].position;
+        this.board.matrix[this.position.x][this.position.y].enter(this);
 
         // Orientación inicial
         this.orientation = Orientation.E;
@@ -79,9 +89,26 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         this.updateSprite();
 
         console.log("Submarine created at", this.position);
+
+        EventDispatch.on(Event.MOVE,(player,direction)=>{
+            if(player == this.id){
+                console.log(this.name);
+                if(direction == 0) this.moveFront();
+                if(direction == 90) this.moveRight();
+                if(direction == -90) this.moveLeft();
+                this.container.resourceManager.checkAndCollectResource(this);
+                this.container.huds[this.container.currentTurn].update()
+            }
+        })
+
+        EventDispatch.on(Event.GET_SUBMARINE,(name,callback)=>{
+            if(this.name == name){
+                callback.callBack(this);
+            }
+        })
     }
 
-    // GETTERS 
+    // ========== GETTERS ==========
     get X() {
         return this.position.x;
     }
@@ -100,15 +127,20 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
 
     //ACTUALIZACIÓN VISUAL
     updateSprite() {
-        const cellSize = this.container.data.cellSize;
+        const cellSize = this.container.config.cellSize;
         this.setPosition(this.position.x * cellSize, this.position.y * cellSize);
-        this.setAngle(this.orientation); 
-        this.positionReferenceCheck();
+        this.setAngle(this.orientation -90); 
+        // this.positionReferenceCheck();
     }
 
     //MOVIMIENTO
     canMoveTo(newX, newY) {
-        return (
+        if(this.board.matrix[newX][newY].submarine != null){
+            console.log("No se puede mover a esa direccion!")
+            return false;   
+        }
+
+        else return (
             newX >= 0 &&
             newY >= 0 &&
             newX <= this.board.matrix.length - 1 &&
@@ -141,7 +173,15 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         }
 
         if (this.canMoveTo(newX, newY)) {
+            //Salir de la casilla actual
+            this.board.matrix[this.position.x][this.position.y].exit();
+
+            //Ir a la nueva
             this.position = this.board.matrix[newX][newY].position;
+
+            //Actualizar la casilla
+            this.board.matrix[newX][newY].enter(this);
+
             this.updateSprite();
             console.log("Moviéndose a", this.position);
             return true;
@@ -181,7 +221,14 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         }
 
         if (this.canMoveTo(newX, newY)) {
+            //Salir de la casilla actual
+            this.board.matrix[this.position.x][this.position.y].exit();
+
+            //Ir a la nueva
             this.position = this.board.matrix[newX][newY].position;
+
+            //Actualizar la casilla
+            this.board.matrix[newX][newY].enter(this);
             this.orientation = newDirection;
             this.updateSprite();
             console.log("Moviéndose a", this.position);
@@ -222,7 +269,15 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         }
 
         if (this.canMoveTo(newX, newY)) {
+            //Salir de la casilla actual
+            this.board.matrix[this.position.x][this.position.y].exit();
+
+            //Ir a la nueva
             this.position = this.board.matrix[newX][newY].position;
+
+            //Actualizar la casilla
+            this.board.matrix[newX][newY].enter(this);
+
             this.orientation = newDirection;
             this.updateSprite();
             console.log("Moviéndose a", this.position);
