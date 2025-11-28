@@ -19,8 +19,8 @@ export class Flappy_Dragon extends Phaser.Scene {
          this.timer = 60; // poner aqui la duracion del minijuego en segundos
        
         // FONDO (Rectángulo azul simple)
-        
         this.add.rectangle(400, 300, 800, 600, 0x003366);
+        
         
         // PARALAX
         
@@ -83,7 +83,14 @@ export class Flappy_Dragon extends Phaser.Scene {
                 this.dragon.setVelocityY(-350);
             }
         });
+
+        this.input.keyboard.once('keydown-ESC', () => { // VOLVER AL MENU
+            this.scene.start('menu');
+        });
         
+        this.input.keyboard.once('keydown-R', () => {   // REINICIAR
+            this.scene.restart();
+        });
 
         // INTERFAZ
         this.textoPuntos = this.add.text(16, 16, 'Puntos: 0', {
@@ -98,20 +105,17 @@ export class Flappy_Dragon extends Phaser.Scene {
 
         // GENERAR BASURA
         this.generarBasura();
-
-        // this.time.addEvent({
-        //     delay: 2000,
-        //     callback: this.generarBasura,
-        //     callbackScope: this,
-        //     loop: true
-        // });
-
         
         // Crear el temporizador en pantalla
-        this.textoTimer = this.add.text(600, 16, 'Tiempo: 02:00', {
+        this.textoTimer = this.add.text(600, 16, '[PLACEHOLDER]', {
             fontSize: '20px',
             fill: '#ffffff'
         });
+        
+        // Formatear el tiempo (minutos:segundos) 
+        const minutos = Math.floor(this.timer / 60);
+        const segundos = this.timer % 60;
+        this.textoTimer.setText(`Tiempo: ${minutos}:${segundos < 10 ? '0' : ''}${segundos}`);
 
          // Iniciar el temporizador
         this.time.addEvent({
@@ -176,13 +180,7 @@ export class Flappy_Dragon extends Phaser.Scene {
                 align: 'center'
             }).setOrigin(0.5);
 
-            this.input.keyboard.once('keydown-R', () => {
-                this.scene.restart();
-            });
 
-            this.input.keyboard.once('keydown-ESC', () => {
-                this.scene.start('menu');
-            });
         }
     }
 
@@ -209,10 +207,6 @@ export class Flappy_Dragon extends Phaser.Scene {
                 fill: '#ffffff',
                 align: 'center'
             }).setOrigin(0.5);
-            
-            this.input.keyboard.once('keydown-R', () => {
-                this.scene.restart();
-            });
 
 			// ESC para volver al menú
 			this.input.keyboard.once('keydown-ESC', () => {
@@ -220,7 +214,7 @@ export class Flappy_Dragon extends Phaser.Scene {
 			});
         }
 
-        // SE SCROLLEA EL PARALAX
+        // SCROLL PARALAX
         this.fondo1.setTilePosition(this.fondo1.tilePositionX + 1);
         this.fondo2.setTilePosition(this.fondo2.tilePositionX + 2);
         this.fondo3.setTilePosition(this.fondo3.tilePositionX + 3);

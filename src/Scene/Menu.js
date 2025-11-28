@@ -35,7 +35,7 @@ export class Menu extends Phaser.Scene {
 		});
 		
 		// Boton para jugar al Flappy Dragon
-		let FlappyBT = this.add.text(10, 10, 'Click aquí para FLappy Dragon', {
+		let FlappyBT = this.add.text(10, 10, 'Click aquí para Flappy Dragon', {
 			fontSize: '16px',
 			fill: '#ffff00',
 			backgroundColor: '#000000',
