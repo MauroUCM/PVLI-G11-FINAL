@@ -1,7 +1,10 @@
 import { Vertex } from "../Board/Vertex.js";
 import { Square } from "../Board/Square.js";
 
-export default class Logic_Board{
+/**
+ * El tablero logico del juego, contiene las informaciones de los cuadrados y de los vertices
+ */
+export default class LogicBoard{
     constructor(x,y){
         this.matrix = [];
         this.initialize(x,y);

@@ -1,5 +1,5 @@
-import GameBoard from "../Board/GameBoard.js";
-import { InputManager } from "../Event/InputManager.js";
+// import GameBoard from "../Board/GameBoard.js";
+// import { InputManager } from "../Input/InputManager.js";
 
 export class Submarine_View extends Phaser.Scene {
     constructor() {

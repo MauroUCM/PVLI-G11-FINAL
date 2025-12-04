@@ -31,21 +31,26 @@ export class GraphicSquare extends Phaser.GameObjects.Image{
      * @param {number} max 
      */
     render(){
-        this.setDisplaySize(this.cellSize*2,this.cellSize*2);
-        if(this.square.active){
+        if(this.square.dragon != null){
+            this.setDisplaySize(this.cellSize*1,this.cellSize*1);
             this.setAlpha(1);
         }
-        else{
-            this.setAlpha(0.01);
-        }
+        else this.setAlpha(0.01);
+        this.setDisplaySize(this.cellSize*2,this.cellSize*2);
+        // if(this.square.active){
+        //     this.setAlpha(1);
+        // }
+        // else{
+        //     this.setAlpha(0.01);
+        // }
     }
 
     addEvent(){
         this.on("pointerdown",()=>{
             this.square.active = !this.square.active
-            console.log(this.square.position.x + " " + this.square.position.y)
+            // console.log(this.square.position.x + " " + this.square.position.y)
             this.render();
-            console.log(this.square.active);
+            // console.log(this.square.active);
         })
     }
     Update(){
