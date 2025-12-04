@@ -28,7 +28,7 @@ let config = {
             debug: false
         }
     },
-	scene: [Menu, Submarine_View, GameScreen, Flappy_Dragon, TutorialScene,FireStateWindow]
+	scene: [Menu2, Submarine_View, GameScreen, Flappy_Dragon, TutorialScene,FireStateWindow]
 };
 
 new Phaser.Game(config);
