@@ -134,6 +134,16 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
     }
 
     //MOVIMIENTO
+    setNewPosition(newX, newY) {
+        const cellSize = this.container.config.cellSize;
+        this.position.x = newX;
+        this.position.y = newY;
+        this.setPosition(this.position.x * cellSize, this.position.y * cellSize);
+        this.setAngle(this.orientation -90); 
+
+        console.log("submarino recolocado en X:" + newX + " Y:" + newY);
+    }
+
     canMoveTo(newX, newY) {
         if(this.board.matrix[newX][newY].submarine != null){
             console.log("No se puede mover a esa direccion!")

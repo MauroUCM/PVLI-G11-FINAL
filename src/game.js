@@ -1,10 +1,12 @@
 import { GameScreen } from "./Scene/GameScreen.js";
 import { Menu } from "./Scene/Menu.js";	
+import { Menu2 } from "./Scene/MenuV2.js";
 import { Submarine_View } from "./Scene/Submarine_View.js";
 import { Flappy_Dragon } from "./Minigames/MGFlappyDragon.js";
+import { TutorialScene } from "./Scene/TutorialScene.js";
+import { FireStateWindow } from "./State/PlayerActionMachine/FireStateWindow.js";
 import { MinigameDialogScene } from "./Scene/MinigameDialogScene.js";
 import { RepairMinigame } from "./Minigames/RepairMinigame.js";
-import { FireStateWindow } from "./State/PlayerActionMachine/FireStateWindow.js"; // FALTABA ESTE IMPORT
 
 /**
  * Inicio del juego en Phaser. Creamos el archivo de configuración del juego y creamos
@@ -16,6 +18,7 @@ let config = {
 	width: 800,
 	height: 600,
 	pixelArt: true,
+    //backgroundColor: '#ebeb34',
 	scale: {
 		autoCenter: Phaser.Scale.CENTER_HORIZONTALLY
 	},
@@ -27,12 +30,14 @@ let config = {
 			debug: false // Cambiar a true para ver las físicas
 		}
     },
+
 	scene: [
-		Menu, 
+		Menu2, 
 		Submarine_View, 
 		GameScreen, 
 		Flappy_Dragon,          
-		FireStateWindow,       
+		FireStateWindow,
+        TutorialScene,       
 		MinigameDialogScene,    
 		RepairMinigame          
 	],
