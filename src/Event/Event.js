@@ -18,6 +18,7 @@ const Event = Object.freeze({
     GET_DRAGON:Symbol("Get dragon"),
     MOVE_DRAGON:Symbol("Move dragon"),
     UPDATE_MAP:Symbol("Update Map"),
+    TUTORIAL_NEXT_STEP:Symbol("Tutorial next state"),
 })
 
 export default Event;

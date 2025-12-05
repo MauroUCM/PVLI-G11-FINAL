@@ -1,14 +1,9 @@
 import GameBoard from "../Board/GameBoard.js";
-import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 import EventDispatch from "../Event/EventDispatch.js";
 import Event from "../Event/Event.js";
-// import { InputManager } from "../Input/InputManager.js";
-import SubmarineView from "../Scene/SubmarineViewObject.js";
 import { GameLoopMachine } from "../State/GameloopMachine/GameLoopMachine.js";
 import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMachine.js";
-// import { ResourceManager } from "../Resources/ResourceManager.js";
-// import { SubmarineInventory } from "../Resources/SubmarineInventory.js";
-
+import DialogText from "../Tutorial/dialog_plugin.js";
 
 //TODO
 // - Arreglar tween
@@ -47,8 +42,23 @@ export class TutorialScene extends Phaser.Scene{
         this.gameloopMachine = new GameLoopMachine(this);
         this.playerActionMachine = new PlayerActionMachine(this,this.gameloopMachine);
         let texturas = ["Square","BG", "Submarine"];
-        // this.submarineView = new SubmarineView(this,0,0)
         this.tablero = new GameBoard(this);
+		
+        this.dialog = new DialogText(this, {
+			borderThickness: 4,
+			borderColor: 0xcb3234,
+			borderAlpha: 1,
+			windowAlpha: 0.6,
+			windowColor: 0xff6961,
+			windowHeight: 150,
+			padding: 32,
+			closeBtnColor: 'darkgoldenrod',
+			dialogSpeed: 4,
+			fontSize: 24,
+			fontFamily: "pixel"
+		});
+
+		this.dialog.setText("¡Bienvenido a tu entrenamiento introductorio, soldado! Aqui aprenderas las bases que toda persona que aspire a ser un capitan decente debe conocer.", true);
 
         EventDispatch.on(Event.UPDATE_ROUND,(round)=>{
             let text = `Round ${round}`
