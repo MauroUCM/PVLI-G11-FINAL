@@ -8,8 +8,9 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         super(scene,x,y)
         this.scene = scene;
         this.active = true;
+        this.imId = "SubWindow";
         this.screenWidth = scene.cameras.main.width;   // 800
-        this.screenHeight = scene.cameras.main.height; // 600
+        this.screenHeight = scene.cameras.main.height - 100; // 600
         this.setSize(this.screenWidth,this.screenHeight);
         
         // PANTALLA DIVIDIDA: mitad superior para Jugador 1, mitad inferior para Jugador 2
@@ -52,7 +53,7 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         // const halfHeight = screenHeight / 2; // 300px por jugador
         
         //JUGADOR 1 (Parte Superior)
-        this.createPlayerViews(0, 0, this.screenWidth, this.screenHeight, 'JAPON', this.submarine1, this.submarine2);
+        this.createPlayerViews(0, 50, this.screenWidth, this.screenHeight, 'JAPON', this.submarine1, this.submarine2);
         
         // Linea divisoria
         // const line = this.scene.add.graphics();
@@ -130,6 +131,7 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
             0x001a33,
             1
         );
+        let bg = "SubWindow";
         
         // Borde blanco de la vista
         const border = this.scene.add.graphics();

@@ -35,22 +35,34 @@ export class GameScreen extends Phaser.Scene{
         this.load.image("Square","Page/img/Profile/Lappland.jpeg")
         this.load.image("BG","assets/GameBoard_BG.jpg")
         this.load.image("Submarine","assets/submarino.png")
+        this.load.image("SubWindow","assets/SubWindow.png")
     }
     
     //La dimension de la tabla tiene que ser un numero impar
     create(){
+        let header = this.add.rectangle(0, 0, 2000, 100, 0x00CC9966, 1);
         let roundText = this.add.text(40,520,"Round 0",{fontFamily:"Arial",fontSize:20})
         this.roundTextAnimation = this.add.text(-150,300,"Round 0",{fontFamily:"Arial",fontSize:25})
-        let playerText = this.add.text(40,545,"Turno de China",{fontFamily:"Arial",fontSize:20})
+        let playerText = this.add.text(0,10,"Turno de China",{fontFamily:"Arial",fontSize:20})
         let playerActionText = this.add.text(40,570,"Fase actual:",{fontFamily:"Arial",fontSize:20})
+        
+        
 
         this.createTextTween();
 
         this.gameloopMachine = new GameLoopMachine(this);
         this.playerActionMachine = new PlayerActionMachine(this,this.gameloopMachine);
         let texturas = ["Square","BG", "Submarine"];
-        this.submarineView = new SubmarineView(this,0,0)
+        this.submarineView = new SubmarineView(this,0, 100)
         this.tablero = new GameBoard(this);
+
+        // let china = this.tablero.player1(); // China
+        // let japan = this.tablero.player2(); // Japon
+
+        // this.pC = china;
+        // this.pJ = japan;
+
+        if (this.tablero.onRange()) console.log("AAA");
 
         EventDispatch.on(Event.UPDATE_ROUND,(round)=>{
             let text = `Round ${round}`
@@ -69,7 +81,12 @@ export class GameScreen extends Phaser.Scene{
         })
     }
 
-    update(){}
+    update(){
+
+        // pC = this.tablero.player1(); // China
+        // pJ = this.tablero.player2(); // Japon
+
+    }
 
     createTextTween(){
 
