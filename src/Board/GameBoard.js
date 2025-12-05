@@ -289,6 +289,42 @@ export default class GameBoard extends Phaser.GameObjects.Container {
     get player2(){
         return this.submarines.blue;
     }
+
+    onRange()
+    {
+         //Logica del disparo (traslado tal cual de lo que habia en GameBoard)
+
+         const attacker = this.submarines[this.currentTurn];
+         const target = this.currentTurn === "red" ? this.submarines.blue : this.submarines.red;
+ 
+ 
+         let isTarget1 = attacker.isTarget(target.position.x, target.position.y, 1)
+         let isTarget2 = attacker.isTarget(target.position.x, target.position.y, 2)
+ 
+        
+ 
+         let isTargetDir1 = isTarget1 && 
+             attacker.isTargetDir(target.position.x, target.position.y, 1, direction) && 
+             attacker.canShoot(distance);
+             
+         let isTargetDir2 = isTarget2 && 
+             attacker.isTargetDir(target.position.x, target.position.y, 2, direction) && 
+             attacker.canShoot(distance);
+        
+             return isTargetDir1 && isTargetDir2;
+        //  if (distance == 1) {
+        //      attacker.shoot(distance);
+        //      if (isTargetDir1) {
+        //          target.loseHealth(5);
+        //      }
+        //  }
+        //  if (distance == 2) {
+        //      attacker.shoot(distance);
+        //      if (isTargetDir2 || isTargetDir1) {
+        //          target.loseHealth(2);
+        //      }
+        //  }
+    }
    
 }
 

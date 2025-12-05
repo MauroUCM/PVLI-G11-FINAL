@@ -16,6 +16,8 @@ export class SubmarineHUD {
         this.x = x;
         this.y = y;
         this.playerName = playerName;
+        this.screenWidth = scene.cameras.main.width;   // 800
+        this.screenHeight = scene.cameras.main.height; // 600
 
         // Contenedor del HUD
         this.container = scene.add.container(x, y);
@@ -40,11 +42,12 @@ export class SubmarineHUD {
             fontFamily: 'Arial'
         };
 
-        // Fondo semi-transparente
+        // Fondo hud
         this.background = this.scene.add.rectangle(0, 0, 280, 180, 0x00CC9966, 1);
         this.background.setOrigin(0, 0);
         this.container.add(this.background);
 
+   
         // Nombre del jugador
         this.playerNameText = this.scene.add.text(10, 10, this.playerName, {
             fontSize: '16px',
