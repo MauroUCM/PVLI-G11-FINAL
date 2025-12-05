@@ -89,7 +89,7 @@ export class FireState extends State{
     }
 
     transition(){
-        this.stateMachine.transition(this.stateMachine.stateList.endState)
+        this.stateMachine.transition(this.stateMachine.stateList.healState)
     }
 
     setEvent(){
