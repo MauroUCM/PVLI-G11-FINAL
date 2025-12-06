@@ -1,46 +1,96 @@
+/**
+ * GameOverScene
+ * 
+ * Escena de fin de juego
+ * 
+ *  CORRECCIÓN: Ahora usa el sistema unificado de estilos (UIStyles.js)
+ *  y tiene soporte completo de teclado + ratón
+ * 
+ * CONTROLES:
+ * - R: Revancha (reiniciar partida)
+ * - ESC: Volver al menú
+ * - Click en botones
+ */
+
+// IMPORTAR sistema de estilos unificado
+import { 
+    UIStyles, 
+    createOverlay, 
+    createStyledPanel, 
+    createStyledText, 
+    createStyledButton 
+} from '../UIStyles.js';
+
 export class GameOverScene extends Phaser.Scene {
+    
     constructor() {
         super({ key: 'GameOver' });
     }
 
+    /**
+     * Inicialización - Recibe datos del resultado de la partida
+     * 
+     * @param {Object} data - Datos del fin de juego
+     * @param {string} data.winner - 'red' o 'blue'
+     * @param {string} data.reason - 'elimination' o 'escape'
+     * @param {Object} data.stats - Estadísticas de la partida
+     */
     init(data) {
-        this.winner = data.winner; // 'red' o 'blue'
-        this.reason = data.reason; // 'elimination' o 'escape'
-        this.stats = data.stats;  // Estadísticas de la partida
+        this.winner = data.winner;
+        this.reason = data.reason;
+        this.stats = data.stats;
+        
+        console.log("=== FIN DE JUEGO ===");
+        console.log(`   Ganador: ${this.winner}`);
+        console.log(`   Razón: ${this.reason}`);
     }
 
+    /**
+     * Creación de la escena
+     */
     create() {
         const w = this.cameras.main.width;
         const h = this.cameras.main.height;
         
-        // Fondo oscuro
-        this.add.rectangle(w/2, h/2, w, h, 0x000000, 0.95);
+        console.log("Creando pantalla de Game Over...");
         
-        // Determinar color del ganador
+        // PASO 1: Fondo oscuro
+        const overlay = createOverlay(this, 0.95);
+        overlay.setDepth(1000);
+        
+        // PASO 2: Determinar datos del ganador
         const winnerColor = this.winner === 'red' ? 0xff4444 : 0x4444ff;
-        const winnerName = this.winner === 'red' ? 'ROJO' : 'AZUL';
+        const winnerColorHex = this.winner === 'red' ? '#ff4444' : '#4444ff';
+        const winnerName = this.winner === 'red' ? 'CHINA (ROJO)' : 'JAPÓN (AZUL)';
         
-        // Título principal
+        // PASO 3: Título principal según razón de victoria
         const titleText = this.reason === 'elimination' 
             ? '¡SUBMARINO DESTRUIDO!' 
             : '¡ZONA DE ESCAPE ALCANZADA!';
         
-        this.add.text(w/2, 100, titleText, {
-            fontSize: '42px',
-            fill: '#ffff00',
-            fontStyle: 'bold',
-            stroke: '#000000',
-            strokeThickness: 6
-        }).setOrigin(0.5);
+        const title = createStyledText(this, w/2, 100, titleText, 'title');
+        title.setFontSize('42px');
+        title.setColor('#ffff00');
+        title.setStroke('#000000', 6);
+        title.setOrigin(0.5);
+        title.setDepth(1001);
         
-        // Ganador con efecto de brillo
-        const winnerText = this.add.text(w/2, 180, `VICTORIA: ${winnerName}`, {
-            fontSize: '56px',
-            fill: Phaser.Display.Color.IntegerToColor(winnerColor).rgba,
-            fontStyle: 'bold',
-            stroke: '#000000',
-            strokeThickness: 8
-        }).setOrigin(0.5);
+        // PASO 4: Anuncio del ganador con efecto de brillo
+        const winnerText = this.add.text(
+            w/2, 180, 
+            `VICTORIA: ${winnerName}`, 
+            {
+                fontSize: '48px',
+                color: winnerColorHex,
+                fontFamily: 'Arial',
+                fontStyle: 'bold',
+                stroke: '#000000',
+                strokeThickness: 8,
+                align: 'center'
+            }
+        );
+        winnerText.setOrigin(0.5);
+        winnerText.setDepth(1001);
         
         // Animación de brillo del ganador
         this.tweens.add({
@@ -52,116 +102,130 @@ export class GameOverScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
         
-        // Estadísticas de la partida
+        // PASO 5: Panel de estadísticas
         this.createStatsPanel(w, h);
         
-        // Botones
+        // PASO 6: Botones de acción
         this.createButtons(w, h);
         
-        // Partículas de celebración
+        // PASO 7: Efecto de celebración
         this.createCelebrationEffect(w/2, h/2, winnerColor);
+        
+        console.log("Pantalla de Game Over creada");
     }
     
+    /**
+     * Crea el panel de estadísticas
+     * 
+     * @param {Number} w - Ancho de la pantalla
+     * @param {Number} h - Alto de la pantalla
+     */
     createStatsPanel(w, h) {
         const panelY = 280;
         
+        console.log("Creando panel de estadísticas...");
+        
         // Panel semi-transparente
-        this.add.rectangle(w/2, panelY + 80, 500, 180, 0x1a1a1a, 0.9)
-            .setStrokeStyle(3, 0xffffff);
+        const panel = createStyledPanel(this, w/2, panelY + 80, 500, 180);
+        panel.setDepth(1001);
         
         // Título de estadísticas
-        this.add.text(w/2, panelY, 'ESTADÍSTICAS DE LA PARTIDA', {
-            fontSize: '20px',
-            fill: '#00ff88',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
+        const statsTitle = createStyledText(
+            this, w/2, panelY, 
+            'ESTADÍSTICAS DE LA PARTIDA',
+            'subtitle'
+        );
+        statsTitle.setColor('#00ff88');
+        statsTitle.setOrigin(0.5);
+        statsTitle.setDepth(1002);
         
-        // Mostrar estadísticas
+        // Mostrar estadísticas (usando datos reales)
         const stats = [
             `Duración: ${this.stats.duration || '5:30'}`,
             `Total de turnos: ${this.stats.totalTurns || 0}`,
-            `Disparos realizados: ${this.stats.totalShots || 0}`,
+            `Disparos realizados: ${this.stats.totalShots || 'N/A'}`,
             `Impactos: ${this.stats.hits || 0}`,
             `Recursos recogidos: ${this.stats.resourcesCollected || 0}`,
-            `Daño total infligido: ${this.stats.totalDamage || 0} HP`
+            `Daño total: ${this.stats.totalDamage || 0} HP`
         ];
         
         stats.forEach((stat, index) => {
-            this.add.text(w/2, panelY + 30 + (index * 25), stat, {
-                fontSize: '16px',
-                fill: '#ffffff'
-            }).setOrigin(0.5);
+            const statText = createStyledText(
+                this, 
+                w/2, 
+                panelY + 30 + (index * 25), 
+                stat, 
+                'body'
+            );
+            statText.setFontSize('16px');
+            statText.setOrigin(0.5);
+            statText.setDepth(1002);
         });
     }
     
+    /**
+     * Crea los botones de acción
+     * 
+     * @param {Number} w - Ancho de la pantalla
+     * @param {Number} h - Alto de la pantalla
+     */
     createButtons(w, h) {
         const buttonY = h - 120;
         
-        // Botón REVANCHA
-        const revanchaBtn = this.add.rectangle(w/2 - 150, buttonY, 250, 70, 0x00ff88, 1);
-        revanchaBtn.setStrokeStyle(4, 0xffffff);
-        revanchaBtn.setInteractive({ useHandCursor: true });
+        console.log("Creando botones...");
         
-        const revanchaText = this.add.text(w/2 - 150, buttonY, '↻ REVANCHA', {
-            fontSize: '28px',
-            fill: '#000000',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
+        // BOTÓN REVANCHA con soporte de teclado (R)
+        const revanchaBtn = createStyledButton(
+            this,
+            w/2 - 150,
+            buttonY,
+            '↻ REVANCHA',
+            () => {
+                console.log("Iniciando revancha...");
+                this.scene.start('GameScreen');
+            },
+            true,   // Botón primario (verde)
+            'R'     // Tecla R
+        );
+        revanchaBtn.bg.setDepth(1002);
+        revanchaBtn.label.setDepth(1003);
         
-        // Botón MENÚ
-        const menuBtn = this.add.rectangle(w/2 + 150, buttonY, 250, 70, 0xff4444, 1);
-        menuBtn.setStrokeStyle(4, 0xffffff);
-        menuBtn.setInteractive({ useHandCursor: true });
+        // BOTÓN MENÚ con soporte de teclado (ESC)
+        const menuBtn = createStyledButton(
+            this,
+            w/2 + 150,
+            buttonY,
+            '⌂ MENÚ',
+            () => {
+                console.log("Volviendo al menú...");
+                this.scene.start('menu2');
+            },
+            false,  // Botón secundario (rojo)
+            'ESC'   // Tecla ESC
+        );
+        menuBtn.bg.setDepth(1002);
+        menuBtn.label.setDepth(1003);
         
-        const menuText = this.add.text(w/2 + 150, buttonY, '⌂ MENÚ', {
-            fontSize: '28px',
-            fill: '#ffffff',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
-        
-        // Efectos hover y click
-        this.setupButton(revanchaBtn, revanchaText, () => {
-            this.scene.start('GameScreen');
-        });
-        
-        this.setupButton(menuBtn, menuText, () => {
-            this.scene.start('menu');
-        });
+        // TEXTO DE AYUDA
+        const helpText = createStyledText(
+            this, w/2, buttonY + 50,
+            'Presiona R para revancha | ESC para menú',
+            'small'
+        );
+        helpText.setOrigin(0.5);
+        helpText.setDepth(1002);
     }
     
-    setupButton(btn, text, onClick) {
-        btn.on('pointerover', () => {
-            this.tweens.add({
-                targets: [btn, text],
-                scaleX: 1.08,
-                scaleY: 1.08,
-                duration: 150,
-                ease: 'Back.easeOut'
-            });
-        });
-        
-        btn.on('pointerout', () => {
-            this.tweens.add({
-                targets: [btn, text],
-                scaleX: 1,
-                scaleY: 1,
-                duration: 150
-            });
-        });
-        
-        btn.on('pointerdown', () => {
-            this.tweens.add({
-                targets: [btn, text],
-                scaleX: 0.95,
-                scaleY: 0.95,
-                duration: 100,
-                yoyo: true,
-                onComplete: onClick
-            });
-        });
-    }
-    
+    /**
+     *  Crea efecto de celebración con partículas
+     * 
+     * @param {Number} x - Posición X
+     * @param {Number} y - Posición Y
+     * @param {Number} color - Color de las partículas
+     */
     createCelebrationEffect(x, y, color) {
+        console.log("Creando efecto de celebración...");
+        
         // Partículas que caen desde arriba
         for (let i = 0; i < 30; i++) {
             this.time.delayedCall(i * 100, () => {
@@ -172,6 +236,7 @@ export class GameOverScene extends Phaser.Scene {
                     color,
                     0.8
                 );
+                particle.setDepth(2000);
                 
                 this.tweens.add({
                     targets: particle,

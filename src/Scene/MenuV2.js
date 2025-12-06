@@ -1,78 +1,105 @@
+/**
+ * MenuV2
+ * 
+ * Menú principal del juego
+ * 
+ * CORRECCIÓN: Ahora usa el sistema unificado de estilos
+ */
+
+// IMPORTAR sistema de estilos
+import { 
+    UIStyles, 
+    createStyledText, 
+    createStyledButton 
+} from '../UIStyles.js';
+
 export class Menu2 extends Phaser.Scene {
-	constructor() {
-		super({ key: 'menu2' }); //seteamos el nobmre de la escena para el SceneManager
-	}
+    constructor() {
+        super({ key: 'menu2' });
+    }
 
-	/**
-	* Carga de los recursos que vamos a necesitar en la escena
-	*/
-	preload(){
-		this.load.image('menufondo', 'assets/menufondo.jpg');
-		//this.load.image('boton', 'assets/boton.jpg');
-		
-	}
-	
-	/**
-	* Creación de los elementos de la escena principal de juego
-	*/
-	create() {
-
-        // ME RINDO CON ESTA MRDA
-        //this.backgroundColor = '#ebeb34'
-        //this.game.backgroundColor = '#ebeb34'
-        //config.backgroundColor = '#ebeb34'
-        //this.cameras.backgroundColor = '#ebeb34'
-        //this.game.config.backgroundColor= '#ebeb34'
-        //this.game.stage.backgroundColor = '#ebeb34'
-
-
-	// Boton para empezar a jugar
-    let start = this.add.text(400, 200, 'Start Game',{             
-            fontFamily: 'Comic Sans MS',
-            fontSize: '32px',
-            color: '#00ab28',
-            align: 'center',
-        }).setOrigin(0.5).setInteractive();
-		
-		start.on('pointerover', () => start.setFontSize('34px'));
-		start.on('pointerout', () => start.setFontSize('32px'));
-
-		// Cambiar a otra escena al hacer clic
-		start.on('pointerdown', () => {
-			this.scene.start('GameScreen');
-		});
-		
-		// Boton para jugar al Flappy Dragon
-		let FlappyBT = this.add.text(400, 300, 'Flappy Dragon', {
-            fontFamily: 'Comic Sans MS',
-            fontSize: '32px',
-            color: '#00ab28',
-            align: 'center',
-		}).setOrigin(0.5).setInteractive();
-
-		FlappyBT.on('pointerover', () => FlappyBT.setFontSize('34px'));
-		FlappyBT.on('pointerout', () => FlappyBT.setFontSize('32px'));
-
-		FlappyBT.on('pointerdown', () => {
-			this.scene.start('FlappyDragon');
-		});
-
-		// Boton para iniciar el tutorial
-		let Tutorial = this.add.text(400, 400, 'Tutorial', {
-            fontFamily: 'Comic Sans MS',
-            fontSize: '32px',
-            color: '#00ab28',
-            align: 'center',
-		}).setOrigin(0.5).setInteractive();
-
-		Tutorial.on('pointerover', () => Tutorial.setFontSize('34px'));
-		Tutorial.on('pointerout', () => Tutorial.setFontSize('32px'));
-
-		Tutorial.on('pointerdown', () => {
-			this.scene.start('tutorial');
-		});
-
-
-	}
-
+    preload(){
+        this.load.image('menufondo', 'assets/menufondo.jpg');
+    }
+    
+    create() {
+        const w = this.cameras.main.width;
+        const h = this.cameras.main.height;
+        
+        console.log("Creando menú principal...");
+        
+        // Fondo (añadirlo si existe la imagen)
+        // this.add.image(w/2, h/2, 'menufondo').setAlpha(0.5);
+        
+        // TÍTULO del juego
+        const title = this.add.text(w/2, 80, 
+            'SUBMARINE TACTICS', 
+            {
+                fontSize: '48px',
+                color: '#00ff88',
+                fontFamily: 'Arial',
+                fontStyle: 'bold',
+                stroke: '#000000',
+                strokeThickness: 6,
+                align: 'center'
+            }
+        );
+        title.setOrigin(0.5);
+        
+        // Animación del título
+        this.tweens.add({
+            targets: title,
+            y: '+=10',
+            duration: 2000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+        
+        // BOTÓN "Start Game"
+        const startBtn = createStyledButton(
+            this, w/2, 200,
+            '▶ EMPEZAR PARTIDA',
+            () => {
+                console.log("Iniciando juego...");
+                this.scene.start('GameScreen');
+            },
+            true,
+            'ENTER'
+        );
+        
+        // BOTÓN "Flappy Dragon" (testing)
+        const flappyBtn = createStyledButton(
+            this, w/2, 280,
+            'FLAPPY DRAGON (Test)',
+            () => {
+                console.log("Iniciando Flappy Dragon...");
+                this.scene.start('FlappyDragon');
+            },
+            true,
+            'F'
+        );
+        
+        // BOTÓN "Tutorial"
+        const tutorialBtn = createStyledButton(
+            this, w/2, 360,
+            'TUTORIAL',
+            () => {
+                console.log("Iniciando tutorial...");
+                this.scene.start('tutorial');
+            },
+            true,
+            'T'
+        );
+        
+        // TEXTO DE AYUDA
+        const helpText = createStyledText(
+            this, w/2, 450,
+            'Presiona ENTER para jugar | T para tutorial | F para minijuego',
+            'small'
+        );
+        helpText.setOrigin(0.5);
+        
+        console.log("Menú principal creado");
+    }
 }

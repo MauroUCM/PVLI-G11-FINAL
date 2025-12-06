@@ -2,232 +2,175 @@
  * MinigameDialogScene
  *
  * Escena de diálogo que aparece cuando el jugador se encuentra con el dragón
- * Permite elegir si jugar al minijuego o continuar
+ * 
+ * CORRECCIÓN: Ahora usa el sistema unificado de estilos (UIStyles.js)
+ * y tiene soporte completo de teclado + ratón
+ * 
+ * CONTROLES:
+ * - ENTER: Aceptar jugar al minijuego
+ * - ESC: Rechazar y continuar
+ * - Click en botones
  */
+
+//IMPORTAR sistema de estilos unificado
+import { 
+    UIStyles, 
+    createOverlay, 
+    createStyledPanel, 
+    createStyledText, 
+    createStyledButton, 
+    createDragonIcon 
+} from '../UIStyles.js';
+
 export class MinigameDialogScene extends Phaser.Scene {
     
     constructor() {
         super({ key: 'MinigameDialog' });
     }
 
+    /**
+     * Inicialización - Recibe datos de la escena anterior
+     * 
+     * @param {Object} data - Datos recibidos
+     * @param {SubmarineComplete} data.submarine - Submarino que activó el evento
+     * @param {Position} data.dragonPosition - Posición del dragón
+     * @param {string} data.callingScene - Escena desde donde se llamó
+     */
     init(data) {
-        // Datos recibidos: submarino que activó el evento
         this.submarine = data.submarine;
         this.dragonPosition = data.dragonPosition;
         this.callingScene = data.callingScene || 'GameScreen';
+        
+        console.log("   MinigameDialogScene iniciado");
+        console.log(`   Submarino: ${this.submarine ? this.submarine.name : 'null'}`);
+        console.log(`   Escena origen: ${this.callingScene}`);
     }
 
+    /**
+     * Creación de la escena
+     */
     create() {
         const screenWidth = this.cameras.main.width;
         const screenHeight = this.cameras.main.height;
         
-        // FONDO OSCURO SEMITRANSPARENTE
-        const overlay = this.add.rectangle(
-            screenWidth / 2,
-            screenHeight / 2,
-            screenWidth,
-            screenHeight,
-            0x000000,
-            0.75
-        );
+        console.log("Creando interfaz del diálogo del dragón...");
+        
+        // PASO 1: FONDO OSCURO SEMITRANSPARENTE
+        const overlay = createOverlay(this, 0.75);
         overlay.setDepth(1000);
         
-        // PANEL PRINCIPAL
+        // PASO 2: PANEL PRINCIPAL
         const panelWidth = 500;
         const panelHeight = 350;
-        const panel = this.add.rectangle(
-            screenWidth / 2,
-            screenHeight / 2,
-            panelWidth,
-            panelHeight,
-            0x2a4858,
-            1
+        const panel = createStyledPanel(
+            this, 
+            screenWidth/2, 
+            screenHeight/2, 
+            panelWidth, 
+            panelHeight
         );
-        panel.setStrokeStyle(4, 0x00ff88);
         panel.setDepth(1001);
         
-        // CABECERA CON ICONO DEL DRAGÓN 
-        this.createDragonIcon(screenWidth / 2, screenHeight / 2 - 120);
+        // PASO 3: ICONO DEL DRAGÓN (animado)
+        const dragonIcon = createDragonIcon(
+            this, 
+            screenWidth/2, 
+            screenHeight/2 - 120,
+            30
+        );
+        dragonIcon.setDepth(1002);
         
-        // TÍTULO 
-        const title = this.add.text(
-            screenWidth / 2,
-            screenHeight / 2 - 80,
+        // PASO 4: TÍTULO
+        const title = createStyledText(
+            this,
+            screenWidth/2,
+            screenHeight/2 - 80,
             '¡Has encontrado al Dragón Vegano!',
-            {
-                fontSize: '24px',
-                fontFamily: 'Arial',
-                color: '#00ff88',
-                fontStyle: 'bold',
-                align: 'center'
-            }
+            'title'
         );
         title.setOrigin(0.5);
         title.setDepth(1002);
         
-        // DESCRIPCIÓN 
-        const description = this.add.text(
-            screenWidth / 2,
-            screenHeight / 2 - 20,
-            'El dragón te ofrece ayudarte a limpiar\nel océano de basura contaminante.\n\n' +
-            'Si aceptas el desafío, podrás ganar\nrecursos valiosos para tu submarino.\n\n' +
+        // PASO 5: DESCRIPCIÓN
+        const description = createStyledText(
+            this,
+            screenWidth/2,
+            screenHeight/2 - 20,
+            'El dragón te ofrece ayudarte a limpiar\n' +
+            'el océano de basura contaminante.\n\n' +
+            'Si aceptas el desafío, podrás ganar\n' +
+            'recursos valiosos para tu submarino.\n\n' +
             '¿Quieres jugar al minijuego?',
-            {
-                fontSize: '16px',
-                fontFamily: 'Arial',
-                color: '#ffffff',
-                align: 'center',
-                lineSpacing: 5
-            }
+            'body'
         );
         description.setOrigin(0.5);
         description.setDepth(1002);
         
-        // BOTÓN "SÍ"
-        const yesButton = this.createButton(
-            screenWidth / 2 - 100,
-            screenHeight / 2 + 110,
+        // PASO 6: BOTÓN "SÍ" con soporte de teclado (ENTER)
+        const yesButton = createStyledButton(
+            this,
+            screenWidth/2 - 100,
+            screenHeight/2 + 110,
             '✓ SÍ, JUGAR',
-            0x00ff88,
-            () => this.startMinigame()
+            () => this.startMinigame(),
+            true,      // Botón primario (verde)
+            'ENTER'    // Tecla asociada
         );
+        yesButton.bg.setDepth(1002);
+        yesButton.label.setDepth(1003);
         
-        //  BOTÓN "NO" 
-        const noButton = this.createButton(
-            screenWidth / 2 + 100,
-            screenHeight / 2 + 110,
+        // PASO 7: BOTÓN "NO" con soporte de teclado (ESC)
+        const noButton = createStyledButton(
+            this,
+            screenWidth/2 + 100,
+            screenHeight/2 + 110,
             '✗ NO, GRACIAS',
-            0xff4444,
-            () => this.decline()
+            () => this.decline(),
+            false,     // Botón secundario (rojo)
+            'ESC'      // Tecla asociada
         );
+        noButton.bg.setDepth(1002);
+        noButton.label.setDepth(1003);
         
-        // TEXTO DE AYUDA 
-        const helpText = this.add.text(
-            screenWidth / 2,
-            screenHeight / 2 + 150,
-            'Presiona ESC para salir',
-            {
-                fontSize: '12px',
-                fontFamily: 'Arial',
-                color: '#888888',
-                align: 'center'
-            }
+        // PASO 8: TEXTO DE AYUDA
+        const helpText = createStyledText(
+            this,
+            screenWidth/2,
+            screenHeight/2 + 150,
+            'Presiona ENTER para aceptar | ESC para rechazar',
+            'small'
         );
         helpText.setOrigin(0.5);
         helpText.setDepth(1002);
         
-        // TECLA ESC PARA SALIR 
-        this.input.keyboard.once('keydown-ESC', () => {
-            this.decline();
-        });
+        // Guardar referencias para limpieza posterior
+        this.uiElements = {
+            overlay,
+            panel,
+            dragonIcon,
+            title,
+            description,
+            yesButton,
+            noButton,
+            helpText
+        };
         
-        // Animación de entrada del panel
-        panel.setScale(0);
-        this.tweens.add({
-            targets: panel,
-            scale: 1,
-            duration: 300,
-            ease: 'Back.easeOut'
-        });
-    }
-
-    /**
-     * Crea un icono del dragón en miniatura
-     */
-    createDragonIcon(x, y) {
-        const size = 30;
-        
-        // Cuerpo
-        const body = this.add.circle(x, y, size * 0.4, 0x00ff88, 1);
-        body.setDepth(1002);
-        
-        // Cabeza
-        const head = this.add.circle(x + size * 0.3, y - size * 0.2, size * 0.25, 0x00dd66, 1);
-        head.setDepth(1002);
-        
-        // Ojos
-        const eye1 = this.add.circle(x + size * 0.35, y - size * 0.25, size * 0.08, 0x000000, 1);
-        eye1.setDepth(1003);
-        
-        const eye2 = this.add.circle(x + size * 0.45, y - size * 0.25, size * 0.08, 0x000000, 1);
-        eye2.setDepth(1003);
-        
-        // Animación de flotación
-        this.tweens.add({
-            targets: [body, head, eye1, eye2],
-            y: '+=5',
-            duration: 1000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-    }
-
-    /**
-     * Crea un botón interactivo
-     */
-    createButton(x, y, text, color, onClick) {
-        const buttonWidth = 150;
-        const buttonHeight = 50;
-        
-        // Fondo del botón
-        const bg = this.add.rectangle(x, y, buttonWidth, buttonHeight, color, 1);
-        bg.setStrokeStyle(2, 0xffffff);
-        bg.setDepth(1002);
-        bg.setInteractive({ useHandCursor: true });
-        
-        // Texto del botón
-        const label = this.add.text(x, y, text, {
-            fontSize: '16px',
-            fontFamily: 'Arial',
-            color: '#ffffff',
-            fontStyle: 'bold',
-            align: 'center'
-        });
-        label.setOrigin(0.5);
-        label.setDepth(1003);
-        
-        // Efectos hover
-        bg.on('pointerover', () => {
-            this.tweens.add({
-                targets: bg,
-                scaleX: 1.1,
-                scaleY: 1.1,
-                duration: 100
-            });
-            bg.setFillStyle(color, 0.8);
-        });
-        
-        bg.on('pointerout', () => {
-            this.tweens.add({
-                targets: bg,
-                scaleX: 1,
-                scaleY: 1,
-                duration: 100
-            });
-            bg.setFillStyle(color, 1);
-        });
-        
-        // Click
-        bg.on('pointerdown', () => {
-            this.tweens.add({
-                targets: [bg, label],
-                scaleX: 0.95,
-                scaleY: 0.95,
-                duration: 50,
-                yoyo: true,
-                onComplete: onClick
-            });
-        });
-        
-        return { bg, label };
+        console.log("Interfaz del diálogo creada correctamente");
     }
 
     /**
      * Inicia el minijuego del dragón
      */
     startMinigame() {
-        console.log('¡Iniciando minijuego del dragón!');
+        console.log("¡Iniciando minijuego del dragón!");
+        
+        // 🔧 LIMPIAR listeners de teclado antes de cerrar
+        if (this.uiElements.yesButton.keyListener) {
+            this.uiElements.yesButton.keyListener.off('down');
+        }
+        if (this.uiElements.noButton.keyListener) {
+            this.uiElements.noButton.keyListener.off('down');
+        }
         
         // Cerrar este diálogo
         this.scene.stop();
@@ -240,18 +183,29 @@ export class MinigameDialogScene extends Phaser.Scene {
     }
 
     /**
-     * Rechaza el minijuego
+     * Rechaza el minijuego y vuelve al juego
      */
     decline() {
-        console.log('Minijuego rechazado');
+        console.log(" Minijuego rechazado por el jugador");
         
-        // Efecto de salida
+        // 🔧 LIMPIAR listeners de teclado
+        if (this.uiElements.yesButton.keyListener) {
+            this.uiElements.yesButton.keyListener.off('down');
+            console.log(" Listener ENTER limpiado");
+        }
+        if (this.uiElements.noButton.keyListener) {
+            this.uiElements.noButton.keyListener.off('down');
+            console.log(" Listener ESC limpiado");
+        }
+        
+        // Efecto de salida (fade out)
         const allObjects = this.children.list;
         this.tweens.add({
             targets: allObjects,
             alpha: 0,
             duration: 200,
             onComplete: () => {
+                console.log("Cerrando diálogo y volviendo al juego");
                 this.scene.stop();
                 this.scene.resume(this.callingScene);
             }

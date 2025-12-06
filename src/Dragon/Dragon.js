@@ -400,22 +400,55 @@ export class Dragon extends Phaser.GameObjects.Container {
         }
     }
 
-    /**
-     * Verifica si el dragón está cerca de un submarino
-     */
-    isNearSubmarine(submarine) {
-        const subX = submarine.position.x;
-        const subY = submarine.position.y;
-        const dragonX = this.position.x;
-        const dragonY = this.position.y;
+ /**
+ * Verifica si el dragón está cerca de un submarino
+ * 
+ *  CORREGIDO: Ahora verifica EXACTAMENTE los 4 vértices adyacentes
+ *  y añade logging detallado para debugging
+ * 
+ * @param {SubmarineComplete} submarine - El submarino a verificar
+ * @returns {boolean} true si el submarino está en un vértice adyacente
+ */
+isNearSubmarine(submarine) {
+    const subX = submarine.position.x;
+    const subY = submarine.position.y;
+    const dragonX = this.position.x;
+    const dragonY = this.position.y;
+    
+    console.log(`  === VERIFICANDO PROXIMIDAD AL DRAGÓN ===`);
+    console.log(`   Dragón en posición: (${dragonX}, ${dragonY})`);
+    console.log(`   Submarino ${submarine.name} en posición: (${subX}, ${subY})`);
+    
+    // Obtener los 4 vértices adyacentes a la casilla del dragón
+    const adjacentVertices = this.square.nextPoint;
+    
+    console.log(`   Verificando ${adjacentVertices.length} vértices adyacentes...`);
+    
+    // Verificar cada vértice adyacente
+    const isAdjacent = adjacentVertices.some((vertex, index) => {
+        if (!vertex) {
+            console.log(`   Vértice ${index + 1}: null (no existe)`);
+            return false;
+        }
         
-        // Verificar si el submarino está en un vértice adyacente a la casilla del dragón
-        const adjacentVertices = this.square.nextPoint;
+        const vertexX = vertex.position.x;
+        const vertexY = vertex.position.y;
+        const matches = vertexX === subX && vertexY === subY;
         
-        return adjacentVertices.some(vertex => 
-            vertex && vertex.position.x === subX && vertex.position.y === subY
-        );
+        console.log(`   Vértice ${index + 1}: (${vertexX}, ${vertexY}) - ${matches ? ' COINCIDE' : ' no coincide'}`);
+        
+        return matches;
+    });
+    
+    if (isAdjacent) {
+        console.log(` RESULTADO: Submarino SÍ está en rango del dragón`);
+    } else {
+        console.log(` RESULTADO: Submarino NO está en rango del dragón`);
     }
+    console.log(`=========================================`);
+    
+    return isAdjacent;
+}
 
     /**
      * Limpieza cuando se destruye el dragón

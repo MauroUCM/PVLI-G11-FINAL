@@ -1,99 +1,187 @@
 /**
- * Escena para mostrar el PopUp del disparo
+ * FireStateWindow
+ * 
+ *   Escena PopUp para seleccionar distancia de disparo
+ * 
+ *    CORRECCIÓN: Ahora usa el sistema unificado de estilos (UIStyles.js)
+ *    y tiene soporte completo de teclado + ratón
+ * 
+ * CONTROLES:
+ * - Jugador 1: A (distancia 1), D (distancia 2)
+ * - Jugador 2: LEFT (distancia 1), RIGHT (distancia 2)
+ * - Click en botones
  */
-export class FireStateWindow extends Phaser.Scene{ 
+
+// IMPORTAR sistema de estilos unificado
+import { 
+    UIStyles, 
+    createOverlay, 
+    createStyledPanel, 
+    createStyledText, 
+    createStyledButton 
+} from '../../UIStyles.js';
+
+export class FireStateWindow extends Phaser.Scene { 
     
     /**
-     * @type {Number} Ancho de la canva del juego
+     * @type {Number} Ancho del canvas del juego
      */
-    screenWidth
+    screenWidth;
 
     /**
-     * @type {Number} Alto de la canva del juego
+     * @type {Number} Alto del canvas del juego
      */
-    screenHeight
-
+    screenHeight;
 
     /**
-     * @constructor constructor de la escena
+     * @type {Array} Referencias a los listeners de teclado para limpieza
+     */
+    keyListeners = [];
+
+    /**
+     * @constructor Constructor de la escena
      */
     constructor(){
-        super({key:"fireStateWindow"})
+        super({ key: "fireStateWindow" });
     }
 
+    /**
+     * Inicialización
+     */
     init(){
-        //Asignar los valores de la dimension de canvas
+        // Asignar dimensiones del canvas
         this.screenWidth = this.sys.game.canvas.width;
         this.screenHeight = this.sys.game.canvas.height;
+        
+        console.log("FireStateWindow iniciado");
     }
 
     preload(){
-
+        // No hay assets que cargar
     }
 
     /**
-     * @param {Object} data datos que utiliza esta escena, contiene la funcion callback a devolver;
+     * Creación de la escena
+     * 
+     * @param {Object} data - Datos recibidos
+     * @param {Array} data.confirmButton - Códigos de teclas para confirmar
+     * @param {Function} data.distanceCallback - Callback para devolver distancia elegida
+     * @param {Number} data.currentPlayer - ID del jugador actual (1 o 2)
      */
     create(data){
         this.data = data;
         
-        //Fondo
-        this.add.rectangle(this.screenWidth/2,this.screenHeight/2,this.screenWidth,this.screenHeight,0x000000,0.7);
-
-        //PopUp
-        this.createPopUp(data);
+        console.log("   Creando ventana de selección de disparo...");
+        console.log(`   Jugador: ${data.currentPlayer}`);
         
+        // FONDO OSCURO usando estilos unificados
+        const overlay = createOverlay(this, 0.7);
+        overlay.setDepth(1000);
+
+        // CREAR PANEL PopUp
+        this.createPopUp(data);
     }
 
     /**
-     * Creacion de la ventana de PopUp
+     * Crea la ventana PopUp de selección de distancia
+     * 
+     * @param {Object} data - Datos de configuración
      */
-    createPopUp(){
-        this.popUp = this.add.container(this.screenWidth/2,this.screenHeight/2);
-
-        let bg = new Phaser.GameObjects.Rectangle(this,0,0,400,200,0xe31e8d,1)
-        let confirmText = new Phaser.GameObjects.Text(this,0,0,
-            "A que distancia quieres disparar?",
-            {fontFamily:"Inconsolata",fontSize:20})
-
-        let confirmButton = [];
-        if(this.data.currentPlayer == 1) confirmButton.push("A","D")
-        else confirmButton.push("LEFT_ARROW","RIGHT_ARROW");
-        let distance1 = new Phaser.GameObjects.Text(this,0,0,`Distancia 1 (${confirmButton[0]})`).setInteractive();
-        let distance2 = new Phaser.GameObjects.Text(this,0,0,`Distancia 2 (${confirmButton[1]})`).setInteractive();
-
-
-        confirmText.setPosition(-confirmText.displayWidth/2,-bg.displayHeight/2+(bg.displayHeight/6));
-        distance1.setPosition(-distance1.displayWidth/2,distance1.displayHeight*1);
-        distance2.setPosition(-distance2.displayWidth/2,distance2.displayHeight*3);
-            
-        this.input.keyboard.addKey(this.data.confirmButton[0]).on("down",()=>{
-            this.parse(1);
-        })
-
-        this.input.keyboard.addKey(this.data.confirmButton[1]).on("down",()=>{
-            this.parse(2);
-        })
-
-        distance1.on("pointerdown",()=>{
-            this.parse(1);
-        })
-
-        distance2.on("pointerdown",()=>{
-            this.parse(2)
-        })
-
-        this.popUp.add([bg,confirmText,distance1,distance2])
+    createPopUp(data){
+        const screenWidth = this.screenWidth;
+        const screenHeight = this.screenHeight;
+        
+        console.log("Creando PopUp...");
+        
+        // Container principal del PopUp
+        this.popUp = this.add.container(screenWidth/2, screenHeight/2);
+        
+        // PANEL de fondo
+        let bg = createStyledPanel(this, 0, 0, 400, 220);
+        
+        // TEXTO de pregunta
+        let confirmText = createStyledText(
+            this, 0, -70,
+            '¿A qué distancia quieres disparar?',
+            'subtitle'
+        );
+        confirmText.setOrigin(0.5);
+        
+        // Determinar teclas según el jugador
+        const buttonKeys = data.currentPlayer == 1 ? ['A', 'D'] : ['LEFT', 'RIGHT'];
+        console.log(`   Teclas asignadas: ${buttonKeys.join(', ')}`);
+        
+        // BOTÓN DISTANCIA 1 con soporte de teclado
+        let distance1Button = createStyledButton(
+            this, 0, 0,
+            `Distancia 1`,
+            () => this.parse(1),
+            true,           // Botón primario
+            buttonKeys[0]   // Tecla asociada (A o LEFT)
+        );
+        
+        // BOTÓN DISTANCIA 2 con soporte de teclado
+        let distance2Button = createStyledButton(
+            this, 0, 60,
+            `Distancia 2`,
+            () => this.parse(2),
+            true,           // Botón primario
+            buttonKeys[1]   // Tecla asociada (D o RIGHT)
+        );
+        
+        // TEXTO DE AYUDA
+        let helpText = createStyledText(
+            this, 0, 95,
+            `Presiona ${buttonKeys[0]} o ${buttonKeys[1]} | Click en botones`,
+            'small'
+        );
+        helpText.setOrigin(0.5);
+        
+        // Añadir todo al container
+        this.popUp.add([
+            bg,
+            confirmText,
+            distance1Button.bg,
+            distance1Button.label,
+            distance2Button.bg,
+            distance2Button.label,
+            helpText
+        ]);
+        
+        // Guardar referencias de listeners para limpieza
+        this.keyListeners = [
+            distance1Button.keyListener,
+            distance2Button.keyListener
+        ];
+        
+        console.log("PopUp creado correctamente");
     }
 
     /**
-     * Metodo que hace la llamada de callback con distance y volver al estado del disparo.
-     * @param {Number} distance Distancia del disparo
+     * Ejecuta el callback con la distancia elegida y cierra la ventana
+     * 
+     * @param {Number} distance - Distancia elegida (1 o 2)
      */
     parse(distance){
+        console.log(`Distancia seleccionada: ${distance}`);
+        
+        // LIMPIAR todos los listeners de teclado
+        this.keyListeners.forEach((listener, index) => {
+            if (listener) {
+                listener.off('down');
+                console.log(`Listener ${index + 1} limpiado`);
+            }
+        });
+        
+        // Ejecutar callback con la distancia
         this.data.distanceCallback(distance);
+        
+        // Cerrar esta escena
         this.scene.stop();
-        this.scene.resume("GameScreen")
+        
+        // Reanudar escena principal
+        this.scene.resume("GameScreen");
+        
+        console.log(" FireStateWindow cerrado");
     }
-
 }
