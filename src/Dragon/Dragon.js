@@ -34,8 +34,7 @@ export class Dragon extends Phaser.GameObjects.Container {
         // this.invisibleBG = new Phaser.GameObjects.Image(board.scene,(this.position.x),(this.position.y),"Square").setAlpha(0.3);
         // this.invisibleBG.setDisplaySize(board.config.cellSize*2,board.config.cellSize*2)
         // this.invisibleBG.setOrigin(0.5,0.5);
-        // console.log(`Dragon t: ${this.x} ${this.y}`)
-        
+        console.log(`Dragon t: ${this.x} ${this.y}`)
 
         // Añadir al tablero
         this.setDepth(150); // Por encima de todo
@@ -43,9 +42,9 @@ export class Dragon extends Phaser.GameObjects.Container {
         // Configurar eventos
         this.setupEvents();
         
-        //El orden importa
-        board.scene.add.existing(this);
+        // this.add(this.invisibleBG);
         board.add(this);
+        board.scene.add.existing(this);
 
     }
 
@@ -188,14 +187,14 @@ export class Dragon extends Phaser.GameObjects.Container {
         
         // === ANIMACIONES ===
         // Flotación suave
-        // scene.tweens.add({
-        //     targets: this,
-        //     y: '+=8',
-        //     duration: 2000,
-        //     yoyo: true,
-        //     repeat: -1,
-        //     ease: 'Sine.easeInOut'
-        // });
+        scene.tweens.add({
+            targets: this,
+            y: '+=8',
+            duration: 2000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
         
         // Aleteo de alas
         scene.tweens.add({
@@ -311,15 +310,13 @@ export class Dragon extends Phaser.GameObjects.Container {
         // Animación suave de movimiento
         this.board.scene.tweens.add({
             targets: this,
-            x: targetX,
-            y: targetY,
+            x: targetX+this.board.config.x,
+            y: targetY+this.board.config.y,
             duration: 500,
             ease: 'Quad.easeInOut'
         });
 
-        this.setPosition(targetX,targetY);
-        console.log(`Dragon t: ${this.x} ${this.y}`)
-
+        // this.setPosition(targetX+this.board.config.x,targetY+this.board.config.y);
     }
 
     /**
