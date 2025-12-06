@@ -104,12 +104,6 @@ export class PlayerActionMachine extends StateMachine{
      * @param {State} state - Estado al que transicionar
      */
     transition(state){
-        //  VERIFICAR si el turno está bloqueado
-        if (this._turnLocked) {
-            console.warn(" Transición bloqueada - El turno ya ha finalizado");
-            return; // No permitir la transición
-        }
-        
         // Ejecutar salida del estado actual
         this._currentState.onStateExit();
         
