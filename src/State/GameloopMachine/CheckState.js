@@ -2,6 +2,7 @@ import EventDispatch from "../../Event/EventDispatch.js";
 import State from "../State.js";
 import Event from "../../Event/Event.js";
 import { StateMachine } from "../StateMachine.js";
+import { GameStats } from '../../Systems/GameStats.js';
 
 /**
  * CheckState
@@ -230,7 +231,7 @@ export class CheckState extends State {
     }
 
     /**
-     *  Termina el juego y muestra la pantalla de victoria
+     * Termina el juego y muestra la pantalla de victoria
      * 
      * @param {string} winner - 'red' o 'blue'
      * @param {string} reason - 'elimination' o 'escape'
@@ -242,18 +243,35 @@ export class CheckState extends State {
         console.log(`   Razón: ${reason === 'escape' ? 'Llegó a la salida' : 'Eliminó al enemigo'}`);
         console.log(`====================\n`);
         
-        // Recopilar estadísticas
         const stats = this.collectStats(board);
         
-        // Pausar la escena del juego
-        this.stateMachine.scene.scene.pause('GameScreen');
+        const phaserScene = this.stateMachine.scene;
         
-        // Mostrar pantalla de Game Over
-        this.stateMachine.scene.scene.launch('GameOver', {
-            winner: winner,
-            reason: reason,
-            stats: stats
-        });
+        if (!phaserScene) {
+            console.error(" ERROR: No se pudo acceder a la escena de Phaser");
+            return;
+        }
+        
+        if (!phaserScene.scene) {
+            console.error(" ERROR: phaserScene no tiene propiedad 'scene'");
+            return;
+        }
+        
+        console.log(" Lanzando pantalla de Game Over");
+        
+        try {
+            phaserScene.scene.pause('GameScreen');
+            
+            phaserScene.scene.launch('GameOver', {
+                winner: winner,
+                reason: reason,
+                stats: stats
+            });
+            
+            console.log(" Game Over lanzado correctamente");
+        } catch (error) {
+            console.error("ERROR al lanzar Game Over:", error);
+        }
     }
 
     /**
