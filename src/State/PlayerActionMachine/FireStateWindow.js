@@ -76,7 +76,7 @@ export class FireStateWindow extends Phaser.Scene {
         
         // FONDO OSCURO usando estilos unificados
         const overlay = createOverlay(this, 0.7);
-        overlay.setDepth(1000);
+        // overlay.setDepth(1000);
 
         // CREAR PANEL PopUp
         this.createPopUp(data);
