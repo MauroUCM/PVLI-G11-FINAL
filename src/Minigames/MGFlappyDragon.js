@@ -3,6 +3,8 @@
  * 
  * El dragón debe recoger basura limpia (verde) y esquivar basura tóxica (roja)
  * Cada X puntos, gana un recurso para su submarino
+ * 
+ * Ahora incluye countdown de inicio (3, 2, 1, ¡YA!)
  */
 export class Flappy_Dragon extends Phaser.Scene {
     constructor() {
@@ -26,6 +28,7 @@ export class Flappy_Dragon extends Phaser.Scene {
         //VARIABLES DEL JUEGO
         this.puntos = 0;
         this.gameOver = false;
+        this.gameStarted = false; // El juego no empieza hasta después del countdown
         this.timer = 60; // Duración en segundos
         this.resourcesEarned = 0; // Recursos ganados
         this.pointsPerResource = 50; // Puntos necesarios para ganar 1 recurso
@@ -52,6 +55,9 @@ export class Flappy_Dragon extends Phaser.Scene {
         //  DRAGÓN (usando geometría) 
         this.createDragon();
         
+        // PAUSAR FÍSICA DEL DRAGÓN hasta que empiece el countdown
+        this.dragon.body.enable = false;
+        
         // GRUPOS DE OBJETOS
         this.basuraLimpia = this.physics.add.group(); // Basura verde (recoger)
         this.basuraToxica = this.physics.add.group(); // Basura roja (esquivar)
@@ -76,16 +82,16 @@ export class Flappy_Dragon extends Phaser.Scene {
             this
         );
         
-        //  CONTROLES
+        //  CONTROLES (solo funcionan cuando el juego ha empezado)
         this.input.keyboard.on('keydown-L', () => {
-            if (!this.gameOver) {
+            if (!this.gameOver && this.gameStarted) {
                 this.dragon.setVelocityY(-350);
                 this.playFlapAnimation();
             }
         });
 
         this.input.keyboard.on('keydown-SPACE', () => {
-            if (!this.gameOver) {
+            if (!this.gameOver && this.gameStarted) {
                 this.dragon.setVelocityY(-350);
                 this.playFlapAnimation();
             }
@@ -102,10 +108,93 @@ export class Flappy_Dragon extends Phaser.Scene {
         // INTERFAZ 
         this.createUI();
         
-        //  GENERACIÓN DE BASURA 
+        // INICIAR COUNTDOWN EN VEZ DE EMPEZAR DIRECTAMENTE
+        this.startCountdown();
+    }
+
+    /**
+     * Inicia el countdown de 3, 2, 1, ¡YA!
+     */
+    startCountdown() {
+        let countdown = 3;
+        
+        // Texto grande en el centro
+        const countdownText = this.add.text(400, 300, countdown.toString(), {
+            fontSize: '120px',
+            fontFamily: 'Arial',
+            color: '#ffff00',
+            fontStyle: 'bold',
+            stroke: '#000000',
+            strokeThickness: 8,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(3000);
+        
+        // Animación de escala para cada número
+        const animateNumber = () => {
+            countdownText.setScale(0.5);
+            this.tweens.add({
+                targets: countdownText,
+                scale: 1.2,
+                alpha: { from: 1, to: 0 },
+                duration: 900,
+                ease: 'Cubic.easeOut'
+            });
+        };
+        
+        animateNumber();
+        
+        // Temporizador del countdown
+        const countdownTimer = this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                countdown--;
+                
+                if (countdown > 0) {
+                    countdownText.setText(countdown.toString());
+                    countdownText.setAlpha(1);
+                    animateNumber();
+                } else {
+                    // ¡YA!
+                    countdownText.setText('¡YA!');
+                    countdownText.setStyle({
+                        fontSize: '100px',
+                        color: '#00ff00'
+                    });
+                    countdownText.setAlpha(1);
+                    
+                    this.tweens.add({
+                        targets: countdownText,
+                        scale: 1.5,
+                        alpha: 0,
+                        duration: 800,
+                        ease: 'Back.easeOut',
+                        onComplete: () => {
+                            countdownText.destroy();
+                            this.startGame();
+                        }
+                    });
+                    
+                    countdownTimer.destroy();
+                }
+            },
+            loop: true
+        });
+    }
+
+    /**
+     * Inicia el juego después del countdown
+     */
+    startGame() {
+        console.log("🎮 ¡Juego iniciado!");
+        this.gameStarted = true;
+        
+        // Habilitar física del dragón
+        this.dragon.body.enable = true;
+        
+        // Iniciar generación de basura
         this.generarBasura();
         
-        //  TEMPORIZADOR 
+        // Iniciar temporizador
         this.timerEvent = this.time.addEvent({
             delay: 1000,
             callback: this.decrementarTiempo,
@@ -248,7 +337,7 @@ export class Flappy_Dragon extends Phaser.Scene {
      * Genera basura aleatoriamente
      */
     generarBasura() {
-        if (this.gameOver) return;
+        if (this.gameOver || !this.gameStarted) return; // No generar si no ha empezado
         
         const y = Phaser.Math.Between(50, 520);
         
@@ -260,28 +349,23 @@ export class Flappy_Dragon extends Phaser.Scene {
             const basura = this.basuraToxica.create(850, y, 'basura_toxica');
             basura.setVelocityX(-180);
             
-            // Efecto pulsante para basura tóxica
+            // Añadir efecto visual para basura tóxica
+            const warning = this.add.circle(850, y, 40, 0xff0000, 0.2);
             this.tweens.add({
-                targets: basura,
-                scaleX: 1.2,
-                scaleY: 1.2,
-                duration: 500,
-                yoyo: true,
-                repeat: -1
+                targets: warning,
+                alpha: 0,
+                duration: 300,
+                onComplete: () => warning.destroy()
             });
         }
         
-        // Siguiente basura
-        this.time.delayedCall(
-            Phaser.Math.Between(800, 2000), 
-            this.generarBasura, 
-            [], 
-            this
-        );
+        // Programar siguiente basura
+        const nextDelay = Phaser.Math.Between(1000, 2000);
+        this.time.delayedCall(nextDelay, () => this.generarBasura(), [], this);
     }
 
     /**
-     * Recoger basura limpia
+     * Recolectar basura limpia
      */
     recogerBasuraLimpia(dragon, basura) {
         basura.destroy();
@@ -523,7 +607,7 @@ export class Flappy_Dragon extends Phaser.Scene {
      * Update
      */
     update() {
-        if (this.gameOver) return;
+        if (this.gameOver || !this.gameStarted) return; // No actualizar si no ha empezado
         
         // Destruir basura fuera de pantalla
         this.basuraLimpia.children.entries.forEach(basura => {
