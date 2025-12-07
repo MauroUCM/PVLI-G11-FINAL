@@ -1,18 +1,12 @@
-    import GameBoard from "../Board/GameBoard.js";
+import GameBoard from "../Board/GameBoard.js";
 import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 import EventDispatch from "../Event/EventDispatch.js";
 import Event from "../Event/Event.js";
-// import { InputManager } from "../Input/InputManager.js";
 import SubmarineView from "../Scene/SubmarineViewObject.js";
 import { GameLoopMachine } from "../State/GameloopMachine/GameLoopMachine.js";
 import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMachine.js";
-// import { ResourceManager } from "../Resources/ResourceManager.js";
-// import { SubmarineInventory } from "../Resources/SubmarineInventory.js";
 
 // AZUL = JAPON | ROJO = CHINA !!!
-
-//TODO
-// - Arreglar tween
 
 export class GameScreen extends Phaser.Scene{
 
@@ -20,13 +14,18 @@ export class GameScreen extends Phaser.Scene{
 
     constructor(){
         super({key:"GameScreen"})
-
         this.tablero;
     }
     
     init(){
-        console.log("init");
-        this.tablero;
+        console.log(" GameScreen init");
+        
+        // LIMPIAR eventos anteriores para evitar duplicados
+        EventDispatch.off(Event.UPDATE_ROUND);
+        EventDispatch.off(Event.UPDATE_PLAYER_TEXT);
+        EventDispatch.off(Event.UPDATE_PLAYER_ACTION_TEXT);
+        
+        this.tablero = null;
     }
     
     preload(){
@@ -38,16 +37,15 @@ export class GameScreen extends Phaser.Scene{
         this.load.image("SubWindow","assets/SubWindow.png")
     }
     
-    //La dimension de la tabla tiene que ser un numero impar
     create(){
+        console.log(" GameScreen create");
+        
         let header = this.add.rectangle(0, 0, 2000, 100, 0x00CC9966, 1);
         let roundText = this.add.text(40,520,"Round 0",{fontFamily:"Arial",fontSize:20})
         this.roundTextAnimation = this.add.text(-150,300,"Round 0",{fontFamily:"Arial",fontSize:25})
         let playerText = this.add.text(0,10,"Turno de China",{fontFamily:"Arial",fontSize:20})
         let playerActionText = this.add.text(40,570,"Fase actual:",{fontFamily:"Arial",fontSize:20})
         
-        
-
         this.createTextTween();
 
         this.gameloopMachine = new GameLoopMachine(this);
@@ -55,12 +53,6 @@ export class GameScreen extends Phaser.Scene{
         let texturas = ["Square","BG", "Submarine"];
         this.submarineView = new SubmarineView(this,0, 100)
         this.tablero = new GameBoard(this);
-
-        // let china = this.tablero.player1(); // China
-        // let japan = this.tablero.player2(); // Japon
-
-        // this.pC = china;
-        // this.pJ = japan;
 
         if (this.tablero.onRange()) console.log("AAA");
 
@@ -79,24 +71,22 @@ export class GameScreen extends Phaser.Scene{
         EventDispatch.on(Event.UPDATE_PLAYER_ACTION_TEXT,(state)=>{
             playerActionText.setText(`Fase actual: ${state}`)
         })
+        
+        console.log("GameScreen creado correctamente");
     }
 
     update(){
-
-        // pC = this.tablero.player1(); // China
-        // pJ = this.tablero.player2(); // Japon
-
+        // Código de update si es necesario
     }
 
     createTextTween(){
-
         this.leftAnimation = this.add.tween({
             targets:this.roundTextAnimation,
             duration:1500,
             props:{
                 x:{value:350}
             },
-            ease:"Quart.easeInOut", //Quart
+            ease:"Quart.easeInOut",
             persist:true,
         })
 
@@ -106,7 +96,7 @@ export class GameScreen extends Phaser.Scene{
             props:{
                 x:{value:1000}
             },
-            ease:"Quart.easeInOut", //Quart
+            ease:"Quart.easeInOut",
             delay:1000,
             persist:true
         })
@@ -122,10 +112,50 @@ export class GameScreen extends Phaser.Scene{
             ],
             persist:true,
         })
-
     }
 
     playChain(){
         this.chain.play();
+    }
+    
+    /**
+     * Limpieza cuando la escena se cierra o se reinicia
+     */
+    shutdown() {
+        console.log("=== LIMPIANDO GAMESCREEN ===");
+        
+        // 1. Eventos
+        EventDispatch.off(Event.UPDATE_ROUND);
+        EventDispatch.off(Event.UPDATE_PLAYER_TEXT);
+        EventDispatch.off(Event.UPDATE_PLAYER_ACTION_TEXT);
+        
+        // 2. CRÍTICO: Detener TODOS los tweens
+        this.tweens.killAll();
+        
+        // 3. Tweens específicos
+        if (this.chain) {
+            this.chain.stop();
+            this.chain.destroy();
+        }
+        if (this.leftAnimation) {
+            this.leftAnimation.stop();
+            this.leftAnimation.destroy();
+        }
+        if (this.rightAnimation) {
+            this.rightAnimation.stop();
+            this.rightAnimation.destroy();
+        }
+        
+        // 4. Sistemas del tablero
+        if (this.tablero) {
+            if (this.tablero.zoneClosing) {
+                this.tablero.zoneClosing.destroy();
+            }
+            if (this.tablero.exitZoneSystem) {
+                this.tablero.exitZoneSystem.destroy();
+            }
+        }
+        
+        console.log("   GameScreen limpio");
     }
 }

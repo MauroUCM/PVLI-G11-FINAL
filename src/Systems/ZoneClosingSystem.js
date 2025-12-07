@@ -378,10 +378,44 @@ export class ZoneClosingSystem {
     }
 
     /**
-     * Reubica las zonas de salida si están en zona cerrada
+     * Reubica las zonas de salida cuando el perímetro se cierra
      */
     relocateExitZones() {
-        if (!this.board.exitZones) return;
+        // Verificación robusta de la estructura completa
+        if (!this.board) {
+            console.warn("Board no existe");
+            return;
+        }
+        
+        if (!this.board.exitZones) {
+            console.warn("board.exitZones no existe");
+            return;
+        }
+    
+        // Verificar que las zonas individuales existen
+        if (!this.board.exitZones.red || !this.board.exitZones.blue) {
+            console.warn(" Zonas de salida individuales no existen");
+            console.log("   exitZones.red:", this.board.exitZones.red);
+            console.log("   exitZones.blue:", this.board.exitZones.blue);
+            return;
+        }
+        
+        // Verificar que las zonas tienen coordenadas
+        if (typeof this.board.exitZones.red.x === 'undefined' || 
+            typeof this.board.exitZones.red.y === 'undefined') {
+            console.warn(" Zona roja no tiene coordenadas válidas");
+            return;
+        }
+        
+        if (typeof this.board.exitZones.blue.x === 'undefined' || 
+            typeof this.board.exitZones.blue.y === 'undefined') {
+            console.warn("Zona azul no tiene coordenadas válidas");
+            return;
+        }
+        
+        console.log(" Verificando zonas de salida...");
+        console.log(`   Zona roja: (${this.board.exitZones.red.x}, ${this.board.exitZones.red.y})`);
+        console.log(`   Zona azul: (${this.board.exitZones.blue.x}, ${this.board.exitZones.blue.y})`);
         
         // Verificar si las zonas de salida están en zona cerrada
         const redInClosed = this.isInClosedZone(
@@ -394,12 +428,34 @@ export class ZoneClosingSystem {
             this.board.exitZones.blue.y
         );
         
-        //  Implementar reubicación
         if (redInClosed || blueInClosed) {
-            console.log("⚠️ Zonas de salida en zona cerrada - reubicación necesaria");
-            // Mover a la esquina más cercana del área válida
+            console.log("Zonas de salida en zona cerrada - reubicación necesaria");
+            
+            //  LLAMAR al método de relocación del ExitZoneSystem
+            if (this.board.exitZoneSystem && 
+                typeof this.board.exitZoneSystem.relocateZones === 'function') {
+                
+                // Calcular nuevos límites
+                const offset = this.closedRings * 2;
+                const logic = this.board.matrix.logic.matrix;
+                
+                const newBounds = {
+                    minX: offset * 2,
+                    maxX: (logic.length - 1 - offset) * 2,
+                    minY: offset * 2,
+                    maxY: (logic[0].length - 1 - offset) * 2
+                };
+                
+                console.log(" Reubicando zonas con nuevos límites:", newBounds);
+                this.board.exitZoneSystem.relocateZones(newBounds);
+            } else {
+                console.warn(" ExitZoneSystem.relocateZones no está disponible");
+            }
+        } else {
+            console.log(" Zonas de salida están en área válida");
         }
     }
+
 
     /**
      * Destruye el sistema

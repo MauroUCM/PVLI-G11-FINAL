@@ -3,9 +3,6 @@
  *
  * Escena de diálogo que aparece cuando el jugador se encuentra con el dragón
  * 
- * CORRECCIÓN: Ahora usa el sistema unificado de estilos (UIStyles.js)
- * y tiene soporte completo de teclado + ratón
- * 
  * CONTROLES:
  * - ENTER: Aceptar jugar al minijuego
  * - ESC: Rechazar y continuar
@@ -41,7 +38,7 @@ export class MinigameDialogScene extends Phaser.Scene {
         this.dragonPosition = data.dragonPosition;
         this.callingScene = data.callingScene || 'GameScreen';
         
-        console.log("   MinigameDialogScene iniciado");
+        console.log("  MinigameDialogScene iniciado");
         console.log(`   Submarino: ${this.submarine ? this.submarine.name : 'null'}`);
         console.log(`   Escena origen: ${this.callingScene}`);
     }
@@ -106,12 +103,13 @@ export class MinigameDialogScene extends Phaser.Scene {
         description.setOrigin(0.5);
         description.setDepth(1002);
         
-        // PASO 6: BOTÓN "SÍ" con soporte de teclado (ENTER)
+        // PASO 6: BOTÓN "SÍ" - Ahora se adapta al texto
+        // El botón será pequeño porque "SÍ" es texto corto
         const yesButton = createStyledButton(
             this,
-            screenWidth/2 - 100,
+            screenWidth/2 - 80,  // Reducir separación
             screenHeight/2 + 110,
-            '✓ SÍ, JUGAR',
+            'SÍ',  // Texto más corto
             () => this.startMinigame(),
             true,      // Botón primario (verde)
             'ENTER'    // Tecla asociada
@@ -119,12 +117,12 @@ export class MinigameDialogScene extends Phaser.Scene {
         yesButton.bg.setDepth(1002);
         yesButton.label.setDepth(1003);
         
-        // PASO 7: BOTÓN "NO" con soporte de teclado (ESC)
+        // PASO 7: BOTÓN "NO" - También adaptado
         const noButton = createStyledButton(
             this,
-            screenWidth/2 + 100,
+            screenWidth/2 + 80,  // Reducir separación
             screenHeight/2 + 110,
-            '✗ NO, GRACIAS',
+            'NO',  // Texto más corto
             () => this.decline(),
             false,     // Botón secundario (rojo)
             'ESC'      // Tecla asociada
@@ -156,6 +154,8 @@ export class MinigameDialogScene extends Phaser.Scene {
         };
         
         console.log("Interfaz del diálogo creada correctamente");
+        console.log(`   Botón SÍ: ancho ~${yesButton.bg.width}px`);
+        console.log(`   Botón NO: ancho ~${noButton.bg.width}px`);
     }
 
     /**
@@ -186,16 +186,16 @@ export class MinigameDialogScene extends Phaser.Scene {
      * Rechaza el minijuego y vuelve al juego
      */
     decline() {
-        console.log(" Minijuego rechazado por el jugador");
+        console.log("Minijuego rechazado por el jugador");
         
         // 🔧 LIMPIAR listeners de teclado
         if (this.uiElements.yesButton.keyListener) {
             this.uiElements.yesButton.keyListener.off('down');
-            console.log(" Listener ENTER limpiado");
+            console.log("   Listener ENTER limpiado");
         }
         if (this.uiElements.noButton.keyListener) {
             this.uiElements.noButton.keyListener.off('down');
-            console.log(" Listener ESC limpiado");
+            console.log("   Listener ESC limpiado");
         }
         
         // Efecto de salida (fade out)

@@ -4,6 +4,8 @@
  * Sistema centralizado de estilos para mantener consistencia visual
  * en todos los paneles, botones y menús del juego
  * 
+ * Botones con tamaño adaptable al texto
+ * 
  * USO:
  * import { UIStyles, createStyledPanel, createStyledButton } from './UIStyles.js';
  */
@@ -84,10 +86,11 @@ export const UIStyles = {
         panelPadding: 20,
         
         // Botones
-        buttonWidth: 250,
         buttonHeight: 50,
         buttonBorderWidth: 2,
-        buttonSpacing: 20
+        buttonSpacing: 20,
+        buttonPaddingX: 30, // Padding horizontal para el texto
+        buttonMinWidth: 150 // Ancho mínimo del botón
     },
     
     //  ANIMACIONES
@@ -149,7 +152,7 @@ export function createStyledText(scene, x, y, text, styleType = 'body') {
 }
 
 /**
- *  Crea un botón interactivo estilizado con soporte completo de teclado
+ * Crea un botón interactivo estilizado con TAMAÑO ADAPTABLE al texto
  * 
  * @param {Phaser.Scene} scene - La escena
  * @param {number} x - Posición X
@@ -161,19 +164,29 @@ export function createStyledText(scene, x, y, text, styleType = 'body') {
  * @returns {Object} { bg, label, keyListener } - Componentes del botón
  */
 export function createStyledButton(scene, x, y, text, onClick, isPrimary = true, keyboardKey = null) {
-    const buttonWidth = UIStyles.dimensions.buttonWidth;
     const buttonHeight = UIStyles.dimensions.buttonHeight;
+    const paddingX = UIStyles.dimensions.buttonPaddingX;
+    const minWidth = UIStyles.dimensions.buttonMinWidth;
     const color = isPrimary ? UIStyles.colors.buttonPrimary : UIStyles.colors.buttonSecondary;
     
-    //  Fondo del botón
+    //Crear el texto primero para calcular su ancho
+    const buttonText = keyboardKey ? `${text} [${keyboardKey}]` : text;
+    const label = scene.add.text(0, 0, buttonText, UIStyles.text.button);
+    label.setOrigin(0.5);
+    
+    //Calcular ancho del botón basado en el texto + padding
+    const textWidth = label.width;
+    const buttonWidth = Math.max(minWidth, textWidth + (paddingX * 2));
+    
+    console.log(`Botón "${text}": ancho calculado = ${buttonWidth}px (texto: ${textWidth}px)`);
+    
+    //  Fondo del botón con ancho calculado
     const bg = scene.add.rectangle(x, y, buttonWidth, buttonHeight, color, 1);
     bg.setStrokeStyle(UIStyles.dimensions.buttonBorderWidth, 0xffffff);
     bg.setInteractive({ useHandCursor: true });
     
-    //  Texto del botón (con tecla si se especifica)
-    const buttonText = keyboardKey ? `${text} [${keyboardKey}]` : text;
-    const label = scene.add.text(x, y, buttonText, UIStyles.text.button);
-    label.setOrigin(0.5);
+    // Posicionar el texto en el centro del botón
+    label.setPosition(x, y);
     
     //  SOPORTE DE TECLADO
     let keyListener = null;

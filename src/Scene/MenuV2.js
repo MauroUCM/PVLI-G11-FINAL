@@ -3,7 +3,6 @@
  * 
  * Menú principal del juego
  * 
- * CORRECCIÓN: Ahora usa el sistema unificado de estilos
  */
 
 // IMPORTAR sistema de estilos
@@ -28,8 +27,11 @@ export class Menu2 extends Phaser.Scene {
         
         console.log("Creando menú principal...");
         
+        // Fondo oscuro para mejor contraste
+        this.add.rectangle(w/2, h/2, w, h, 0x0a1f2e, 1);
+        
         // Fondo (añadirlo si existe la imagen)
-        // this.add.image(w/2, h/2, 'menufondo').setAlpha(0.5);
+        // this.add.image(w/2, h/2, 'menufondo').setAlpha(0.3);
         
         // TÍTULO del juego
         const title = this.add.text(w/2, 80, 
@@ -56,7 +58,7 @@ export class Menu2 extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
         
-        // BOTÓN "Start Game"
+        // BOTÓN "Start Game" - Con configuración explícita
         const startBtn = createStyledButton(
             this, w/2, 200,
             '▶ EMPEZAR PARTIDA',
@@ -64,11 +66,17 @@ export class Menu2 extends Phaser.Scene {
                 console.log("Iniciando juego...");
                 this.scene.start('GameScreen');
             },
-            true,
-            'ENTER'
+            true,    // Botón primario
+            'ENTER'  // Tecla
         );
         
-        // BOTÓN "Flappy Dragon" (testing)
+        // ASEGURAR que el texto sea visible
+        startBtn.label.setDepth(1003);
+        startBtn.label.setColor('#ffffff');
+        startBtn.label.setVisible(true);
+        startBtn.bg.setDepth(1002);
+        
+        // BOTÓN "Flappy Dragon"
         const flappyBtn = createStyledButton(
             this, w/2, 280,
             'FLAPPY DRAGON (Test)',
@@ -79,6 +87,11 @@ export class Menu2 extends Phaser.Scene {
             true,
             'F'
         );
+        
+        flappyBtn.label.setDepth(1003);
+        flappyBtn.label.setColor('#ffffff');
+        flappyBtn.label.setVisible(true);
+        flappyBtn.bg.setDepth(1002);
         
         // BOTÓN "Tutorial"
         const tutorialBtn = createStyledButton(
@@ -92,6 +105,11 @@ export class Menu2 extends Phaser.Scene {
             'T'
         );
         
+        tutorialBtn.label.setDepth(1003);
+        tutorialBtn.label.setColor('#ffffff');
+        tutorialBtn.label.setVisible(true);
+        tutorialBtn.bg.setDepth(1002);
+        
         // TEXTO DE AYUDA
         const helpText = createStyledText(
             this, w/2, 450,
@@ -99,7 +117,13 @@ export class Menu2 extends Phaser.Scene {
             'small'
         );
         helpText.setOrigin(0.5);
+        helpText.setColor('#aaaaaa'); // Gris claro para mejor visibilidad
         
         console.log("Menú principal creado");
+        
+        // VERIFICACIÓN: Imprimir estado de los botones
+        console.log("Estado de botones:");
+        console.log(`  Start label visible: ${startBtn.label.visible}`);
+        console.log(`  Start label color: ${startBtn.label.style.color}`);
     }
 }

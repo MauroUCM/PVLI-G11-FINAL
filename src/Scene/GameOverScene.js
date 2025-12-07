@@ -182,7 +182,14 @@ export class GameOverScene extends Phaser.Scene {
             '↻ REVANCHA',
             () => {
                 console.log("Iniciando revancha...");
-                this.scene.start('GameScreen');
+                
+                // CRÍTICO: Parar ANTES de reiniciar
+                this.scene.stop('GameScreen');
+                
+                // Esperar para que se complete la limpieza
+                this.time.delayedCall(100, () => {
+                    this.scene.start('GameScreen');
+                });
             },
             true,   // Botón primario (verde)
             'R'     // Tecla R
