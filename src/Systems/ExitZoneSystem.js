@@ -29,18 +29,25 @@ export class ExitZoneSystem {
         console.log("ExitZoneSystem inicializado");
     }
 
-    /**
-     * Crea las zonas de salida basándose en las posiciones iniciales de los submarinos
+   /**
+     * Crea las zonas de salida en las esquinas FIJAS del tablero
      */
     createExitZones() {
+        // Obtener dimensiones del tablero en coordenadas de vértices
         const w = this.board.config.boardWidth - 1;
         const h = this.board.config.boardHeight - 1;
         
-        // Obtener posiciones iniciales de los submarinos
-        const sub1Pos = this.board.submarines.red.position;
-        const sub2Pos = this.board.submarines.blue.position;
+        console.log("=== CREANDO ZONAS DE SALIDA ===");
+        console.log(`  Dimensiones tablero: ${w} x ${h} (en vértices)`);
         
-        // Zona de salida ROJA (esquina opuesta a spawn de rojo)
+        // SIMPLIFICADO: Salidas FIJAS en esquinas opuestas a spawns
+        // Las 4 esquinas del tablero son:
+        // Superior Izquierda: (0, 0)
+        // Superior Derecha: (w*2, 0)
+        // Inferior Izquierda: (0, h*2)
+        // Inferior Derecha: (w*2, h*2)
+        
+        // ZONA ROJA: Esquina inferior derecha (opuesta a spawn rojo en superior izquierda)
         this.zones.red = {
             x: w * 2,
             y: h * 2,
@@ -48,7 +55,7 @@ export class ExitZoneSystem {
             label: 'SALIDA\nROJO'
         };
         
-        // Zona de salida AZUL (esquina opuesta a spawn de azul)
+        // ZONA AZUL: Esquina superior izquierda (opuesta a spawn azul en inferior derecha)
         this.zones.blue = {
             x: 0,
             y: 0,
@@ -56,13 +63,12 @@ export class ExitZoneSystem {
             label: 'SALIDA\nAZUL'
         };
         
+        console.log(`  ✓ Zona ROJA creada en: (${this.zones.red.x}, ${this.zones.red.y})`);
+        console.log(`  ✓ Zona AZUL creada en: (${this.zones.blue.x}, ${this.zones.blue.y})`);
+        
         // Visualizar las zonas
         this.visualizeZone(this.zones.red, 'red');
         this.visualizeZone(this.zones.blue, 'blue');
-        
-        console.log(`Zonas de salida creadas:`);
-        console.log(`- Rojo: (${this.zones.red.x}, ${this.zones.red.y})`);
-        console.log(`- Azul: (${this.zones.blue.x}, ${this.zones.blue.y})`);
         
         return this.zones;
     }
@@ -72,8 +78,8 @@ export class ExitZoneSystem {
      */
     visualizeZone(zone, playerColor) {
         const cellSize = this.board.config.cellSize;
-        const x = this.board.config.x + zone.x * cellSize;
-        const y = this.board.config.y + zone.y * cellSize;
+        const x = zone.x * cellSize;
+        const y = zone.y * cellSize;
         
         // Crear container para la zona
         const container = this.board.scene.add.container(x, y);
@@ -151,94 +157,64 @@ export class ExitZoneSystem {
                submarine.position.y === zone.y;
     }
 
-    /**
-     * Reubica las zonas de salida manteniendo su posición relativa en las esquinas
+   /**
+     * Elimina una zona de salida completamente
      * 
-     * @param {Object} newBounds - Nuevos límites del área válida
-     * @param {number} newBounds.minX - Coordenada X mínima
-     * @param {number} newBounds.maxX - Coordenada X máxima
-     * @param {number} newBounds.minY - Coordenada Y mínima
-     * @param {number} newBounds.maxY - Coordenada Y máxima
+     * @param {string} zoneName - 'red' o 'blue'
      */
-    relocateZones(newBounds) {
-        console.log("\n === REUBICANDO ZONAS DE SALIDA ===");
-        console.log("   Posiciones anteriores:");
-        console.log(`     Zona Roja: (${this.zones.red.x}, ${this.zones.red.y})`);
-        console.log(`     Zona Azul: (${this.zones.blue.x}, ${this.zones.blue.y})`);
-        console.log("   Nuevos límites:");
-        console.log(`     X: ${newBounds.minX} a ${newBounds.maxX}`);
-        console.log(`     Y: ${newBounds.minY} a ${newBounds.maxY}`);
+    removeZone(zoneName) {
+        console.log(` Eliminando zona de salida: ${zoneName}`);
         
-        //  DETERMINAR ESQUINA DE CADA ZONA
-        
-        // Zona AZUL
-        const oldBlueX = this.zones.blue.x;
-        const oldBlueY = this.zones.blue.y;
-        
-        let newBlueX, newBlueY;
-        
-        if (oldBlueX === 0 && oldBlueY === 0) {
-            // Esquina superior izquierda
-            newBlueX = newBounds.minX;
-            newBlueY = newBounds.minY;
-            console.log("   Azul: Superior Izquierda");
-        } else if (oldBlueY === 0) {
-            // Esquina superior derecha
-            newBlueX = newBounds.maxX;
-            newBlueY = newBounds.minY;
-            console.log("   Azul: Superior Derecha");
-        } else if (oldBlueX === 0) {
-            // Esquina inferior izquierda
-            newBlueX = newBounds.minX;
-            newBlueY = newBounds.maxY;
-            console.log("   Azul: Inferior Izquierda");
-        } else {
-            // Esquina inferior derecha
-            newBlueX = newBounds.maxX;
-            newBlueY = newBounds.maxY;
-            console.log("   Azul: Inferior Derecha");
+        // 1. Detener tweens del sprite
+        const sprite = this.zoneSprites[zoneName];
+        if (sprite && this.board.scene) {
+            this.board.scene.tweens.killTweensOf(sprite);
+            
+            // Si es un contenedor, detener tweens de sus hijos
+            if (sprite.list && Array.isArray(sprite.list)) {
+                sprite.list.forEach(child => {
+                    this.board.scene.tweens.killTweensOf(child);
+                });
+            }
         }
         
-        // Zona ROJA (normalmente esquina opuesta a azul)
-        const oldRedX = this.zones.red.x;
-        const oldRedY = this.zones.red.y;
-        
-        let newRedX, newRedY;
-        
-        // La roja suele estar en la esquina opuesta
-        // Si azul está en (0,0), roja está en (max, max)
-        if (oldBlueX === 0 && oldBlueY === 0) {
-            // Azul en superior izq → Roja en inferior der
-            newRedX = newBounds.maxX;
-            newRedY = newBounds.maxY;
-            console.log("   Roja: Inferior Derecha (opuesta a azul)");
-        } else if (oldBlueY === 0) {
-            // Azul en superior → Roja en inferior (mismo lado X)
-            newRedX = newBounds.maxX;
-            newRedY = newBounds.maxY;
-            console.log("   Roja: Inferior Derecha");
-        } else {
-            // Por defecto, esquina inferior derecha
-            newRedX = newBounds.maxX;
-            newRedY = newBounds.maxY;
-            console.log("   Roja: Inferior Derecha (default)");
+        // 2. Destruir sprite
+        if (sprite && sprite.destroy) {
+            sprite.destroy();
         }
         
-        //  ACTUALIZAR coordenadas
-        this.zones.blue.x = newBlueX;
-        this.zones.blue.y = newBlueY;
-        this.zones.red.x = newRedX;
-        this.zones.red.y = newRedY;
+        // 3. Limpiar referencias
+        delete this.zoneSprites[zoneName];
+        this.zones[zoneName] = null;
         
-        console.log("    Nuevas posiciones:");
-        console.log(`     Zona Azul: (${newBlueX}, ${newBlueY})`);
-        console.log(`     Zona Roja: (${newRedX}, ${newRedY})`);
+        console.log(`  ✓ Zona ${zoneName} eliminada`);
+    }
+
+    /**
+     *Verifica si una zona está en área cerrada y la elimina
+     * 
+     * @param {string} zoneName - 'red' o 'blue'
+     * @param {number} closedRings - Número de anillos cerrados
+     */
+    checkAndRemoveIfClosed(zoneName, closedRings) {
+        const zone = this.zones[zoneName];
+        if (!zone) {
+            return; // Ya eliminada
+        }
         
-        //  ANIMAR el movimiento
-        this.animateZoneRelocation('blue', newBlueX, newBlueY);
-        this.animateZoneRelocation('red', newRedX, newRedY);
+        // Calcular si está en zona cerrada
+        const offset = closedRings * 2;
+        const logic = this.board.matrix.logic.matrix;
+        const maxX = (logic.length - 1 - closedRings) * 2;
+        const maxY = (logic[0].length - 1 - closedRings) * 2;
+        const minX = offset * 2;
+        const minY = offset * 2;
         
-        console.log("===================================\n");
+        // Si la zona está fuera del área válida, eliminarla
+        if (zone.x < minX || zone.x > maxX || zone.y < minY || zone.y > maxY) {
+            console.log(`   Zona ${zoneName} en área cerrada - ELIMINANDO`);
+            this.removeZone(zoneName);
+        }
     }
 
     /**
@@ -341,34 +317,51 @@ export class ExitZoneSystem {
         }
     }
 
-    /**
-     *  Destruye las zonas de salida COMPLETAMENTE
+   /**
+     * Destruye las zonas de salida COMPLETAMENTE
      */
     destroy() {
         console.log(" Destruyendo ExitZoneSystem...");
         
-        // 1. DETENER todos los tweens activos
-        Object.values(this.zoneSprites).forEach(sprite => {
-            if (sprite) {
-                // Detener tweens del container
-                this.board.scene.tweens.killTweensOf(sprite);
-                
-                // Detener tweens de los hijos (círculos, texto)
-                if (sprite.list) {
-                    sprite.list.forEach(child => {
-                        this.board.scene.tweens.killTweensOf(child);
-                    });
+        // 1. Detener TODOS los tweens primero
+        if (this.board && this.board.scene) {
+            const scene = this.board.scene;
+            
+            // Detener tweens de todos los sprites de zona
+            for (const [key, sprite] of Object.entries(this.zoneSprites)) {
+                if (sprite) {
+                    // Detener tweens específicos de este sprite
+                    scene.tweens.killTweensOf(sprite);
+                    
+                    // Si es un contenedor, detener tweens de sus hijos
+                    if (sprite.list && Array.isArray(sprite.list)) {
+                        sprite.list.forEach(child => {
+                            scene.tweens.killTweensOf(child);
+                        });
+                    }
                 }
-                
-                // Destruir el sprite
-                sprite.destroy();
             }
-        });
+        }
         
-        // 2. Limpiar referencias
+        // 2. Destruir sprites después de detener tweens
+        for (const [key, sprite] of Object.entries(this.zoneSprites)) {
+            if (sprite && sprite.destroy) {
+                console.log(`  Destruyendo sprite de zona ${key}`);
+                try {
+                    sprite.destroy();
+                } catch (e) {
+                    console.error(`  Error destruyendo sprite ${key}:`, e);
+                }
+            }
+        }
+        
+        // 3. Limpiar referencias
         this.zoneSprites = {};
-        this.zones = { red: null, blue: null };
+        this.zones = {
+            red: null,
+            blue: null
+        };
         
-        console.log("   ExitZoneSystem destruido");
+        console.log("  ✓ ExitZoneSystem destruido completamente");
     }
 }

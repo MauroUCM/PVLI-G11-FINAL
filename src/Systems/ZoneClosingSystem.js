@@ -95,7 +95,7 @@ export class ZoneClosingSystem {
         
         // Texto de advertencia
         const warning = scene.add.text(400, 300, 
-            `⚠️ ADVERTENCIA ⚠️\n\n` +
+            ` ADVERTENCIA \n\n` +
             `El mapa empezará a cerrarse\n` +
             `en ${this.config.warningTurns} turnos!\n\n` +
             `Muévete hacia el centro`, 
@@ -129,7 +129,7 @@ export class ZoneClosingSystem {
         // Efecto de pantalla (flash naranja)
         scene.cameras.main.flash(300, 255, 170, 0, false);
         
-        console.log(`⚠️ WARNING: El mapa se cerrará en ${this.config.warningTurns} turnos!`);
+        console.log(`WARNING: El mapa se cerrará en ${this.config.warningTurns} turnos!`);
     }
 
     /**
@@ -139,7 +139,7 @@ export class ZoneClosingSystem {
         const scene = this.board.scene;
         
         const msg = scene.add.text(400, 300,
-            `🚨 CIERRE DE ZONA ACTIVADO 🚨\n\n` +
+            `CIERRE DE ZONA ACTIVADO \n\n` +
             `El mapa se reduce cada ${this.config.interval} turnos\n` +
             `¡Evita las zonas rojas!`,
             {
@@ -164,7 +164,7 @@ export class ZoneClosingSystem {
         // Flash rojo
         scene.cameras.main.flash(500, 255, 0, 0, false);
         
-        console.log("🚨 CIERRE DE ZONA ACTIVADO");
+        console.log("CIERRE DE ZONA ACTIVADO");
     }
 
     /**
@@ -417,42 +417,10 @@ export class ZoneClosingSystem {
         console.log(`   Zona roja: (${this.board.exitZones.red.x}, ${this.board.exitZones.red.y})`);
         console.log(`   Zona azul: (${this.board.exitZones.blue.x}, ${this.board.exitZones.blue.y})`);
         
-        // Verificar si las zonas de salida están en zona cerrada
-        const redInClosed = this.isInClosedZone(
-            this.board.exitZones.red.x,
-            this.board.exitZones.red.y
-        );
-        
-        const blueInClosed = this.isInClosedZone(
-            this.board.exitZones.blue.x,
-            this.board.exitZones.blue.y
-        );
-        
-        if (redInClosed || blueInClosed) {
-            console.log("Zonas de salida en zona cerrada - reubicación necesaria");
-            
-            //  LLAMAR al método de relocación del ExitZoneSystem
-            if (this.board.exitZoneSystem && 
-                typeof this.board.exitZoneSystem.relocateZones === 'function') {
-                
-                // Calcular nuevos límites
-                const offset = this.closedRings * 2;
-                const logic = this.board.matrix.logic.matrix;
-                
-                const newBounds = {
-                    minX: offset * 2,
-                    maxX: (logic.length - 1 - offset) * 2,
-                    minY: offset * 2,
-                    maxY: (logic[0].length - 1 - offset) * 2
-                };
-                
-                console.log(" Reubicando zonas con nuevos límites:", newBounds);
-                this.board.exitZoneSystem.relocateZones(newBounds);
-            } else {
-                console.warn(" ExitZoneSystem.relocateZones no está disponible");
-            }
-        } else {
-            console.log(" Zonas de salida están en área válida");
+        //Verificar y ELIMINAR zonas de salida si están en área cerrada
+        if (this.board.exitZoneSystem) {
+            this.board.exitZoneSystem.checkAndRemoveIfClosed('red', this.closedRings);
+            this.board.exitZoneSystem.checkAndRemoveIfClosed('blue', this.closedRings);
         }
     }
 

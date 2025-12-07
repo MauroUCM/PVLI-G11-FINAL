@@ -174,29 +174,41 @@ export class GameOverScene extends Phaser.Scene {
         
         console.log("Creando botones...");
         
-        // BOTÓN REVANCHA con soporte de teclado (R)
+       // BOTÓN REVANCHA con soporte de teclado (R)
         const revanchaBtn = createStyledButton(
             this,
             w/2 - 150,
             buttonY,
             '↻ REVANCHA',
             () => {
-                console.log("Iniciando revancha...");
+                console.log("=== INICIANDO REVANCHA ===");
                 
-                // CRÍTICO: Parar ANTES de reiniciar
-                this.scene.stop('GameScreen');
+                console.log("  Cerrando Game Over...");
+                this.scene.stop('GameOver');
                 
-                // Esperar para que se complete la limpieza
-                this.time.delayedCall(100, () => {
-                    this.scene.start('GameScreen');
+                console.log("  Reanudando GameScreen...");
+                this.scene.resume('GameScreen');
+                
+                this.time.delayedCall(50, () => {
+                    console.log("  Reiniciando GameScreen...");
+                    
+                    const gameScreen = this.scene.get('GameScreen');
+                    if (gameScreen) {
+                        this.scene.stop('GameScreen');
+                        
+                        this.time.delayedCall(300, () => {
+                            this.scene.start('GameScreen');
+                            console.log("Revancha iniciada");
+                        });
+                    }
                 });
             },
-            true,   // Botón primario (verde)
-            'R'     // Tecla R
+            true,
+            'R'
         );
         revanchaBtn.bg.setDepth(1002);
         revanchaBtn.label.setDepth(1003);
-        
+
         // BOTÓN MENÚ con soporte de teclado (ESC)
         const menuBtn = createStyledButton(
             this,
@@ -204,11 +216,27 @@ export class GameOverScene extends Phaser.Scene {
             buttonY,
             '⌂ MENÚ',
             () => {
-                console.log("Volviendo al menú...");
-                this.scene.start('menu2');
+                console.log("=== VOLVIENDO AL MENÚ ===");
+                
+                console.log("  Deteniendo Game Over...");
+                this.scene.stop('GameOver');
+                
+                console.log("  Reanudando GameScreen temporalmente...");
+                this.scene.resume('GameScreen');
+                
+                this.time.delayedCall(50, () => {
+                    console.log("  Deteniendo GameScreen...");
+                    this.scene.stop('GameScreen');
+                    
+                    this.time.delayedCall(300, () => {
+                        console.log("  Iniciando menú...");
+                        this.scene.start('menu2');
+                        console.log(" Menú cargado");
+                    });
+                });
             },
-            false,  // Botón secundario (rojo)
-            'ESC'   // Tecla ESC
+            false,
+            'ESC'
         );
         menuBtn.bg.setDepth(1002);
         menuBtn.label.setDepth(1003);
