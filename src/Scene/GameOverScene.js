@@ -173,8 +173,8 @@ export class GameOverScene extends Phaser.Scene {
         const buttonY = h - 120;
         
         console.log("Creando botones...");
-        
-       // BOTÓN REVANCHA con soporte de teclado (R)
+    
+        // BOTÓN REVANCHA con soporte de teclado (R)
         const revanchaBtn = createStyledButton(
             this,
             w/2 - 150,
@@ -183,31 +183,21 @@ export class GameOverScene extends Phaser.Scene {
             () => {
                 console.log("=== INICIANDO REVANCHA ===");
                 
+                // CRÍTICO: Detener TODOS los tweens y timers de Game Over
+                console.log("  Deteniendo tweens de Game Over...");
+                this.tweens.killAll();
+                this.time.removeAllEvents();
+                
+                console.log("  Cerrando Game Over...");
                 this.scene.stop('GameOver');
                 
-                const gameScreenScene = this.scene.get('GameScreen');
+                const gameScreen = this.scene.get('GameScreen');
                 
-                if (gameScreenScene) {
-                    console.log("  Forzando reinicio completo...");
-                    
-                    if (typeof gameScreenScene.shutdown === 'function') {
-                        console.log("  Ejecutando shutdown...");
-                        gameScreenScene.shutdown();
-                    }
-                    
-                    if (this.scene.isActive('GameScreen')) {
-                        this.scene.stop('GameScreen');
-                    } else {
-                        this.scene.manager.stop('GameScreen');
-                    }
-                    
-                    this.time.delayedCall(350, () => {
-                        console.log("  Iniciando nueva partida...");
-                        this.scene.start('GameScreen');
-                        console.log(" Revancha iniciada - Partida nueva");
-                    });
+                if (gameScreen && typeof gameScreen.restartGame === 'function') {
+                    console.log("  Llamando a restartGame()...");
+                    gameScreen.restartGame();
                 } else {
-                    console.error(" No se encontró GameScreen");
+                    console.error(" No se pudo reiniciar GameScreen");
                 }
             },
             true,
@@ -225,31 +215,54 @@ export class GameOverScene extends Phaser.Scene {
             () => {
                 console.log("=== VOLVIENDO AL MENÚ ===");
                 
-                this.scene.stop('GameOver');
+                // CRÍTICO: Detener TODOS los tweens y timers de Game Over
+                console.log("  Deteniendo tweens de Game Over...");
+                this.tweens.killAll();
+                this.time.removeAllEvents();
                 
-                const gameScreenScene = this.scene.get('GameScreen');
+                const gameScreen = this.scene.get('GameScreen');
                 
-                if (gameScreenScene) {
+                if (gameScreen) {
                     console.log("  Limpiando GameScreen...");
                     
-                    if (typeof gameScreenScene.shutdown === 'function') {
-                        console.log("  Ejecutando shutdown...");
-                        gameScreenScene.shutdown();
+                    if (gameScreen.tweens) {
+                        gameScreen.tweens.killAll();
                     }
                     
-                    if (this.scene.isActive('GameScreen')) {
-                        this.scene.stop('GameScreen');
-                    } else {
-                        this.scene.manager.stop('GameScreen');
+                    if (gameScreen.tablero) {
+                        if (gameScreen.tablero.zoneClosing) {
+                            gameScreen.tablero.zoneClosing.destroy();
+                        }
+                        if (gameScreen.tablero.exitZoneSystem) {
+                            gameScreen.tablero.exitZoneSystem.destroy();
+                        }
                     }
-                    
-                    this.time.delayedCall(350, () => {
-                        console.log("  Iniciando menú principal...");
-                        this.scene.start('menu2');
-                        console.log(" Volviendo al menú");
+                }
+                
+                console.log("  Deteniendo Game Over...");
+                this.scene.stop('GameOver');
+                
+                console.log("  Deteniendo GameScreen...");
+                this.scene.stop('GameScreen');
+                
+                // Usar timer desde scene manager (no desde this que ya está detenida)
+                const sceneManager = this.scene.manager;
+                
+                // Intentar usar escena default/boot para el timer
+                const bootScene = sceneManager.getScene('default');
+                
+                if (bootScene && bootScene.time) {
+                    bootScene.time.delayedCall(200, () => {
+                        console.log("  Iniciando menú...");
+                        sceneManager.start('menu2');
+                        console.log("Menú cargado");
                     });
                 } else {
-                    console.error(" No se encontró GameScreen");
+                    // Fallback: iniciar inmediatamente
+                    console.log("  Iniciando menú (sin delay)...");
+                    setTimeout(() => {
+                        sceneManager.start('menu2');
+                    }, 200);
                 }
             },
             false,
