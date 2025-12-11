@@ -3,6 +3,8 @@
  *
  * Minijuego de reparación de fugas del submarino
  * 
+ * Ahora incluye countdown de 3, 2, 1, ¡YA!
+ * 
  * MECÁNICAS:
  * - El submarino tiene fugas por donde entran objetos flotantes
  * - El jugador debe hacer clic en las fugas para repararlas
@@ -25,6 +27,7 @@ export class RepairMinigame extends Phaser.Scene {
     create() {
         // VARIABLES DEL JUEGO 
         this.gameOver = false;
+        this.gameStarted = false; // El juego no empieza hasta después del countdown
         this.gameWon = false;
         this.timer = 45; // Segundos para completar
         this.objectsEntered = 0; // Objetos que entraron
@@ -49,12 +52,107 @@ export class RepairMinigame extends Phaser.Scene {
         
         // CONTROLES 
         this.input.on('pointerdown', (pointer) => {
-            this.checkLeakClick(pointer);
+            if (this.gameStarted && !this.gameOver) { // Solo funciona si el juego ha empezado
+                this.checkLeakClick(pointer);
+            }
         });
         
-        this.input.keyboard.once('keydown-ESC', () => {
-            this.exitMinigame(false);
+        // AÑADIR: Soporte de teclado ESC para salir
+        this.escKey = this.input.keyboard.addKey('ESC');
+        this.escKey.on('down', () => {
+            if (!this.gameOver) {
+                console.log("Jugador salió del minijuego con ESC");
+                this.exitMinigame(false);
+            }
         });
+        
+        // NO iniciar la generación ni el temporizador todavía
+        // Se iniciarán después del countdown
+        
+        // FÍSICA MODIFICADA (flotación) 
+        this.physics.world.gravity.y = -50; // Gravedad negativa para flotación
+        
+        console.log("RepairMinigame creado - esperando countdown");
+        
+        // INICIAR COUNTDOWN
+        this.startCountdown();
+    }
+
+    /**
+     * Inicia el countdown de 3, 2, 1, ¡YA!
+     */
+    startCountdown() {
+        let countdown = 3;
+        
+        // Texto grande en el centro
+        const countdownText = this.add.text(400, 300, countdown.toString(), {
+            fontSize: '120px',
+            fontFamily: 'Arial',
+            color: '#ffff00',
+            fontStyle: 'bold',
+            stroke: '#000000',
+            strokeThickness: 8,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(3000);
+        
+        // Animación de escala para cada número
+        const animateNumber = () => {
+            countdownText.setScale(0.5);
+            this.tweens.add({
+                targets: countdownText,
+                scale: 1.2,
+                alpha: { from: 1, to: 0 },
+                duration: 900,
+                ease: 'Cubic.easeOut'
+            });
+        };
+        
+        animateNumber();
+        
+        // Temporizador del countdown
+        const countdownTimer = this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                countdown--;
+                
+                if (countdown > 0) {
+                    countdownText.setText(countdown.toString());
+                    countdownText.setAlpha(1);
+                    animateNumber();
+                } else {
+                    // ¡YA!
+                    countdownText.setText('¡REPARA LAS FUGAS!');
+                    countdownText.setStyle({
+                        fontSize: '60px',
+                        color: '#00ff00'
+                    });
+                    countdownText.setAlpha(1);
+                    
+                    this.tweens.add({
+                        targets: countdownText,
+                        scale: 1.5,
+                        alpha: 0,
+                        duration: 800,
+                        ease: 'Back.easeOut',
+                        onComplete: () => {
+                            countdownText.destroy();
+                            this.startGame();
+                        }
+                    });
+                    
+                    countdownTimer.destroy();
+                }
+            },
+            loop: true
+        });
+    }
+
+    /**
+     * Inicia el juego después del countdown
+     */
+    startGame() {
+        console.log("¡Juego de reparación iniciado!");
+        this.gameStarted = true;
         
         // GENERACIÓN DE OBJETOS
         this.objectSpawnTimer = this.time.addEvent({
@@ -71,11 +169,6 @@ export class RepairMinigame extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-        
-        // FÍSICA MODIFICADA (flotación) 
-        this.physics.world.gravity.y = -50; // Gravedad negativa para flotación
-        
-        console.log("RepairMinigame iniciado correctamente");
     }
 
     /**
@@ -93,11 +186,11 @@ export class RepairMinigame extends Phaser.Scene {
         this.add.rectangle(w/2, h * 0.15, w, h * 0.3, 0x2a4858, 1);
         
         // Línea de agua
-        const waterLine = this.add.graphics();
-        waterLine.lineStyle(3, 0x00aaff, 0.5);
-        waterLine.lineBetween(0, waterLevel - h * 0.2, w, waterLevel - h * 0.2);
+        const waterLine = this.add.line(0, 0, 0, h * 0.3, w, h * 0.3, 0x00ffff, 0.5);
+        waterLine.setOrigin(0, 0);
+        waterLine.setLineWidth(3);
         
-        // Animación de olas en la línea de agua
+        // Efecto de olas en la línea de agua
         this.tweens.add({
             targets: waterLine,
             y: '+=5',
@@ -108,172 +201,122 @@ export class RepairMinigame extends Phaser.Scene {
         });
         
         // Paredes del submarino
-        const wallThickness = 20;
-        this.add.rectangle(wallThickness/2, h/2, wallThickness, h, 0x555555, 1);
-        this.add.rectangle(w - wallThickness/2, h/2, wallThickness, h, 0x555555, 1);
-        this.add.rectangle(w/2, wallThickness/2, w, wallThickness, 0x555555, 1);
-        this.add.rectangle(w/2, h - wallThickness/2, w, wallThickness, 0x555555, 1);
+        const wallColor = 0x555555;
+        this.add.rectangle(30, h/2, 60, h, wallColor, 1); // Izquierda
+        this.add.rectangle(w - 30, h/2, 60, h, wallColor, 1); // Derecha
         
-        // Ventanas/portillas (decoración)
-        for (let i = 0; i < 3; i++) {
-            const porthole = this.add.circle(
-                150 + i * 250,
-                80,
-                30,
-                0x003366,
-                0.5
-            );
-            porthole.setStrokeStyle(4, 0x888888);
+        // Detalles del interior (tuberías, etc)
+        for (let i = 0; i < 5; i++) {
+            const pipeY = 50 + i * 100;
+            this.add.rectangle(60, pipeY, 20, 80, 0x888888, 1);
+            this.add.rectangle(w - 60, pipeY, 20, 80, 0x888888, 1);
         }
-        
-        // Tuberías (decoración)
-        const pipes = this.add.graphics();
-        pipes.lineStyle(8, 0x666666, 1);
-        pipes.lineBetween(50, 150, 750, 150);
-        pipes.lineBetween(50, 200, 750, 200);
     }
 
     /**
-     * Crea las fugas en posiciones aleatorias
+     * Crea las fugas en el submarino
      */
     createLeaks() {
         const w = this.cameras.main.width;
         const h = this.cameras.main.height;
         
-        for (let i = 0; i < this.totalLeaks; i++) {
-            // Posición aleatoria en las paredes
-            let x, y;
-            const wall = Phaser.Math.Between(0, 3); // 0:izq, 1:der, 2:arriba, 3:abajo
-            
-            switch(wall) {
-                case 0: // Izquierda
-                    x = 30;
-                    y = Phaser.Math.Between(300, h - 50);
-                    break;
-                case 1: // Derecha
-                    x = w - 30;
-                    y = Phaser.Math.Between(300, h - 50);
-                    break;
-                case 2: // Arriba (solo en zona sumergida)
-                    x = Phaser.Math.Between(100, w - 100);
-                    y = 250;
-                    break;
-                case 3: // Abajo
-                    x = Phaser.Math.Between(100, w - 100);
-                    y = h - 30;
-                    break;
-            }
-            
-            this.createLeak(x, y);
-        }
+        // Posiciones de las fugas (distribuidas en las paredes)
+        const leakPositions = [
+            { x: 100, y: 150 },
+            { x: w - 100, y: 200 },
+            { x: 150, y: 350 },
+            { x: w - 150, y: 400 },
+            { x: w/2, y: 450 }
+        ];
+        
+        leakPositions.forEach((pos, index) => {
+            this.createLeak(pos.x, pos.y, index);
+        });
     }
 
     /**
      * Crea una fuga individual
      */
-    createLeak(x, y) {
+    createLeak(x, y, id) {
         const leak = {
+            id: id,
             x: x,
             y: y,
-            active: true,
-            size: 15,
-            container: null
+            repaired: false,
+            sprite: null,
+            particles: []
         };
         
-        // Container para la fuga
-        leak.container = this.add.container(x, y);
+        // Sprite de la fuga (círculo rojo con animación)
+        const leakSprite = this.add.circle(x, y, 15, 0xff0000, 0.8);
+        leakSprite.setInteractive({ useHandCursor: true });
+        leakSprite.setDepth(100);
         
-        // Círculo rojo (la fuga)
-        const hole = this.add.circle(0, 0, leak.size, 0xff0000, 1);
-        hole.setStrokeStyle(3, 0xff4444);
-        leak.container.add(hole);
-        
-        // Botón de reparación (área clickeable más grande)
-        const repairBtn = this.add.circle(0, 0, leak.size + 10, 0xffff00, 0);
-        repairBtn.setInteractive({ useHandCursor: true });
-        repairBtn.setStrokeStyle(2, 0xffff00);
-        leak.container.add(repairBtn);
-        
-        // Hacer visible al pasar el ratón
-        repairBtn.on('pointerover', () => {
-            if (leak.active) {
-                repairBtn.setAlpha(0.5);
-            }
-        });
-        
-        repairBtn.on('pointerout', () => {
-            repairBtn.setAlpha(0);
-        });
-        
-        // Animación pulsante
+        // Animación de pulsación
         this.tweens.add({
-            targets: hole,
-            scale: 1.2,
+            targets: leakSprite,
+            scale: 1.3,
+            alpha: 0.5,
             duration: 500,
             yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
+            repeat: -1
         });
         
-        leak.hole = hole;
-        leak.repairBtn = repairBtn;
+        leak.sprite = leakSprite;
+        
+        // Efecto de agua saliendo (partículas)
+        this.createWaterParticles(leak);
+        
         this.leaks.push(leak);
     }
 
     /**
-     * Crea la interfaz
+     * Crea partículas de agua saliendo de una fuga
      */
-    createUI() {
-        // Panel superior
-        const panelBg = this.add.rectangle(400, 30, 760, 60, 0x000000, 0.7);
-        panelBg.setDepth(1000);
+    createWaterParticles(leak) {
+        const particleTimer = this.time.addEvent({
+            delay: 200,
+            callback: () => {
+                if (!leak.repaired && this.gameStarted) { // Solo si el juego ha empezado
+                    const particle = this.add.circle(
+                        leak.x,
+                        leak.y,
+                        Phaser.Math.Between(2, 5),
+                        0x00aaff,
+                        0.7
+                    );
+                    
+                    this.tweens.add({
+                        targets: particle,
+                        x: leak.x + Phaser.Math.Between(-30, 30),
+                        y: leak.y + 50,
+                        alpha: 0,
+                        duration: 1000,
+                        onComplete: () => particle.destroy()
+                    });
+                }
+            },
+            loop: true
+        });
         
-        // Timer
-        this.timerText = this.add.text(50, 30, 'Tiempo: 0:45', {
-            fontSize: '20px',
-            fill: '#ffffff',
-            fontStyle: 'bold'
-        }).setOrigin(0, 0.5).setDepth(1001);
-        
-        // Fugas reparadas
-        this.leaksText = this.add.text(250, 30, `Fugas: 0/${this.totalLeaks}`, {
-            fontSize: '20px',
-            fill: '#00ff88',
-            fontStyle: 'bold'
-        }).setOrigin(0, 0.5).setDepth(1001);
-        
-        // Objetos entrados
-        this.objectsText = this.add.text(450, 30, `Objetos: 0/${this.maxObjects}`, {
-            fontSize: '20px',
-            fill: '#ffff00',
-            fontStyle: 'bold'
-        }).setOrigin(0, 0.5).setDepth(1001);
-        
-        // Instrucciones
-        this.add.text(400, 580, 'HAZ CLIC EN LAS FUGAS ROJAS PARA REPARARLAS | ESC: Salir', {
-            fontSize: '16px',
-            fill: '#ffffff',
-            align: 'center',
-            backgroundColor: '#000000',
-            padding: { x: 10, y: 5 }
-        }).setOrigin(0.5).setDepth(1001);
+        leak.particleTimer = particleTimer;
     }
 
     /**
      * Verifica si se hizo clic en una fuga
      */
     checkLeakClick(pointer) {
-        if (this.gameOver) return;
-        
         this.leaks.forEach(leak => {
-            if (!leak.active) return;
+            if (leak.repaired) return;
             
             const distance = Phaser.Math.Distance.Between(
-                pointer.x, pointer.y,
-                leak.x, leak.y
+                pointer.x,
+                pointer.y,
+                leak.x,
+                leak.y
             );
             
-            if (distance < leak.size + 15) { // Área clickeable más generosa
+            if (distance < 20) {
                 this.repairLeak(leak);
             }
         });
@@ -283,32 +326,31 @@ export class RepairMinigame extends Phaser.Scene {
      * Repara una fuga
      */
     repairLeak(leak) {
-        if (!leak.active) return;
+        if (leak.repaired) return;
         
-        leak.active = false;
+        console.log(`Fuga ${leak.id} reparada!`);
+        
+        leak.repaired = true;
         this.leaksRepaired++;
         
-        // Actualizar UI
-        this.leaksText.setText(`Fugas: ${this.leaksRepaired}/${this.totalLeaks}`);
-        
-        // Efecto visual de reparación
-        this.createRepairEffect(leak.x, leak.y);
-        
         // Cambiar color a verde
-        leak.hole.setFillStyle(0x00ff00);
-        leak.hole.setStrokeStyle(3, 0x00aa00);
+        leak.sprite.setFillStyle(0x00ff00, 1);
         
-        // Animar desaparición
-        this.tweens.add({
-            targets: leak.container,
-            alpha: 0,
-            scale: 0,
-            duration: 500,
-            ease: 'Back.easeIn',
-            onComplete: () => {
-                leak.container.destroy();
-            }
-        });
+        // Detener animación
+        this.tweens.killTweensOf(leak.sprite);
+        leak.sprite.setScale(1);
+        leak.sprite.setAlpha(1);
+        
+        // Detener partículas
+        if (leak.particleTimer) {
+            leak.particleTimer.destroy();
+        }
+        
+        // Efecto de reparación
+        this.showRepairEffect(leak.x, leak.y);
+        
+        // Actualizar UI
+        this.updateLeaksText();
         
         // Verificar victoria
         if (this.leaksRepaired >= this.totalLeaks) {
@@ -317,93 +359,159 @@ export class RepairMinigame extends Phaser.Scene {
     }
 
     /**
-     * Efecto visual de reparación
+     * Muestra efecto visual al reparar
      */
-    createRepairEffect(x, y) {
-        // Destello verde
-        const flash = this.add.circle(x, y, 30, 0x00ff00, 1);
-        flash.setDepth(500);
-        
-        this.tweens.add({
-            targets: flash,
-            scale: 3,
-            alpha: 0,
-            duration: 500,
-            ease: 'Cubic.easeOut',
-            onComplete: () => flash.destroy()
-        });
-        
-        // Chispas
-        for (let i = 0; i < 12; i++) {
-            const angle = (Math.PI * 2 * i) / 12;
-            const spark = this.add.circle(x, y, 3, 0xffff00, 1);
-            spark.setDepth(500);
+    showRepairEffect(x, y) {
+        // Partículas de éxito
+        for (let i = 0; i < 10; i++) {
+            const angle = (Math.PI * 2 * i) / 10;
+            const particle = this.add.star(
+                x, y,
+                5, 5, 10,
+                0x00ff00, 1
+            );
+            particle.setDepth(200);
             
             this.tweens.add({
-                targets: spark,
-                x: x + Math.cos(angle) * 60,
-                y: y + Math.sin(angle) * 60,
+                targets: particle,
+                x: x + Math.cos(angle) * 50,
+                y: y + Math.sin(angle) * 50,
                 alpha: 0,
-                duration: 600,
-                ease: 'Cubic.easeOut',
-                onComplete: () => spark.destroy()
+                scale: 0,
+                duration: 800,
+                onComplete: () => particle.destroy()
             });
+        }
+        
+        // Flash verde
+        this.cameras.main.flash(200, 0, 255, 0, false);
+    }
+
+    /**
+     * Genera un objeto flotante desde una fuga
+     */
+    spawnFloatingObject() {
+        if (this.gameOver || !this.gameStarted) return; // No generar si no ha empezado
+        
+        // Elegir una fuga no reparada aleatoria
+        const activeLeaks = this.leaks.filter(l => !l.repaired);
+        if (activeLeaks.length === 0) return;
+        
+        const leak = Phaser.Utils.Array.GetRandom(activeLeaks);
+        
+        // Crear objeto flotante
+        const obj = this.physics.add.sprite(leak.x, leak.y, null);
+        
+        // Crear geometría (puede ser un cubo, esfera, etc)
+        const graphics = this.add.graphics();
+        const objType = Phaser.Math.Between(0, 2);
+        
+        if (objType === 0) {
+            // Cubo
+            graphics.fillStyle(0xff6600, 1);
+            graphics.fillRect(-10, -10, 20, 20);
+        } else if (objType === 1) {
+            // Círculo
+            graphics.fillStyle(0x6600ff, 1);
+            graphics.fillCircle(0, 0, 10);
+        } else {
+            // Triángulo
+            graphics.fillStyle(0x00ffff, 1);
+            graphics.fillTriangle(-10, 10, 0, -10, 10, 10);
+        }
+        
+        graphics.generateTexture('debris' + objType, 20, 20);
+        graphics.destroy();
+        
+        obj.setTexture('debris' + objType);
+        obj.setScale(0.8);
+        
+        // Física: flotar hacia arriba con movimiento lateral
+        obj.setVelocity(
+            Phaser.Math.Between(-50, 50),  // Movimiento lateral
+            Phaser.Math.Between(-80, -120)  // Flotar hacia arriba
+        );
+        
+        // Rotación
+        obj.setAngularVelocity(Phaser.Math.Between(-100, 100));
+        
+        this.floatingObjects.add(obj);
+        
+        // Destruir si sale de la pantalla arriba
+        this.time.delayedCall(5000, () => {
+            if (obj.active && obj.y < 0) {
+                this.objectsEntered++;
+                this.updateObjectsText();
+                obj.destroy();
+                
+                // Verificar derrota
+                if (this.objectsEntered >= this.maxObjects) {
+                    this.loseGame();
+                }
+            }
+        });
+    }
+
+    /**
+     * Crea la interfaz de usuario
+     */
+    createUI() {
+        // Temporizador
+        this.timerText = this.add.text(16, 16, 'Tiempo: 0:45', {
+            fontSize: '24px',
+            fill: '#ffffff',
+            backgroundColor: '#000000',
+            padding: { x: 10, y: 5 }
+        }).setDepth(1000);
+        
+        // Fugas reparadas
+        this.leaksText = this.add.text(16, 50, 'Fugas: 0/5', {
+            fontSize: '20px',
+            fill: '#00ff88',
+            backgroundColor: '#000000',
+            padding: { x: 10, y: 5 }
+        }).setDepth(1000);
+        
+        // Objetos que entraron
+        this.objectsText = this.add.text(16, 84, 'Objetos: 0/15', {
+            fontSize: '18px',
+            fill: '#ffaa00',
+            backgroundColor: '#000000',
+            padding: { x: 10, y: 5 }
+        }).setDepth(1000);
+        
+        // Instrucciones
+        this.add.text(400, 16, 'HAZ CLIC EN LAS FUGAS ROJAS | ESC para salir', {
+            fontSize: '14px',
+            fill: '#ffff00',
+            align: 'center'
+        }).setOrigin(0.5, 0).setDepth(1000);
+    }
+
+    /**
+     * Actualiza el texto de fugas
+     */
+    updateLeaksText() {
+        this.leaksText.setText(`Fugas: ${this.leaksRepaired}/${this.totalLeaks}`);
+        
+        if (this.leaksRepaired >= this.totalLeaks * 0.8) {
+            this.leaksText.setColor('#00ff00');
         }
     }
 
     /**
-     * Genera objetos flotantes desde las fugas activas
+     * Actualiza el texto de objetos
      */
-    spawnFloatingObject() {
-        if (this.gameOver) return;
+    updateObjectsText() {
+        this.objectsText.setText(`Objetos: ${this.objectsEntered}/${this.maxObjects}`);
         
-        // Encontrar fugas activas
-        const activeLeaks = this.leaks.filter(l => l.active);
-        if (activeLeaks.length === 0) return;
-        
-        // Elegir fuga aleatoria
-        const leak = Phaser.Utils.Array.GetRandom(activeLeaks);
-        
-        // Crear objeto flotante
-        this.createFloatingObject(leak.x, leak.y);
+        if (this.objectsEntered >= this.maxObjects * 0.7) {
+            this.objectsText.setColor('#ff0000');
+        }
     }
 
     /**
-     * Crea un objeto flotante individual
-     */
-    createFloatingObject(x, y) {
-        // Crear círculo simple como objeto
-        const size = Phaser.Math.Between(10, 20);
-        const color = Phaser.Math.RND.pick([0x8B4513, 0x4169E1, 0x228B22, 0xFF6347]);
-        
-        const obj = this.add.circle(x, y, size, color, 1);
-        obj.setStrokeStyle(2, 0x000000, 0.5);
-        this.physics.add.existing(obj);
-        
-        // Física de flotación
-        obj.body.setVelocity(
-            Phaser.Math.Between(-50, 50),
-            Phaser.Math.Between(-80, -50) // Flotar hacia arriba
-        );
-        
-        obj.body.setDrag(50); // Resistencia del agua
-        obj.body.setBounce(0.7); // Rebote suave
-        obj.body.setCollideWorldBounds(true);
-        
-        // Rotación lenta (efecto visual)
-        this.tweens.add({
-            targets: obj,
-            angle: 360,
-            duration: Phaser.Math.Between(2000, 4000),
-            repeat: -1
-        });
-        
-        this.floatingObjects.add(obj);
-        obj.setData('checked', false);
-    }
-
-    /**
-     * Decrementa el timer
+     * Decrementa el temporizador
      */
     decrementTimer() {
         if (this.gameOver) return;
@@ -413,14 +521,12 @@ export class RepairMinigame extends Phaser.Scene {
         const secs = this.timer % 60;
         this.timerText.setText(`Tiempo: ${mins}:${secs < 10 ? '0' : ''}${secs}`);
         
-        // Advertencia
-        if (this.timer <= 10 && this.timer > 0) {
+        if (this.timer <= 10) {
             this.timerText.setColor('#ff0000');
         }
         
-        // Tiempo agotado
         if (this.timer <= 0) {
-            this.loseGame('¡TIEMPO AGOTADO!');
+            this.loseGame();
         }
     }
 
@@ -428,57 +534,76 @@ export class RepairMinigame extends Phaser.Scene {
      * Victoria
      */
     winGame() {
+        if (this.gameOver) return;
+        
         this.gameOver = true;
         this.gameWon = true;
         this.physics.pause();
         
+        console.log("¡Victoria! Todas las fugas reparadas");
+        
+        // Detener temporizadores
+        if (this.objectSpawnTimer) this.objectSpawnTimer.destroy();
+        if (this.timerEvent) this.timerEvent.destroy();
+        
+        // Pantalla de victoria
+        this.showEndScreen(true);
+        
         // Curar submarino
         if (this.submarine) {
             this.submarine.heal(this.healAmount);
-            console.log(`Submarino curado: +${this.healAmount} HP`);
+            console.log(`Submarino curado +${this.healAmount} HP`);
         }
-        
-        this.showEndScreen(
-            '¡TODAS LAS FUGAS REPARADAS!',
-            `Submarino curado: +${this.healAmount} HP`,
-            '#00ff88'
-        );
     }
 
     /**
      * Derrota
      */
-    loseGame(reason) {
+    loseGame() {
+        if (this.gameOver) return;
+        
         this.gameOver = true;
         this.gameWon = false;
         this.physics.pause();
         
-        this.showEndScreen(reason, 'No se pudo completar la reparación', '#ff0000');
+        console.log("Derrota - Demasiados objetos o tiempo agotado");
+        
+        // Detener temporizadores
+        if (this.objectSpawnTimer) this.objectSpawnTimer.destroy();
+        if (this.timerEvent) this.timerEvent.destroy();
+        
+        // Pantalla de derrota
+        this.showEndScreen(false);
     }
 
     /**
-     * Muestra pantalla final
+     * Muestra pantalla de fin de juego
      */
-    showEndScreen(title, subtitle, color) {
+    showEndScreen(won) {
         const bg = this.add.rectangle(400, 300, 600, 400, 0x000000, 0.9);
         bg.setDepth(2000);
         
-        this.add.text(400, 220, title, {
-            fontSize: '32px',
-            fill: color,
+        const resultText = won ? '¡REPARACIÓN COMPLETA!' : '¡FALLO EN LA REPARACIÓN!';
+        const resultColor = won ? '#00ff00' : '#ff0000';
+        
+        this.add.text(400, 200, resultText, {
+            fontSize: '36px',
+            fill: resultColor,
             fontStyle: 'bold',
             align: 'center'
         }).setOrigin(0.5).setDepth(2001);
         
-        this.add.text(400, 280, subtitle, {
+        if (won) {
+            this.add.text(400, 260, `Submarino curado: +${this.healAmount} HP`, {
+                fontSize: '24px',
+                fill: '#ffffff',
+                align: 'center'
+            }).setOrigin(0.5).setDepth(2001);
+        }
+        
+        this.add.text(400, 320, `Fugas reparadas: ${this.leaksRepaired}/${this.totalLeaks}`, {
             fontSize: '20px',
             fill: '#ffffff',
-            align: 'center'
-        }).setOrigin(0.5).setDepth(2001);
-        
-        this.add.text(400, 330, `Fugas reparadas: ${this.leaksRepaired}/${this.totalLeaks}`, {
-            fontSize: '18px',
-            fill: '#00ff88',
             align: 'center'
         }).setOrigin(0.5).setDepth(2001);
         
@@ -487,17 +612,13 @@ export class RepairMinigame extends Phaser.Scene {
             fill: '#ffff00',
             align: 'center'
         }).setOrigin(0.5).setDepth(2001);
-        
-        this.input.keyboard.once('keydown-ESC', () => {
-            this.exitMinigame(this.gameWon);
-        });
     }
 
     /**
      * Salir del minijuego
      */
-    exitMinigame(success) {
-        console.log(`Saliendo del minigame. Éxito: ${success}`);
+    exitMinigame(won) {
+        console.log(`Saliendo del minijuego (${won ? 'victoria' : 'sin completar'})`);
         
         this.scene.stop();
         this.scene.resume(this.returnScene);
@@ -507,29 +628,18 @@ export class RepairMinigame extends Phaser.Scene {
      * Update
      */
     update() {
-        if (this.gameOver) return;
+        if (this.gameOver || !this.gameStarted) return; // No actualizar si no ha empezado
         
-        // Verificar objetos que llegaron arriba
+        // Destruir objetos que salieron de la pantalla superior
         this.floatingObjects.children.entries.forEach(obj => {
-            if (obj && obj.body && !obj.getData('checked') && obj.y < 100) {
-                obj.setData('checked', true);
+            if (obj.y < -50) {
                 this.objectsEntered++;
-                this.objectsText.setText(`Objetos: ${this.objectsEntered}/${this.maxObjects}`);
-                
-                // Advertencia si se acerca al límite
-                if (this.objectsEntered >= this.maxObjects * 0.7) {
-                    this.objectsText.setColor('#ff0000');
-                }
-                
-                // Perder si se excede el límite
-                if (this.objectsEntered >= this.maxObjects) {
-                    this.loseGame('¡DEMASIADOS OBJETOS ENTRARON!');
-                }
-            }
-            
-            // Destruir objetos muy arriba
-            if (obj && obj.y < 50) {
+                this.updateObjectsText();
                 obj.destroy();
+                
+                if (this.objectsEntered >= this.maxObjects) {
+                    this.loseGame();
+                }
             }
         });
     }
