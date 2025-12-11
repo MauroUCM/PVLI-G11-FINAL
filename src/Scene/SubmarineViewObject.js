@@ -34,7 +34,7 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         this.toggleKey = this.scene.input.keyboard.addKey('M');
 
          //calcular centros de las ventanas
-        this.centerY = this.screenHeight / 2 + 100; // vertical es la misma
+        this.centerY = this.screenHeight / 2 + 50; // vertical es la misma
         this.centerXiz = this.screenWidth / 6;
         this.centerX = this.screenWidth / 2;
         this.centerXder = this.screenWidth  - (this.screenWidth / 6) ;
@@ -52,7 +52,7 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         }
 
         
-        this.sub = this.scene.add.image(this.centerX, this.centerY, "Submarine" ).setDisplaySize(50,50);
+        this.sub = this.scene.add.image(this.centerX, this.centerY, "sFront" ).setDisplaySize(120,120);
         this.add(this.sub);
         this.sub.setAlpha(0)
 
@@ -113,43 +113,57 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         waterBg.setDisplaySize(width, height - 20); 
     }
 
-    //Esto sirve de render -- si se ve un submarino, lo pinta ne la vista correspondiente
-    renderView() {
-
-         if ( this.tablero.currentTurn === "blue"){
-
-                this.sub.setTint(0xff0000);
-             }
-
-             else{
-
-                this.sub.setTint(0x0000ff);
-             }
-        
+    //Esto sirve de render 
+    // si se ve un submarino, lo pinta en la vista correspondiente
+    renderView() 
+    {
         this.sub.setAlpha(0)
-        if (this.onDistance1(this.tablero.submarines.red, this.tablero.submarines.blue, "front")){
+        if ( this.tablero.currentTurn === "blue")
+        {
+            if (this.onDistance1(this.tablero.submarines.blue, this.tablero.submarines.red, "front")){
            
-            this.sub.setAlpha(1)
-            this.sub.setPosition(this.centerX, this.centerY);
+                this.sub.setAlpha(1)
+                this.sub.setPosition(this.centerX, this.centerY);
            
-        }
-        
+            }
+            else if (this.onDistance1(this.tablero.submarines.blue, this.tablero.submarines.red, "right")){
+            
+                this.sub.setAlpha(1)
+                this.sub.setPosition(this.centerXder, this.centerY);
+           
+            }
 
-        if (this.onDistance1(this.tablero.submarines.red, this.tablero.submarines.blue, "right")){
-           
-            this.sub.setAlpha(1)
-            this.sub.setPosition(this.centerXder, this.centerY);
-           
+            else if (this.onDistance1(this.tablero.submarines.blue, this.tablero.submarines.red, "left")){
+            
+                this.sub.setAlpha(1)
+                this.sub.setPosition(this.centerXiz, this.centerY);
+            
+            }
+            this.sub.setTint(0xff0000);
         }
+        else
+        {
+            if (this.onDistance1(this.tablero.submarines.red, this.tablero.submarines.blue, "front")){
+           
+                this.sub.setAlpha(1)
+                this.sub.setPosition(this.centerX, this.centerY);
+           
+            }
+            else if (this.onDistance1(this.tablero.submarines.red, this.tablero.submarines.blue, "right")){
+            
+                this.sub.setAlpha(1)
+                this.sub.setPosition(this.centerXder, this.centerY);
+           
+            }
 
-        if (this.onDistance1(this.tablero.submarines.red, this.tablero.submarines.blue, "left")){
-           
-            this.sub.setAlpha(1)
-            this.sub.setPosition(this.centerXiz, this.centerY);
-           
+            else if (this.onDistance1(this.tablero.submarines.red, this.tablero.submarines.blue, "left")){
+            
+                this.sub.setAlpha(1)
+                this.sub.setPosition(this.centerXiz, this.centerY);
+            
+            }
+            this.sub.setTint(0x0000ff);
         }
-        
-
         
     }
 

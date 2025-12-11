@@ -36,6 +36,10 @@ export class GameScreen extends Phaser.Scene{
         this.load.image("BG","assets/GameBoard_BG.jpg")
         this.load.image("Submarine","assets/submarino.png")
         this.load.image("SubWindow", "assets/SubWindow.png");
+        this.load.image("sFront", "assets/Submarine/Submarine_front.png");
+        this.load.image("sBack", "assets/Submarine/Submarine_back.png");
+        this.load.image("sRight", "assets/Submarine/Submarine_right.png");
+        this.load.image("sLeft", "assets/Submarine/Submarine_left.png");
     }
     
     //La dimension de la tabla tiene que ser un numero impar
@@ -180,12 +184,7 @@ export class GameScreen extends Phaser.Scene{
     {
         this.panel = this.add.rectangle(0, 0, 1050, 100, 0x00CC9966, 1);
         this.panel.setPosition(0,575);
-       
-        // this.container.add(this.background);
-
-        // const border = this.scene.add.graphics();
-        // border.lineStyle(2, 0xffffff, 1);
-        // border.strokeRect(0, 0, 525, 3000);
+      
 
           let divisor = this.add.text(300,565," | ",
         {
