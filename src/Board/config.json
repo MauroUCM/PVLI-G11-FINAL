@@ -1,0 +1,7 @@
+{
+    "boardWidth":5,
+    "boardHeight":5,
+    "x":250,
+    "y":100,
+    "cellSize":40
+}

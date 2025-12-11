@@ -34,7 +34,7 @@ export class Menu extends Phaser.Scene {
 			// this.scene.start('Submarine_View');
 			this.scene.start('GameScreen');
 		});
-		
+
 	}
 
 }

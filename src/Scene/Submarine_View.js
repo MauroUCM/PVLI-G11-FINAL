@@ -1,5 +1,5 @@
-import GameBoard from "../Board/GameBoard.js";
-import { InputManager } from "../Event/InputManager.js";
+// import GameBoard from "../Board/GameBoard.js";
+// import { InputManager } from "../Input/InputManager.js";
 
 export class Submarine_View extends Phaser.Scene {
     constructor() {
@@ -41,15 +41,15 @@ export class Submarine_View extends Phaser.Scene {
         const halfHeight = screenHeight / 2; // 300px por jugador
         
         //JUGADOR 1 (Parte Superior)
-        this.createPlayerViews(0, 0, screenWidth, halfHeight, 'JUGADOR 1', this.submarine1, this.submarine2);
+        this.createPlayerViews(0, 0, screenWidth, screenHeight, 'JUGADOR 1', this.submarine1, this.submarine2);
         
         // Linea divisoria
         const line = this.add.graphics();
         line.lineStyle(2, 0xffffff, 1);
         line.lineBetween(0, halfHeight, screenWidth, halfHeight);
         
-        // JUGADOR 2 (Parte Inferior)
-        this.createPlayerViews(0, halfHeight, screenWidth, halfHeight, 'JUGADOR 2', this.submarine2, this.submarine1);
+        // // JUGADOR 2 (Parte Inferior)
+        // this.createPlayerViews(0, halfHeight, screenWidth, halfHeight, 'JUGADOR 2', this.submarine2, this.submarine1);
     }
 
     /**

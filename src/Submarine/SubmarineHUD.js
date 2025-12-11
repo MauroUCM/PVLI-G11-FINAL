@@ -16,6 +16,8 @@ export class SubmarineHUD {
         this.x = x;
         this.y = y;
         this.playerName = playerName;
+        this.screenWidth = scene.cameras.main.width;   // 800
+        this.screenHeight = scene.cameras.main.height; // 600
 
         // Contenedor del HUD
         this.container = scene.add.container(x, y);
@@ -29,27 +31,28 @@ export class SubmarineHUD {
      */
     createHUD() {
         const style = {
-            fontSize: '16px',
-            color: '#ffffff',
-            fontFamily: 'Inconsolata'
+            fontSize: '14px',
+            color: '#443521ff',
+            fontFamily: 'Arial'
         };
 
         const smallStyle = {
-            fontSize: '14px',
-            color: '#ffffff',
-            fontFamily: 'Inconsolata'
+            fontSize: '12px',
+            color: '#443521ff',
+            fontFamily: 'Arial'
         };
 
-        // Fondo semi-transparente
-        this.background = this.scene.add.rectangle(0, 0, 280, 180, 0x000000, 0.7);
+        // Fondo hud
+        this.background = this.scene.add.rectangle(0, 0, 280, 180, 0x00CC9966, 1);
         this.background.setOrigin(0, 0);
         this.container.add(this.background);
 
+   
         // Nombre del jugador
         this.playerNameText = this.scene.add.text(10, 10, this.playerName, {
-            fontSize: '18px',
-            color: '#FFD700',
-            fontFamily: 'Inconsolata',
+            fontSize: '16px',
+            color: '#553c28ff',
+            fontFamily: 'Arial',
             fontStyle: 'bold'
         });
         this.container.add(this.playerNameText);
@@ -59,12 +62,12 @@ export class SubmarineHUD {
         this.container.add(this.hpLabel);
 
         // Fondo de la barra de vida
-        this.hpBarBackground = this.scene.add.rectangle(60, 43, 200, 20, 0x660000);
+        this.hpBarBackground = this.scene.add.rectangle(60, 43, 200, 20, 0x00999966);
         this.hpBarBackground.setOrigin(0, 0.5);
         this.container.add(this.hpBarBackground);
 
         // Barra de vida (relleno)
-        this.hpBar = this.scene.add.rectangle(60, 43, 200, 20, 0x00ff00);
+        this.hpBar = this.scene.add.rectangle(60, 43, 200, 20, 0x00339999);
         this.hpBar.setOrigin(0, 0.5);
         this.container.add(this.hpBar);
 
@@ -81,10 +84,10 @@ export class SubmarineHUD {
         this.container.add(this.ammoText);
 
         // Ataque aéreo
-        this.aerialLabel = this.scene.add.text(10, 90, 'Ataque Aéreo:', style);
+        this.aerialLabel = this.scene.add.text(10, 93, 'Ataque Aéreo:', style);
         this.container.add(this.aerialLabel);
 
-        this.aerialText = this.scene.add.text(130, 90, 'Cooldown: 2', smallStyle);
+        this.aerialText = this.scene.add.text(130, 93, 'Cooldown: 2', smallStyle);
         this.container.add(this.aerialText);
 
         // Inventario
@@ -97,8 +100,8 @@ export class SubmarineHUD {
         // Estado (fugas, restricciones)
         this.statusText = this.scene.add.text(10, 155, '', {
             fontSize: '12px',
-            color: '#ff0000',
-            fontFamily: 'Outfit'
+            color: '#c23434ff',
+            fontFamily: 'Arial'
         });
         this.container.add(this.statusText);
 
@@ -116,25 +119,41 @@ export class SubmarineHUD {
         
         // Cambiar color según la vida
         if (hpPercent > 0.5) {
-            this.hpBar.fillColor = 0x00ff00; // Verde
+            this.hpBar.fillColor = 0x00339999; // Verde
         } else if (hpPercent > 0.25) {
-            this.hpBar.fillColor = 0xffff00; // Amarillo
+            this.hpBar.fillColor = 0x00CCCC33; // Amarillo
         } else {
-            this.hpBar.fillColor = 0xff0000; // Rojo
+            this.hpBar.fillColor = 0x00CC3300; // Rojo
         }
 
         this.hpText.setText(`${this.submarine.currentHP}/${this.submarine.maxHP}`);
 
-        // Actualizar munición
-        this.ammoText.setText(`Corta: ${this.submarine.mun1} | Larga: ${this.submarine.mun2}`);
+            
+        const MAX_M1 = 3;
+        const MAX_M2 = 2;
+
+        
+        const mun1Raw = (this.submarine && typeof this.submarine.mun1 === 'number') ? this.submarine.mun1 : 0;
+        const mun2Raw = (this.submarine && typeof this.submarine.mun2 === 'number') ? this.submarine.mun2 : 0;
+
+       
+        const m1_full = Phaser.Math.Clamp(mun1Raw, 0, MAX_M1);
+        const m2_full = Phaser.Math.Clamp(mun2Raw, 0, MAX_M2);
+
+        
+        const m1 = "●".repeat(m1_full) + "○".repeat(MAX_M1 - m1_full);
+        const m2 = "●".repeat(m2_full) + "○".repeat(MAX_M2 - m2_full);
+
+        this.ammoText.setText(`Corta: ${m1}\nLarga: ${m2}`);
+       // this.ammoText.setText(`Corta: ${this.submarine.mun1} | Larga: ${this.submarine.mun2}`);
 
         // Actualizar ataque aéreo
         if (this.submarine.aerialCooldown <= 0) {
             this.aerialText.setText('DISPONIBLE');
-            this.aerialText.setColor('#00ff00');
+            this.aerialText.setColor('#4fbd4fff');
         } else {
             this.aerialText.setText(`Cooldown: ${this.submarine.aerialCooldown}`);
-            this.aerialText.setColor('#ffffff');
+            this.aerialText.setColor('#443521ff');
         }
 
         // Actualizar inventario

@@ -1,4 +1,5 @@
 import { Position } from "../Board/Position.js";
+import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 
 /**
  * Clase base para todos los recursos del juego que pueden ser recogidos en el mapa
@@ -26,7 +27,7 @@ export class Resource extends Phaser.GameObjects.Sprite
 
     /**
      * Método que se ejecuta cuando el recurso es recogido por un submarino
-     * @param {Submarine} submarine - El submarino que recoge el recurso
+     * @param {SubmarineComplete} submarine - El submarino que recoge el recurso
      */
     collect(submarine) {
         if (!this.collected) {
@@ -41,7 +42,7 @@ export class Resource extends Phaser.GameObjects.Sprite
     /**
      * Método abstracto - debe ser implementado por las subclases
      * Define el efecto específico de cada tipo de recurso
-     * @param {Submarine} submarine - El submarino que recibe el efecto
+     * @param {SubmarineComplete} submarine - El submarino que recibe el efecto
      */
     applyEffect(submarine) {
         console.warn("applyEffect() debe ser implementado en la subclase");

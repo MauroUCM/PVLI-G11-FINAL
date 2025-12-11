@@ -1,0 +1,1978 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text/>
+  <zoom_level>6</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2160</x>
+      <y>612</y>
+      <w>516</w>
+      <h>246</h>
+    </coordinates>
+    <panel_attributes>GameBoard
+--
+- scene : Phaser.Scene
+- active : bool
+- config : Object 
+- matrix : Object&lt;LogicBoard | Array&lt;GraphicSquare | GraphicVertex&gt;&gt;
+- submarines : Object&lt;Submarine&gt;
+- exitZoneSystem ：ExitZoneSystem
+- exitZones : Object
+- huds : Object&lt;SubmarineHUD&gt;
+- zoneClosing : ZoneClosingSystem
+- currentTurn : string
+- dragon : Dragon
+--
++ get player1() : Submarine
++ get player2() : Submarine
+--
++ setupEvent() : void
++ render() : void
++ graphicMatrixInitialize(boardWidth: int, boardHeight: int, logic: LogicBoard) : Array&lt;GraphicSquare | GraphicVertex&gt;
++ initializeBackground(x, y, image) : void
++ createGraphicPoint(m, i, j, logic) : void
++ refresh() : void
++ swapHUDS() : void
++ endTurn() : void
++ update() : void
++ onRange() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2052</x>
+      <y>1200</y>
+      <w>258</w>
+      <h>426</h>
+    </coordinates>
+    <panel_attributes>Submarine
+--
+- name : string
+- id : number
+- container : GameBoard
+- board : LogicBoard
+- scene : Phaser.Scene
+- position : Position
+- orientation : Orientation
+- currentHP : number
+- maxHP : number
+- inventory : Object
+--
++ get X() : Position.x
++ get Y() : Position.y
++ get HP() : currentHP
++ get MaxHP() : maxHP
+--
++ updateSprite() : void
++ setNewPosition(newX : int, newY : int) : void 
++ canMoveTo(newX : int, newY : int) : bool
++ moveFront() : bool
++ moveRight() : bool
++ moveLeft() : bool
++ canShoot(distance : int) :bool
++ shoot(distance : int) : bool
++ isTarget(x : int, y : int, distance : int) : bool
++ isTargetDir(x : int, y : int, distance : int, direction : Orientation)
++ loseHealth(damage : int) : void 
++ isSunk() : bool
++ heal(amount : int) : int
++ applyLeakDamage() : void
++ canUseAerialAttack() : bool
++ useAerialAttack()  : bool
++ reduceCooldown(amount : int) : bool 
++ updateCooldown() : void
++ addAmmunition(amount : int) : void
++ addCooldownReducer(amount : int) : void
++ useCooldownReducer() : bool
++ addMovementLimiter(amount : int) : void 
++ useMovementLimiter(targetSubmarine) : bool
++ addRepairKit(amount : int) : void 
++ useRepairKit(healAmount : int) : bool
++ collectResource(resource : Resource) : void 
++ updateMovementRestrictions() : void
++ endTurn() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1638</x>
+      <y>702</y>
+      <w>192</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>GameScreen
+--
+- header : Phaser.GameObject.Rectangle
+- roundText : Phaser.GameObject.Text
+- roundTextAnimation : Phaser.GameObject.Text
+- playerText : Phaser.GameObject.Text
+- playerActionText : Phaser.GameObject.Text
+- gameloopMachine : GameloopMachine
+- playerActionMachine : PlayerActionMachine
+- texturas : Array&lt;string&gt;
+- submarineView : SubmarineView
+- tablero ：GameBoard
+--
++ createTextTween();</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2376</x>
+      <y>888</y>
+      <w>132</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>LogicBoard
+--
+- matrix : Array&lt;Square | Vertex&gt;
+--
++ initialize(x : int,y : int) : void
++ getVertexListForSquare() : void
++ createVertex(x : int,y : int) : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>852</x>
+      <y>246</y>
+      <w>432</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>Menu
+--
+- title : Phaser.GameObjects.Text
+- startBtn :Object&lt;Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text | Phaser.Input.Keyboard.Key&gt;
+- flappyBtn : Object&lt;Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text | Phaser.Input.Keyboard.Key&gt;
+- tutorialBtn : Object&lt;Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text | Phaser.Input.Keyboard.Key&gt;
+- helpText : Phaser.GameObjects.Text</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1002</x>
+      <y>630</y>
+      <w>126</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>MinigameDialogScene
+--
+- data : Object
+- submarine : Submarine
+- dragonPosition : Position
+- callingScene : Phaser.Scene
+--
++ startMinigame() : void
++ decline() : void
+
+
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>984</x>
+      <y>522</y>
+      <w>162</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>FireStateWindow
+--
+- screenWidth : number
+- screenHeight : number
+- data : Object
+- popUp : Phaser.GameObjects.Container
+--
++ createPopUp(data : data) : void
++ parse(distance : number) : void
+
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>942</x>
+      <y>816</y>
+      <w>252</w>
+      <h>300</h>
+    </coordinates>
+    <panel_attributes>RepairMinigame
+--
+- data : data
+- submarine : Submarine
+- returnScene : Phaser.Scene
+- healAmount : number
+- gameOver : boolean
+- gameWon : boolean
+- timer : number
+- objectsEntered : number
+- maxObjects : number
+- leaks : Array&lt;&gt;
+- totalLeaks : number
+- leaksRepaired : number
+- escKey : Phaser.Input.Keyboard.Key
+- objectSpawnTimer : Phaser.Time.TimerEvent
+- timerEvent : Phaser.Time.TimerEvent
+--
++ createSubmarineInterior() : void
++ createLeaks() : void
++ createLeak(x: int, y : int) : void
++ createUI() : void
++ checkLeakClick(pointer : Phaser.Input.Pointer) : void
++ repairLeak(leak : leak) : void
++ createRepairEffect(x: int, y: int) : void
++ spawnFloatingObject() : void
++ createFloatingObject(x: int, y: int) : void
++ decrementTimer() : void
++ winGame() : void
++ loseGame(reason :) : void
++ showEndScreen(title : string, subtitle : string, color : hex) : void
++ exitMinigame(success : boolean) : void
+ 
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2916</x>
+      <y>1236</y>
+      <w>120</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>Phaser.Event.EventEmitter
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>642</x>
+      <y>726</y>
+      <w>72</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>Phaser.Scene
+--
++ init()
++ preload()
++ create()
++ update()
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>3030</x>
+      <y>786</y>
+      <w>126</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>
+
+Phaser.GameObjects.Container
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>3204</x>
+      <y>786</y>
+      <w>126</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>
+
+Phaser.GameObjects.Image
+Phaser.GameObjects.Sprite
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>954</x>
+      <y>378</y>
+      <w>228</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>GameOverScene
+--
+- data : Object
+- winner : string
+- reason : string
+- stats : Object
+--
++ createStatsPanel(w : int, h : int) : void
++ createButtons(w : int, h : int) : void
++ createCelebrationEffect(x : int, y : int, color : hex) : void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2904</x>
+      <y>1308</y>
+      <w>126</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Singleton&gt;&gt;
+EventDispatch
+--
++ on(Event, callback)
++ emit(Event, params)
+group=group-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2820</x>
+      <y>1308</y>
+      <w>48</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Enum&gt;&gt;
+Event
+group=group-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2334</x>
+      <y>1494</y>
+      <w>258</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>Orientation
+--
+N : number
+E : number
+S : number
+W : number
+--
++ getAvailableDirection(direction : Orientation) : Array&lt;Orientation&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2268</x>
+      <y>294</y>
+      <w>282</w>
+      <h>234</h>
+    </coordinates>
+    <panel_attributes>ResourceManager
+--
+- scene : Phaser.Scene
+- board : GameBoard
+- resources : Array&lt;Resouce&gt;
+- resourceSprite : Array&lt;&gt;
+- resouceColor : hex
+- resourceTypes : Object&lt;string&gt;
+--
++ createResource(type : resourceTypes, x : int, y : int) : Resource | null
++ createResourceSprite(resource : Resource, x : int, y : int) : void
++ createRandomResource(x : int,y : int) : Resource
++ distributeRandomResources(count : int) : void
++ distributeResourcesByType(distribution : Object) : void
++ getAvailablePositions() : Array&lt;Object&gt;
++ isPositionAvailable(x : int, y : int) : boolean
++ getResourceAt(x : int, y : int) : Resource | null
++ collectResourceAt(x : int, y : int, submarine : Submarine) : boolean
++ hideResourceSprite(resource : Resource) : void
++ createCollectionEffect(x : int, y : int) : void
++ checkAndCollectResource(submarine : Submarine) : void
++ getAvailableResources() : Array&lt;Resource&gt;
++ cleanupCollectedResources() : void
++ shuffleArray(array : Array&lt;&gt;) : void
++ clear() : void
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2466</x>
+      <y>1002</y>
+      <w>216</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>Square
+--
+- position : Position
+- nextPoint : Array&lt;Vertex&gt;
+- active : boolean
+- dragon : Dragon | null
+-- 
++ getNextPoint(matrix : Array&lt;Square | Vertex&gt;) : void
++ dragonEnter(dragon : Dragon) : this
++ dragonExit() : void
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2346</x>
+      <y>1200</y>
+      <w>180</w>
+      <h>156</h>
+    </coordinates>
+    <panel_attributes>SubmarineHUD
+--
+- scene : Phaser.Scene
+- submarine : Submarine
+- x : number
+- y : number
+- playerName : string
+- screenWidth : number
+- screenHeight : number
+- container : Phaser.GameObjects.Container
+--
++ createHUD() : void
++ update() : void
++ show() : void
++ hide() : void
++ destroy() : void
++ setPosition() : void
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2286</x>
+      <y>1002</y>
+      <w>156</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>Vertex
+--
+- position : Position
+- available : boolean
+- submarine : Submarine | null
+--
++ enter(submarine : Submarine) : void
++ exit() : void
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2760</x>
+      <y>342</y>
+      <w>168</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>ZoneClosingSystem
+--
+- board : GameBoard
+- config : Object&lt;number | hex&gt;
+- currentTurn : number
+- isActive : boolean
+- hasWarned : boolean
+- closedRings : number
+- closedZones : Array&lt;&gt;
+- cclosedSprites : Array&lt;string&gt;
+--
++ setupEvent() : void
++ checkClosing() : void
++ showWarning() ; void
++ showActivationMessage() : void
++ closeNextRing() : void
++ closeBorder() : void
++ visualizeClosedZone(positions) : void
++ showClosingEffect() : void
++ getCurrentMapSize() : int
++ isInClosedZone(x : int, y : int)  : boolean
++ checkSubmarinesInClosedZone() : void
++ showDamageEffect(submarine) : void
++ relocateExitZones() : void
++ destroy() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2340</x>
+      <y>210</y>
+      <w>168</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Resource
+--
++ collected : boolean
+--
++ applyEffect(Submarine) : void
++ isAtPosition(x : int, y : int) : boolean
++ isAvailable() : boolean
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2952</x>
+      <y>468</y>
+      <w>306</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>ExitZoneSystem
+--
+- board : GameBoard
+- zones : Object
+- zoneSprite : Object
+--
++ createExitZones() : zones
++ visualizeZone(zone : zone, playerColor : string) : void
++ checkSubmarineInZone(submarine : Submarine, zoneName : zone) : boolean
++ relocateZones(newBounds : ) : void
++ showEnterEffect(zoneName : string) : void
++ destroy() : void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2550</x>
+      <y>888</y>
+      <w>126</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>GraphicSquare
+--
+- cellSize : number
+- square : Square
+- texture : string
+--
++ render() : void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2184</x>
+      <y>888</y>
+      <w>156</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>GraphicVertex
+--
+graphic : Phaser.GameObjects.Graphics
+cellSize : number
+vertex : Vertex
+--
++ render() : void
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2118</x>
+      <y>102</y>
+      <w>162</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>RepairKit
+--
+- healAmount : number
+- autoUse : boolean
+--
++ use(submarine : Submarine) : void
++ heal(submarine : Submarine) : void
++ canUse(submarine : Submarine) : void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2580</x>
+      <y>120</y>
+      <w>126</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>AmunitionExtra
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2442</x>
+      <y>120</y>
+      <w>90</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>CooldownReducer
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2310</x>
+      <y>120</y>
+      <w>102</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>MovementLimiter
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>942</x>
+      <y>1140</y>
+      <w>252</w>
+      <h>342</h>
+    </coordinates>
+    <panel_attributes>MGFlappyDragon
+--
+- submarine : Submarine
+- returnScene : Phaser.Scene
+- puntos : number
+- gameOver : boolean
+- timer : number
+- resourceEarned : number 
+- pointsPerResource : number
+- nextResourceThreshold : pointsPerResource
+- fondo1 : Phaser.GameObjects.TileSprite
+- fondo2 : Phaser.GameObjects.TileSprite
+- fondo3 : Phaser.GameObjects.TileSprite
+- basuraLimpia : Phaser.Physics.Arcade.Group
+- basuraToxica ： Phaser.Physics.Arcade.Group
+- dragon : Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
+- textoPuntos : Phaser.GameObjects.Text
+- textoRecursos : Phaser.GameObjects.Text
+- textoProximoRecurso : Phaser.GameObjects.Text
+- textoTimer : Phaser.GameObjects.Text
+
+--
++ createDragon() : void
++ createTrashTextures() : void
++ createUI() : void 
++ generarBasura() : void
++ recogerBasuraLimpia(dragon : dragon, basura)
++ ganarRecurso() : void
++ createCollectEffect(x: int, y : int, color : hex) : void
++ playFlapAnimation() : void
++ decrementarTiempo() : void
++ actualizarTextoTimer() : void
++ finalizarJuego() : void
++ showGameOverScreen(reason) : void
++ giveResourcesToSubmarine() : void
++ exitMinigame() : void
+
+
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2610</x>
+      <y>852</y>
+      <w>18</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2304</x>
+      <y>1224</y>
+      <w>54</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;..</panel_attributes>
+    <additional_attributes>10.0;10.0;70.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2172</x>
+      <y>174</y>
+      <w>180</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>280.0;100.0;10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2364</x>
+      <y>132</y>
+      <w>18</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;130.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2472</x>
+      <y>132</y>
+      <w>18</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;130.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2502</x>
+      <y>132</y>
+      <w>150</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;180.0;230.0;180.0;230.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2412</x>
+      <y>264</y>
+      <w>18</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;50.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>2796</x>
+      <y>1272</y>
+      <w>270</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>Eventos
+--
+bg=orange
+group=group-2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2964</x>
+      <y>1248</y>
+      <w>18</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1932</x>
+      <y>906</y>
+      <w>126</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>Phaser.GameObjects.Graphics
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>306</x>
+      <y>834</y>
+      <w>324</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>UIStyle
+--
++ createStyledPanel(scene, x, y, width, height) : Phaser.GameObjects.Rectangle
++ createOverlay(scene, alpha = 0.75) : Phaser.GameObjects.Rectangle
++ createStyledText(scene, x, y, text, styleType = 'body') : Phaser.GameObjects.Text
++ createStyledButton(scene, x, y, text, onClick, isPrimary, keyboardKey) : Object
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2364</x>
+      <y>1416</y>
+      <w>150</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>Position
+--
+- x : number
+- y : number
+--
++ get Position() : string
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2304</x>
+      <y>1518</y>
+      <w>42</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2304</x>
+      <y>1434</y>
+      <w>72</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;100.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1494</x>
+      <y>1200</y>
+      <w>522</w>
+      <h>204</h>
+    </coordinates>
+    <panel_attributes>SubmarineView
+--
+- scene : Phaser.Scene
+- active : boolean
+- imID : string
+- screenWidth : number
+- screenHeight : number
+- halfHeight : number
+- submarine1 : Object
+- submarine2 : Object
+--
++ initialize: void
++ createPlayerViews(x: int, y: int, width: int, height: int, playerLabel: string, mySub: Submarine, enemySub: Submarine): void
++ createSingleView(x: int, y: int, width: int, height: int, label: string, mySub: Submarine, enemySub: Submarine, viewDirection: Object) : void
++ renderViewContent(x: int, y: int, width: int, height: int, mySub: Submarine, enemySub: Submarine, viewDirection: Object) : void
++ drawSubmarine(centerX: int, centerY: int, distance: int): void
++ drawWater(centerX: int, centerY: int): void
++ getVisibleCells(mySub: Submarine, direction: string) : Object
++ isEnemyInCell(enemySub: Submarine, cell: Object) : boolean
++ getDirectionVector(direction: Object) : Object  
++ getLeftDirection(direction: string) : string
++ getRightDirection(direction: string) : string
+
+
+
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2010</x>
+      <y>1242</y>
+      <w>54</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;..</panel_attributes>
+    <additional_attributes>70.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2862</x>
+      <y>1314</y>
+      <w>54</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;70.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>306</x>
+      <y>738</y>
+      <w>108</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Game
+--
+- config : Object
+- game : Phaser.Game
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2856</x>
+      <y>1038</y>
+      <w>216</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>Dragon
+--
+- board : GameBoard
+- visualComponentes : Array&lt;Phaser.GameObjects&gt;
+--
++ createDragonGeometry() : void
++ blink() : void
++ setupEvents() : void
++ randomSpawn() : void
++ updateVisualPosition() : void
++ playMoveEffect() : void
++ isNearSubmarine(submarine ： Submarine) : boolean
++ destroy(fromScene : Phaser.Scene) : void | boolean</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1602</x>
+      <y>168</y>
+      <w>126</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>StateMachine
+--
+- currentState : State
+- context : Object
+- name : string
+--
+- setState(State)
+--
++ transition(State)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1614</x>
+      <y>282</y>
+      <w>126</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Abstract&gt;&gt;
+State
+--
+- stateMachine : StateMachine
+- name : string
+--
++ onStateEnter()
++ onStateExit()
+--
+- transition()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1356</x>
+      <y>408</y>
+      <w>126</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>
+
+PlayerActionMachine</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1536</x>
+      <y>444</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>MoveState</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1536</x>
+      <y>408</y>
+      <w>66</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>FireState
+--
++ shoot() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1536</x>
+      <y>486</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>EndState</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1932</x>
+      <y>438</y>
+      <w>126</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>GameloopMachine
+--
+- round : number
+--
++ updateRound() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1830</x>
+      <y>444</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>Player1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1830</x>
+      <y>468</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>Player2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1536</x>
+      <y>372</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>HealState</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1752</x>
+      <y>444</y>
+      <w>60</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>PlayerState
+--
+- id : number
+- player : string</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1404</x>
+      <y>210</y>
+      <w>210</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>330.0;10.0;10.0;10.0;10.0;330.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1722</x>
+      <y>210</y>
+      <w>288</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;460.0;10.0;460.0;380.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1674</x>
+      <y>240</y>
+      <w>18</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1452</x>
+      <y>456</y>
+      <w>96</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0;140.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1476</x>
+      <y>444</y>
+      <w>72</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;100.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1476</x>
+      <y>420</y>
+      <w>72</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;100.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1452</x>
+      <y>372</y>
+      <w>96</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;60.0;10.0;10.0;140.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1806</x>
+      <y>444</y>
+      <w>36</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1806</x>
+      <y>468</y>
+      <w>36</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1734</x>
+      <y>330</y>
+      <w>60</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0;80.0;190.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1830</x>
+      <y>408</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>CheckState</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1884</x>
+      <y>408</y>
+      <w>78</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>110.0;50.0;110.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1884</x>
+      <y>444</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1884</x>
+      <y>468</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1734</x>
+      <y>300</y>
+      <w>138</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;210.0;10.0;210.0;180.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1560</x>
+      <y>330</y>
+      <w>66</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>90.0;10.0;10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1596</x>
+      <y>360</y>
+      <w>48</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>60.0;10.0;60.0;110.0;10.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1590</x>
+      <y>360</y>
+      <w>78</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>110.0;10.0;110.0;160.0;10.0;160.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1590</x>
+      <y>360</y>
+      <w>114</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>170.0;10.0;170.0;220.0;10.0;220.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2436</x>
+      <y>852</y>
+      <w>18</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>708</x>
+      <y>756</y>
+      <w>942</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;1550.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>708</x>
+      <y>774</y>
+      <w>384</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;620.0;10.0;620.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>708</x>
+      <y>708</y>
+      <w>384</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;60.0;620.0;60.0;620.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>408</x>
+      <y>750</y>
+      <w>246</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;390.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1404</x>
+      <y>456</y>
+      <w>312</w>
+      <h>258</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>500.0;410.0;500.0;180.0;10.0;180.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1758</x>
+      <y>474</y>
+      <w>252</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;380.0;10.0;150.0;400.0;150.0;400.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1824</x>
+      <y>756</y>
+      <w>348</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;560.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1728</x>
+      <y>828</y>
+      <w>18</w>
+      <h>384</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;620.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2088</x>
+      <y>798</y>
+      <w>84</w>
+      <h>414</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>120.0;10.0;10.0;10.0;10.0;670.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2304</x>
+      <y>1266</y>
+      <w>54</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;70.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>648</x>
+      <y>786</y>
+      <w>306</w>
+      <h>552</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;900.0;490.0;900.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2412</x>
+      <y>522</y>
+      <w>18</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2670</x>
+      <y>576</y>
+      <w>192</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;130.0;300.0;130.0;300.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2670</x>
+      <y>576</y>
+      <w>456</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;170.0;740.0;170.0;740.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>828</x>
+      <y>204</y>
+      <w>480</w>
+      <h>1308</h>
+    </coordinates>
+    <panel_attributes>Scene
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2502</x>
+      <y>252</y>
+      <w>816</w>
+      <h>546</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>1340.0;890.0;1340.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>3048</x>
+      <y>840</y>
+      <w>18</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;330.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2670</x>
+      <y>804</y>
+      <w>372</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>600.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>1338</x>
+      <y>138</y>
+      <w>732</w>
+      <h>384</h>
+    </coordinates>
+    <panel_attributes>State
+--
+bg=orange
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>678</x>
+      <y>786</y>
+      <w>276</w>
+      <h>192</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;300.0;440.0;300.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>648</x>
+      <y>252</y>
+      <w>216</w>
+      <h>486</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;790.0;10.0;10.0;340.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>672</x>
+      <y>396</y>
+      <w>294</w>
+      <h>342</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;550.0;10.0;10.0;470.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>696</x>
+      <y>540</y>
+      <w>300</w>
+      <h>198</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;310.0;10.0;10.0;480.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2262</x>
+      <y>852</y>
+      <w>18</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2364</x>
+      <y>948</y>
+      <w>72</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>100.0;10.0;100.0;60.0;10.0;60.0;10.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2448</x>
+      <y>948</y>
+      <w>96</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0;140.0;60.0;140.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2436</x>
+      <y>1026</y>
+      <w>42</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2304</x>
+      <y>948</y>
+      <w>18</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;..</panel_attributes>
+    <additional_attributes>10.0;90.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2604</x>
+      <y>948</y>
+      <w>18</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;..</panel_attributes>
+    <additional_attributes>10.0;90.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2508</x>
+      <y>1098</y>
+      <w>132</w>
+      <h>366</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;590.0;200.0;590.0;200.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2358</x>
+      <y>1068</y>
+      <w>228</w>
+      <h>378</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>260.0;610.0;360.0;610.0;360.0;120.0;10.0;120.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2304</x>
+      <y>1452</y>
+      <w>72</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>100.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2676</x>
+      <y>1050</y>
+      <w>192</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>300.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2304</x>
+      <y>840</y>
+      <w>984</w>
+      <h>774</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>1620.0;10.0;1620.0;1270.0;10.0;1270.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1722</x>
+      <y>840</y>
+      <w>1404</w>
+      <h>846</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>2320.0;10.0;2320.0;1390.0;10.0;1390.0;10.0;940.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2052</x>
+      <y>912</y>
+      <w>144</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;220.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2460</x>
+      <y>522</y>
+      <w>18</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2670</x>
+      <y>576</y>
+      <w>168</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;90.0;260.0;90.0;260.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2670</x>
+      <y>576</y>
+      <w>486</w>
+      <h>138</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;210.0;790.0;210.0;790.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2670</x>
+      <y>822</y>
+      <w>312</w>
+      <h>228</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;500.0;10.0;500.0;360.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2670</x>
+      <y>840</y>
+      <w>294</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;470.0;10.0;470.0;330.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2670</x>
+      <y>840</y>
+      <w>558</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>910.0;10.0;910.0;130.0;10.0;130.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>2106</x>
+      <y>48</y>
+      <w>606</w>
+      <h>504</h>
+    </coordinates>
+    <panel_attributes>Resource
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>2742</x>
+      <y>312</y>
+      <w>540</w>
+      <h>306</h>
+    </coordinates>
+    <panel_attributes>System
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>2832</x>
+      <y>1008</y>
+      <w>258</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>Dragon
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>2136</x>
+      <y>582</y>
+      <w>570</w>
+      <h>540</h>
+    </coordinates>
+    <panel_attributes>Board
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>1476</x>
+      <y>1164</y>
+      <w>1134</w>
+      <h>486</h>
+    </coordinates>
+    <panel_attributes>Submarine
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>1620</x>
+      <y>672</y>
+      <w>228</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>Scene
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>306</x>
+      <y>396</y>
+      <w>276</w>
+      <h>174</h>
+    </coordinates>
+    <panel_attributes>Nota
+
+group=group-1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>342</x>
+      <y>432</y>
+      <w>96</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>Carpeta
+--
+bg=orange
+group=group-1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>462</x>
+      <y>492</y>
+      <w>90</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Fondo de color cian significa que son cosas de Phaser
+style=wordwrap
+group=group-1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>468</x>
+      <y>468</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>Phaser
+bg=cyan
+group=group-1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>348</x>
+      <y>492</y>
+      <w>90</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>Esto indica la carpeta en el que se encuentra el script
+style=wordwrap
+group=group-1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>360</x>
+      <y>456</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>SimpleClass
+layer=1
+group=group-1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>306</x>
+      <y>252</y>
+      <w>216</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>src
+--
+Todas las carpetas se encuentran 
+a partir de src
+bg=orange
+fontsize=20</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
