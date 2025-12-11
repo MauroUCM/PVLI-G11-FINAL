@@ -37,9 +37,9 @@ export class Menu2 extends Phaser.Scene {
 		start.on('pointerover', () => start.setFontSize('34px'));
 		start.on('pointerout', () => start.setFontSize('32px'));
 
-		// Cambiar a otra escena al hacer clic
+		// Cambiar a la escena del juego al hacer click
 		start.on('pointerdown', () => {
-			this.scene.start('GameScreen');
+			this.scene.start('GameScreen', {tutorial: false});
 		});
 		
 		// Boton para jugar al Flappy Dragon
@@ -69,7 +69,7 @@ export class Menu2 extends Phaser.Scene {
 		Tutorial.on('pointerout', () => Tutorial.setFontSize('32px'));
 
 		Tutorial.on('pointerdown', () => {
-			this.scene.start('tutorial');
+			this.scene.start('GameScreen', {tutorial: true});
 		});
 
 

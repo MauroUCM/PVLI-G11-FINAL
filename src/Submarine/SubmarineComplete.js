@@ -144,6 +144,24 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
         this.setPosition(this.position.x * cellSize, this.position.y * cellSize);
         this.setAngle(this.orientation -90); 
 
+        if (this.canMoveTo(newX, newY)) {
+            //Salir de la casilla actual
+            this.board.matrix[this.position.x][this.position.y].exit();
+
+            //Ir a la nueva
+            this.position = this.board.matrix[newX][newY].position;
+
+            //Actualizar la casilla
+            this.board.matrix[newX][newY].enter(this);
+
+            this.updateSprite();
+            console.log("Moviéndose a", this.position);
+            return true;
+        } else {
+            console.log("Fuera del tablero.");
+            return false;
+        }
+
         console.log("submarino recolocado en X:" + newX + " Y:" + newY);
     }
 

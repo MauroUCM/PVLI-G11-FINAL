@@ -6,7 +6,6 @@ import SubmarineView from "../Scene/SubmarineViewObject.js";
 import { GameLoopMachine } from "../State/GameloopMachine/GameLoopMachine.js";
 import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMachine.js";
 import DialogText from "../Tutorial/dialog_plugin.js";
-import { Position } from "../Board/Position.js";
 
 //TODO
 // - Arreglar tween
@@ -40,7 +39,6 @@ export class TutorialScene extends Phaser.Scene{
     
     //La dimension de la tabla tiene que ser un numero impar
     create(){
-
         this.createHeader();
         this.createPanel();
         let roundText = this.add.text(400,550,"Round 0",
@@ -81,25 +79,9 @@ export class TutorialScene extends Phaser.Scene{
         let redSubmarine = this.tablero.submarines.red;
         let blueSubmarine = this.tablero.submarines.blue;
 
-        redSubmarine.setNewPosition(2, 6);
-        blueSubmarine.setNewPosition(4, 6);
         this.submarineView = new SubmarineView(this,0,0, this.tablero, this.tablero.submarines.red, this.tablero.submarines.blue);
         this.submarineView.setDepth(1); // Pantalla al fondo
         this.tablero.setDepth(0); // Tablero encima
-
-        this.dialog = new DialogText(this, {
-			borderThickness: 4,
-			borderColor: 0xcb3234,
-			borderAlpha: 1,
-			windowAlpha: 0.6,
-			windowColor: 0xff6961,
-			windowHeight: 150,
-			padding: 32,
-			closeBtnColor: 'darkgoldenrod',
-			dialogSpeed: 4,
-			fontSize: 24,
-			fontFamily: "pixel",
-		});
 
         // this.submarineView.setVisible(false);
         console.log(this.submarineView.visible)
@@ -123,7 +105,11 @@ export class TutorialScene extends Phaser.Scene{
              this.submarineView.renderView();
         })
 
-        		this.dialog.setText("¡Bienvenido a tu entrenamiento introductorio, soldado! Aqui aprenderas las bases que toda persona que aspire a ser un capitan decente debe conocer.", true);
+        //Toogle Submarine View - Board con M
+        // this.toggleKey.on("down",()=>{
+        //     this.refresh();
+        // }) 
+
     }
 
      refresh() {
@@ -210,4 +196,44 @@ export class TutorialScene extends Phaser.Scene{
 
 
     }
+
+    setUpEvents(){
+
+        EventDispatch.on(Event.TUTORIAL_NEXT_STEP,()=>{
+            this.tutorialStep = this.tutorialStep + 1;
+            console.log("Paso del tutorial num.: " + this.tutorialStep);
+        })
+    }
+
+    setUpControls(){
+
+        this.input.on('pointerdown', () =>
+        {
+            this.tutorialStep++;
+            console.log("Paso del tutorial num.: " + this.tutorialStep);
+            this.updateTutorial();
+
+        }, this);
+    }
+
+    updateTutorial(){
+        switch(this.tutorialStep){
+        case 0:
+            this.dialog.setText(
+            "¡Bienvenido a tu entrenamiento introductorio, soldado! Aqui aprenderas las bases que toda persona que aspire a ser un capitan decente debe conocer. Haz click con el boton izquierdo para seguir.",
+            true);
+            break;
+        case 1:
+            this.dialog.setText(
+            "En la tabla que tienes en frente verás 2 submarinos",
+            true);            
+            break;
+        case 2:
+            this.dialog.toggleWindow();
+            break;
+        }
+
+
+    }
+
 }
