@@ -4,7 +4,7 @@ import { Menu2 } from "./Scene/MenuV2.js";
 import { Submarine_View } from "./Scene/Submarine_View.js";
 import { Flappy_Dragon } from "./Minigames/MGFlappyDragon.js";
 import { TutorialScene } from "./Scene/TutorialScene.js";
-import { FireStateWindow } from "./State/PlayerActionMachine/FireStateWindow.js";
+import { FireStateWindow } from "./Scene/FireStateWindow.js";
 import { MinigameDialogScene } from "./Scene/MinigameDialogScene.js";
 import { RepairMinigame } from "./Minigames/RepairMinigame.js";
 import { GameOverScene } from "./Scene/GameOverScene.js"; 

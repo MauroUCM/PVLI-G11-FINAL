@@ -153,7 +153,7 @@ export class SubmarineHUD {
             this.aerialText.setColor('#4fbd4fff');
         } else {
             this.aerialText.setText(`Cooldown: ${this.submarine.aerialCooldown}`);
-            this.aerialText.setColor('#443521ff');
+            // this.aerialText.setColor('#443521ff');
         }
 
         // Actualizar inventario
