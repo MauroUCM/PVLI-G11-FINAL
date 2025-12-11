@@ -7,7 +7,7 @@ import { TutorialScene } from "./Scene/TutorialScene.js";
 import { FireStateWindow } from "./Scene/FireStateWindow.js";
 import { MinigameDialogScene } from "./Scene/MinigameDialogScene.js";
 import { RepairMinigame } from "./Minigames/RepairMinigame.js";
-
+import { GameOverScene } from "./Scene/GameOverScene.js"; 
 /**
  * Inicio del juego en Phaser. Creamos el archivo de configuración del juego y creamos
  * la clase Game de Phaser, encargada de crear e iniciar el juego.
@@ -39,7 +39,8 @@ let config = {
 		FireStateWindow,
         TutorialScene,       
 		MinigameDialogScene,    
-		RepairMinigame          
+		RepairMinigame,
+		GameOverScene          
 	],
 };
 
@@ -67,7 +68,7 @@ document.addEventListener('keydown', (event) => {
     
     // Escuchar la tecla B para el minijuego de reparación (testing)
     if (event.key === 'b' || event.key === 'B') {
-        console.log("Tecla R presionada - Iniciando minijuego de reparación");
+        console.log("Tecla B presionada - Iniciando minijuego de reparación");
         
         const activeScenes = game.scene.getScenes(true);
         

@@ -1,11 +1,13 @@
-import GameBoard from "../Board/GameBoard.js";
+    import GameBoard from "../Board/GameBoard.js";
 import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 import EventDispatch from "../Event/EventDispatch.js";
 import Event from "../Event/Event.js";
+// import { InputManager } from "../Input/InputManager.js";
 import SubmarineView from "../Scene/SubmarineViewObject.js";
 import { GameLoopMachine } from "../State/GameloopMachine/GameLoopMachine.js";
 import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMachine.js";
-import DialogText from "../Tutorial/dialog_plugin.js";
+// import { ResourceManager } from "../Resources/ResourceManager.js";
+// import { SubmarineInventory } from "../Resources/SubmarineInventory.js";
 
 // AZUL = JAPON | ROJO = CHINA !!!
 
@@ -22,11 +24,9 @@ export class GameScreen extends Phaser.Scene{
         this.tablero;
     }
     
-    init(data){
+    init(){
         console.log("init");
         this.tablero;
-        this.tutorialToggle = data.tutorial;
-        console.log("Tutorial activado: " + this.tutorialToggle);
     }
     
     preload(){
@@ -44,6 +44,7 @@ export class GameScreen extends Phaser.Scene{
     
     //La dimension de la tabla tiene que ser un numero impar
     create(){
+
         this.createHeader();
         this.createPanel();
         let roundText = this.add.text(400,550,"Round 0",
@@ -95,13 +96,15 @@ export class GameScreen extends Phaser.Scene{
             let text = `Round ${round}`
             roundText.setText(text)
             this.roundTextAnimation.setText(text);
-            
+             this.submarineView.renderView();
             this.chain.restart();            
         })
         
         EventDispatch.on(Event.UPDATE_PLAYER_TEXT,(player)=>{
             if (this.tablero.currentTurn == "red") playerText.setText(`Turno de China`);
             else if (this.tablero.currentTurn == "blue")playerText.setText(`Turno de Japon`);
+             this.submarineView.renderView();
+          
         })
 
         EventDispatch.on(Event.UPDATE_PLAYER_ACTION_TEXT,(state)=>{
@@ -110,30 +113,10 @@ export class GameScreen extends Phaser.Scene{
              this.submarineView.renderView();
         })
 
-
-
-        if(this.tutorialToggle){
-            this.setUpControls();
-            this.tutorialStep = 0;
-            this.dialog = new DialogText(this, {
-                borderThickness: 4,
-                borderColor: 0xcb3234,
-                borderAlpha: 1,
-                windowAlpha: 0.6,
-                windowColor: 0xff6961,
-                windowHeight: 150,
-                padding: 32,
-                closeBtnColor: 'darkgoldenrod',
-                dialogSpeed: 4,
-                fontSize: 24,
-                fontFamily: "pixel",
-            });
-            this.updateTutorial();
-        }
-
-            this.tablero.submarines.red.setNewPosition(2, 6);
-            this.tablero.submarines.blue.setNewPosition(4, 6);
-        
+        //Toogle Submarine View - Board con M
+        // this.toggleKey.on("down",()=>{
+        //     this.refresh();
+        // }) 
     }
 
      refresh() {
@@ -147,7 +130,7 @@ export class GameScreen extends Phaser.Scene{
     }
 
     update(){
-
+     
     }
 
     createTextTween(){
@@ -217,39 +200,6 @@ export class GameScreen extends Phaser.Scene{
             fontSize:40,
             color: '#412e1fff'
         })
-
-
-    }
-    
-    // Controladores del tutorial
-    setUpControls(){
-
-        this.input.on('pointerdown', () =>
-        {
-            this.tutorialStep++;
-            console.log("Paso del tutorial num.: " + this.tutorialStep);
-            this.updateTutorial();
-
-        }, this);
-    }
-
-    //Estados del tutorial
-    updateTutorial(){
-        switch(this.tutorialStep){
-        case 0:
-            this.dialog.setText(
-            "¡Bienvenido a tu entrenamiento introductorio, soldado! Aqui aprenderas las bases que toda persona que aspire a ser un capitan decente debe conocer. Haz click con el boton izquierdo para seguir.",
-            true);
-            break;
-        case 1:
-            this.dialog.setText(
-            "En la tabla que tienes en frente verás 2 submarinos",
-            true);            
-            break;
-        case 2:
-            this.dialog.toggleWindow();
-            break;
-        }
 
 
     }

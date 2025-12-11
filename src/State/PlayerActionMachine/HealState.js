@@ -53,8 +53,7 @@ export class HealState extends State {
         }
 
         // Mostrar información al jugador
-        this.showHealInfo(currentSubmarine);
-
+        
         // Evento para usar kit
         this.useKey.on("down", () => {
             if (currentSubmarine && currentSubmarine.inventory.repairKits > 0) {
@@ -64,12 +63,13 @@ export class HealState extends State {
                 this.transition();
             }
         });
-
+        
         // Evento para saltar
         this.skipKey.on("down", () => {
             console.log("Curación omitida");
             this.transition();
         });
+        this.showHealInfo(currentSubmarine);
     }
 
     /**
