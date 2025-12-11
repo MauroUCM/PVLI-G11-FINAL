@@ -2,6 +2,8 @@
 //TODO:
 //Vincular las vistas con el tablero y el submarino de verdad, pasandole a esto como parametros
 
+import { Orientation } from "../Submarine/SubmarineComplete.js";
+
 export default class SubmarineView extends Phaser.GameObjects.Container{
 /**
      * @param {Phaser.Scene} scene - La escena de Phaser
@@ -131,6 +133,8 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         let front2 = null
         let right2 = null
         let left2 = null
+
+        //Logica para que aparezca y a distintas distancias
        
         if ( this.tablero.currentTurn === "blue")
         {
@@ -145,6 +149,11 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
             left2 = this.onDistance2(this.tablero.submarines.blue, this.tablero.submarines.red, "left")
 
             this.paintSub(front, right, left, front2, right2, left2);
+
+            let me = this.tablero.submarines.blue;
+            let enemy = this.tablero.submarines.red;
+
+            this.checkRotations(me, enemy, front, right, left, front2, right2, left2);
              
         }
         else
@@ -160,17 +169,31 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
             left2 = this.onDistance2(this.tablero.submarines.red, this.tablero.submarines.blue, "left")
 
             this.paintSub(front, right, left, front2, right2, left2);
+
+            let me = this.tablero.submarines.red;
+            let enemy = this.tablero.submarines.blue;
+
+             this.checkRotations(me, enemy, front, right, left, front2, right2, left2);
             
         }
+
+        //Logica para pintar el submarino enemigo segun el lado que el atacante este mirando
+        let thisDir = this.tablero.submarines[this.tablero.currentTurn].orientation
+        let enemyDir = this.tablero.submarines[this.tablero.currentTurn === "red" ? "blue" : "red"].orientation
+ 
+        
+      
         
     }
 
     paintSub(front, right, left, front2, right2, left2)
     {
+        let rotar = 20;
         if (front){
                 this.sub.setAlpha(1)
                 this.sub.setPosition(this.centerX, this.centerY); 
                 this.sub.setDisplaySize(250,250); // mas cerca para dist 1 
+                
             }
 
             if (front2){
@@ -183,26 +206,30 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
             if (right ){
                 this.sub.setAlpha(1)
                 this.sub.setPosition(this.centerXder, this.centerY);
-                this.sub.setDisplaySize(250,250);
+                this.sub.setDisplaySize(150,150);
+                this.sub.setAngle(rotar);
             }
 
             if (right2){
                 this.sub.setAlpha(1)
                 this.sub.setPosition(this.centerXder, this.centerY);
-                this.sub.setDisplaySize(150,150);
+                this.sub.setDisplaySize(50,50);
+                this.sub.setAngle(rotar);
             }
 
             if (left){
             
                 this.sub.setAlpha(1)
                 this.sub.setPosition(this.centerXiz, this.centerY);
-                this.sub.setDisplaySize(250,250);
+                this.sub.setDisplaySize(150,150);
+                this.sub.setAngle(0 - rotar);
             }
 
             if (left2){
                 this.sub.setAlpha(1)
                 this.sub.setPosition(this.centerXiz, this.centerY);
-                this.sub.setDisplaySize(150,150);
+                this.sub.setDisplaySize(50,50);
+                this.sub.setAngle(0 - rotar);
             }   
 
             if (!front && !right && !left && !front2 && !right2 && !left2) this.sub.setAlpha(0); 
@@ -242,6 +269,124 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         else this.setVisible(false);
          
         // this.render()
+    }
+
+    changeSprite(rotation)
+    {
+        switch (rotation) {
+            case 'front':
+                this.sub.setTexture("sFront");
+                break;
+            case 'back':
+                this.sub.setTexture("sBack");
+                break;
+            case 'right':
+                this.sub.setTexture("sRight");
+                break; 
+            case 'left':
+                this.sub.setTexture("sLeft");
+                break;
+        }
+    }
+
+    checkRotations(me, enemy, front, right, left, front2, right2, left2)
+    {
+        if (front || front2)
+            {
+                if (me.orientation === Orientation.N)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("back");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("front");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("right");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("left");
+                }
+                if (me.orientation === Orientation.S)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("front");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("back");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("left");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("right");
+                }
+                if (me.orientation === Orientation.E)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("left");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("right");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("back");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("front");
+                }
+                if (me.orientation === Orientation.W)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("right");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("left");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("front");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("back");
+                }
+            }
+
+            if (right || right2)
+            {
+                if (me.orientation === Orientation.N)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("right");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("left");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("back");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("front");
+                }
+                if (me.orientation === Orientation.S)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("left");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("right");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("front");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("back");
+                }
+                if (me.orientation === Orientation.E)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("back");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("front");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("right");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("left");
+                }
+                if (me.orientation === Orientation.W)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("front");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("back");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("left");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("right");
+                }
+            }
+            
+            if (left || left2)
+            {
+                if (me.orientation === Orientation.N)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("left");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("right");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("front");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("back");
+                }
+                if (me.orientation === Orientation.S)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("right");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("left");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("back");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("front");
+                }   
+                if (me.orientation === Orientation.E)
+
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("front");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("back");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("left");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("right");
+                }
+                if (me.orientation === Orientation.W)
+                {
+                    if (enemy.orientation == Orientation.N) this.changeSprite("back");
+                    if (enemy.orientation == Orientation.S) this.changeSprite("front");
+                    if (enemy.orientation == Orientation.E) this.changeSprite("right");
+                    if (enemy.orientation == Orientation.W) this.changeSprite("left");
+                }
+            }
     }
 
 }
