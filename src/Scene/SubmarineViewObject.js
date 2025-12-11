@@ -34,10 +34,10 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         this.toggleKey = this.scene.input.keyboard.addKey('M');
 
          //calcular centros de las ventanas
-        const centerY = this.screenHeight / 2; // vertical es la misma
-        const centerXiz = this.screenWidth / 3;
-        const centerX = this.screenWidth / 2;
-        const centerXder = this.screenWidth  - (this.screenWidth / 3);
+        this.centerY = this.screenHeight / 2 + 100; // vertical es la misma
+        this.centerXiz = this.screenWidth / 6;
+        this.centerX = this.screenWidth / 2;
+        this.centerXder = this.screenWidth  - (this.screenWidth / 6) ;
 
      
         this.initialize();
@@ -52,7 +52,7 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         }
 
         
-        this.sub = this.scene.add.image(centerX, centerY, "Submarine" ).setDisplaySize(50,50);
+        this.sub = this.scene.add.image(this.centerX, this.centerY, "Submarine" ).setDisplaySize(50,50);
         this.add(this.sub);
         this.sub.setAlpha(0)
 
@@ -115,11 +115,8 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
 
     //Esto sirve de render -- si se ve un submarino, lo pinta ne la vista correspondiente
     renderView() {
-        
-        if (this.onDistance(this.tablero.submarines.red, this.tablero.submarines.blue)){
-           
-            this.sub.setAlpha(1)
-             if ( this.tablero.currentTurn === "blue"){
+
+         if ( this.tablero.currentTurn === "blue"){
 
                 this.sub.setTint(0xff0000);
              }
@@ -128,38 +125,59 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
 
                 this.sub.setTint(0x0000ff);
              }
-
+        
+        this.sub.setAlpha(0)
+        if (this.onDistance1(this.tablero.submarines.red, this.tablero.submarines.blue, "front")){
+           
+            this.sub.setAlpha(1)
+            this.sub.setPosition(this.centerX, this.centerY);
            
         }
-        else 
-        {
-           this.sub.setAlpha(0)
+        
+
+        if (this.onDistance1(this.tablero.submarines.red, this.tablero.submarines.blue, "right")){
+           
+            this.sub.setAlpha(1)
+            this.sub.setPosition(this.centerXder, this.centerY);
+           
         }
+
+        if (this.onDistance1(this.tablero.submarines.red, this.tablero.submarines.blue, "left")){
+           
+            this.sub.setAlpha(1)
+            this.sub.setPosition(this.centerXiz, this.centerY);
+           
+        }
+        
 
         
     }
 
-    onDistance(attacker, target)
+    //Comprobar si el submarino enemigo esta en rango 1 o 2
+    onDistance1(attacker, target, direction)
     {
         //Calcula si los submarinos estan en rango de verse - usar isTargetDIr para pintar la vista en especifica 
         let isTarget1 = attacker.isTarget(target.position.x, target.position.y, 1)
+
+        let isTargetDir1 = isTarget1 && attacker.isTargetDir(target.position.x, target.position.y, 1, direction)
+            
+        console.log("ON_DISTANCE_1", isTargetDir1, direction)
+
+        return isTarget1;
+    }
+
+    onDistance2(attacker, target)
+    {
         let isTarget2 = attacker.isTarget(target.position.x, target.position.y, 2)
         
-
-        // let isTargetDir1 = isTarget1 && 
-        //     attacker.isTargetDir(target.position.x, target.position.y, 1, direction) && 
-        //     attacker.canShoot(distance);
-            
-        // let isTargetDir2 = isTarget2 && 
-        //     attacker.isTargetDir(target.position.x, target.position.y, 2, direction) && 
-        //     attacker.canShoot(distance);
-
-        let debug = isTarget1 || isTarget2;
-        console.log("ON_DISTANCE", debug)
+        let isTargetDir2 = isTarget2 && 
+            attacker.isTargetDir(target.position.x, target.position.y, 2, direction) 
+        console.log("ON_DISTANCE_2", isTarget2)
 
 
-        return isTarget1 || isTarget2;
+        return isTargetDir2;
     }
+
 
     
     refresh() {

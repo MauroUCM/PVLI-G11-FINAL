@@ -170,7 +170,7 @@ export class GameScreen extends Phaser.Scene{
 
     createHeader()
     {
-        this.background = this.add.rectangle(0, 0, 1600, 50, 0x00CC9966, 1);
+        this.background = this.add.rectangle(0, 0, 1600, 60, 0x00CC9966, 1);
         this.background.setOrigin(0, 0);
         // this.container.add(this.background);
 
