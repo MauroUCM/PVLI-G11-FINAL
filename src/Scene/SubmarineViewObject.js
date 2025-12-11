@@ -52,7 +52,7 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         }
 
         
-        this.sub = this.scene.add.image(this.centerX, this.centerY, "sFront" ).setDisplaySize(160,160);
+        this.sub = this.scene.add.image(this.centerX, this.centerY, "sFront" ).setDisplaySize(250,250);
         this.add(this.sub);
         this.sub.setAlpha(0)
 
