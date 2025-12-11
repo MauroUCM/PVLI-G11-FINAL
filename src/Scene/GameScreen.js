@@ -1,4 +1,4 @@
-    import GameBoard from "../Board/GameBoard.js";
+import GameBoard from "../Board/GameBoard.js";
 import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 import EventDispatch from "../Event/EventDispatch.js";
 import Event from "../Event/Event.js";

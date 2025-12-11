@@ -1,10 +1,12 @@
 import GameBoard from "../Board/GameBoard.js";
+import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 import EventDispatch from "../Event/EventDispatch.js";
 import Event from "../Event/Event.js";
+import SubmarineView from "../Scene/SubmarineViewObject.js";
 import { GameLoopMachine } from "../State/GameloopMachine/GameLoopMachine.js";
 import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMachine.js";
 import DialogText from "../Tutorial/dialog_plugin.js";
-import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
+import { Position } from "../Board/Position.js";
 
 //TODO
 // - Arreglar tween
@@ -29,26 +31,61 @@ export class TutorialScene extends Phaser.Scene{
         this.load.image("Square","Page/img/Profile/Lappland.jpeg")
         this.load.image("BG","assets/GameBoard_BG.jpg")
         this.load.image("Submarine","assets/submarino.png")
+        this.load.image("SubWindow", "assets/SubWindow.png");
+        this.load.image("sFront", "assets/Submarine/Submarine_front.png");
+        this.load.image("sBack", "assets/Submarine/Submarine_back.png");
+        this.load.image("sRight", "assets/Submarine/Submarine_right.png");
+        this.load.image("sLeft", "assets/Submarine/Submarine_left.png");
     }
     
     //La dimension de la tabla tiene que ser un numero impar
     create(){
-        let roundText = this.add.text(350,400,"Round 0",{fontFamily:"inconsolata",fontSize:32})
-        this.roundTextAnimation = this.add.text(-150,300,"Round 0",{fontFamily:"inconsolata",fontSize:32})
-        let playerText = this.add.text(350,450,"Turno del submarino rojo",{fontFamily:"inconsolata",fontSize:32})
-        let playerActionText = this.add.text(350,500,"Fase actual:",{fontFamily:"inconsolata",fontSize:32})
+
+        this.createHeader();
+        this.createPanel();
+        let roundText = this.add.text(400,550,"Round 0",
+        {
+            fontFamily:"Outfit",
+            fontSize:30,
+            color: '#412e1fff'
+        })
+
+        this.roundTextAnimation = this.add.text(-150,300,"Round 0",{fontFamily:"Outfit",fontSize:25})
+
+        let playerText = this.add.text(5,5,"Turno de China",
+        {
+            fontFamily:"Outfit",
+            fontSize:40,
+            color: '#412e1fff'
+        })
+
+        let playerActionText = this.add.text(5,550,"Fase actual:", 
+        {
+            fontFamily:"Outfit",
+            fontSize:30,
+            color: '#412e1fff'
+        })
+
+        this.toggleKey = this.input.keyboard.addKey('M');
 
         this.createTextTween();
 
+        // Maquina de estados y objetos del juego
         this.gameloopMachine = new GameLoopMachine(this);
         this.playerActionMachine = new PlayerActionMachine(this,this.gameloopMachine);
+
         let texturas = ["Square","BG", "Submarine"];
-        this.tablero = new GameBoard(this);		
+
+        this.tablero = new GameBoard(this);
+
         let redSubmarine = this.tablero.submarines.red;
         let blueSubmarine = this.tablero.submarines.blue;
 
         redSubmarine.setNewPosition(2, 6);
         blueSubmarine.setNewPosition(4, 6);
+        this.submarineView = new SubmarineView(this,0,0, this.tablero, this.tablero.submarines.red, this.tablero.submarines.blue);
+        this.submarineView.setDepth(1); // Pantalla al fondo
+        this.tablero.setDepth(0); // Tablero encima
 
         this.dialog = new DialogText(this, {
 			borderThickness: 4,
@@ -61,29 +98,47 @@ export class TutorialScene extends Phaser.Scene{
 			closeBtnColor: 'darkgoldenrod',
 			dialogSpeed: 4,
 			fontSize: 24,
-			fontFamily: "pixel"
+			fontFamily: "pixel",
 		});
 
-		this.dialog.setText("¡Bienvenido a tu entrenamiento introductorio, soldado! Aqui aprenderas las bases que toda persona que aspire a ser un capitan decente debe conocer.", true);
-
+        // this.submarineView.setVisible(false);
+        console.log(this.submarineView.visible)
+        //Actualizar textos de ronda y jugador
         EventDispatch.on(Event.UPDATE_ROUND,(round)=>{
             let text = `Round ${round}`
             roundText.setText(text)
             this.roundTextAnimation.setText(text);
-            this.chain.restart();
+            
+            this.chain.restart();            
         })
-
+        
         EventDispatch.on(Event.UPDATE_PLAYER_TEXT,(player)=>{
-            playerText.setText(`Turno del submarino ${player}`);
+            if (this.tablero.currentTurn == "red") playerText.setText(`Turno de China`);
+            else if (this.tablero.currentTurn == "blue")playerText.setText(`Turno de Japon`);
         })
 
         EventDispatch.on(Event.UPDATE_PLAYER_ACTION_TEXT,(state)=>{
             playerActionText.setText(`Fase actual: ${state}`)
+           // this.submarineView.onDistance(this.tablero.submarines.red, this.tablero.submarines.blue)
+             this.submarineView.renderView();
         })
 
+        		this.dialog.setText("¡Bienvenido a tu entrenamiento introductorio, soldado! Aqui aprenderas las bases que toda persona que aspire a ser un capitan decente debe conocer.", true);
     }
 
-    update(){}
+     refresh() {
+        this.submarineView.active = !this.submarineView.active;
+        if (this.submarineView.active) {
+            this.submarineView.setVisible(true);
+        }
+        else this.submarineView.setVisible(false);
+        console.log("Toggled submarine view visibility");
+        
+    }
+
+    update(){
+     
+    }
 
     createTextTween(){
 
@@ -109,7 +164,7 @@ export class TutorialScene extends Phaser.Scene{
         })
 
         this.rightAnimation.on("complete",()=>{
-            this.roundTextAnimation.setPosition(-150,300)
+            this.roundTextAnimation.setPosition(-150,525)
         })
 
         this.chain = this.tweens.chain({
@@ -124,5 +179,35 @@ export class TutorialScene extends Phaser.Scene{
 
     playChain(){
         this.chain.play();
+    }
+
+    createHeader()
+    {
+        this.background = this.add.rectangle(0, 0, 1600, 60, 0x00CC9966, 1);
+        this.background.setOrigin(0, 0);
+        // this.container.add(this.background);
+
+
+    }
+    createPanel()
+    {
+        this.panel = this.add.rectangle(0, 0, 1050, 100, 0x00CC9966, 1);
+        this.panel.setPosition(0,575);
+      
+
+          let divisor = this.add.text(300,565," | ",
+        {
+            fontFamily:"Outfit",
+            fontSize:40,
+            color: '#412e1fff'
+        })
+           let divisor2 = this.add.text(300,530," | ",
+        {
+            fontFamily:"Outfit",
+            fontSize:40,
+            color: '#412e1fff'
+        })
+
+
     }
 }
