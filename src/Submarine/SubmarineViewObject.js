@@ -188,7 +188,7 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
 
     paintSub(front, right, left, front2, right2, left2)
     {
-        let rotar = 20;
+        let rotar = 10;
         if (front){
                 this.sub.setAlpha(1)
                 this.sub.setPosition(this.centerX, this.centerY); 
