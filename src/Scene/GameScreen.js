@@ -2,14 +2,11 @@ import GameBoard from "../Board/GameBoard.js";
 import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 import EventDispatch from "../Event/EventDispatch.js";
 import Event from "../Event/Event.js";
-// import { InputManager } from "../Input/InputManager.js";
 import SubmarineView from "../Submarine/SubmarineViewObject.js";
 import { GameLoopMachine } from "../State/GameloopMachine/GameLoopMachine.js";
 import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMachine.js";
 import DialogText from "../Tutorial/dialog_plugin.js";
-
-// import { ResourceManager } from "../Resources/ResourceManager.js";
-// import { SubmarineInventory } from "../Resources/SubmarineInventory.js";
+import { StateMachine } from "../State/StateMachine.js";
 
 // AZUL = JAPON | ROJO = CHINA !!!
 
@@ -44,6 +41,7 @@ export class GameScreen extends Phaser.Scene{
         this.load.image("sBack", "assets/Submarine/Submarine_back.png");
         this.load.image("sRight", "assets/Submarine/Submarine_right.png");
         this.load.image("sLeft", "assets/Submarine/Submarine_left.png");
+        this.load.image("tutorialArrow", "assets/flecha.png")
     }
     
     //La dimension de la tabla tiene que ser un numero impar
@@ -118,6 +116,11 @@ export class GameScreen extends Phaser.Scene{
         })
 
         if(this.tutorialToggle){
+            this.clickAdvanceEnabled = true;
+            this.wAdvanceEnabled = false;
+            this.aAdvanceEnabled = false;
+            this.dAdvanceEnabled = false;
+
             this.setUpControls();
             this.tutorialStep = 0;
             this.dialog = new DialogText(this, {
@@ -135,7 +138,11 @@ export class GameScreen extends Phaser.Scene{
             });
             this.updateTutorial();
             this.tablero.submarines.red.setNewPosition(2, 6);
-            this.tablero.submarines.blue.setNewPosition(4, 6);
+            this.tablero.submarines.blue.setNewPosition(6, 6);
+            this.arrow = new Phaser.GameObjects.Image(this, 230, 345, "tutorialArrow")
+            this.add.existing(this.arrow);
+            this.arrow.scale = 0.05;
+            this.arrow.visible = false;
         }
 
     }
@@ -229,11 +236,36 @@ export class GameScreen extends Phaser.Scene{
 
         this.input.on('pointerdown', () =>
         {
-            this.tutorialStep++;
-            console.log("Paso del tutorial num.: " + this.tutorialStep);
-            this.updateTutorial();
+            if(this.clickAdvanceEnabled){
+                this.tutorialStep++;
+                console.log("Paso del tutorial num.: " + this.tutorialStep);
+                this.updateTutorial();
+            }
 
         }, this);
+
+        this.input.keyboard.on('keydown-W', () =>{
+            if(this.wAdvanceEnabled){
+                this.tutorialStep++;
+                console.log("Paso del tutorial num.: " + this.tutorialStep);
+                this.updateTutorial();
+            }
+        })
+
+        this.input.keyboard.on('keydown-A', () =>{
+            if(this.aAdvanceEnabled){
+                this.tutorialStep++;
+                console.log("Paso del tutorial num.: " + this.tutorialStep);
+                this.updateTutorial();
+            }
+        })
+        this.input.keyboard.on('keydown-D', () =>{
+            if(this.dAdvanceEnabledAdvanceEnabled){
+                this.tutorialStep++;
+                console.log("Paso del tutorial num.: " + this.tutorialStep);
+                this.updateTutorial();
+            }
+        })
     }
 
     //Estados del tutorial
@@ -241,19 +273,91 @@ export class GameScreen extends Phaser.Scene{
         switch(this.tutorialStep){
         case 0:
             this.dialog.setText(
-            "¡Bienvenido a tu entrenamiento introductorio, soldado! Aqui aprenderas las bases que toda persona que aspire a ser un capitan decente debe conocer. Haz click con el boton izquierdo para seguir.",
-            true);
+            "Te damos la bienvenida a tu entrenamiento introductorio, recluta! Aqui aprenderas las bases que toda persona que aspire a ser un capitan decente debe conocer. Haz click con el boton izquierdo para seguir.",
+            true
+            )
+            //this.tablero.remove(this.tablero.dragon)
+            this.tablero.dragon.destroy();
             break;
         case 1:
             this.dialog.setText(
-            "En la tabla que tienes en frente verás 2 submarinos",
-            true);            
+                "En el mapa que tienes en frente de ti verás 2 submarinos.", 
+                true
+            )            
             break;
         case 2:
-            this.dialog.toggleWindow();
+            this.dialog.setText(
+                "El rojo pertenece a China.", 
+                true
+            )
+            this.arrow.visible = true
+            break;
+        case 3:
+            this.dialog.setText(
+                "Y el azul, a Japón.", 
+                true
+            )
+            this.arrow.x = 590;
+            this.arrow.toggleFlipX()
+            break;
+        case 4:
+            this.dialog.setText(
+                "En este entrenamiento asumiremos que somos los rojos, camarada.",
+                true
+            )
+            this.arrow.visible = false;
+            break;
+        case 5:
+            this.dialog.setText(
+                "Practicaremos primero un movimiento acompañado por un ataque.",
+                true
+            )
+            break;
+        case 6:
+            this.dialog.setText(
+                "Pulsa [W] para avanzar hacia delante.",
+                true
+            )
+            this.clickAdvanceEnabled = false;
+            this.wAdvanceEnabled = true;
+            break;
+        case 7:
+            this.dialog.setText(
+                "Ahora pulsa [W] de nuevo para atacar a tu frente. Y después [A] para hacer un ataque a corto alcance.",
+                true
+            )
+            break;
+        case 8:
+            this.dialog.setText(
+                "Muy bien! Observa como has dañado el submarino japonés, ahora es su turno.",
+                true
+            )
+            this.clickAdvanceEnabled = true;
+            this.wAdvanceEnabled = false;
+            break;
+        case 9:
+            this.tablero.submarines.blue.moveRight();
+            this.playerActionMachine.transition(this.playerActionMachine._currentState);
+            break;
+        case 10:
+            this.dialog.setText(
+                "Parece que se ha apartado para que no puedas seguir golpeandolo. Pulsa [D] para desplazarte a la casilla en tu derecha.",
+                true
+            )
+            this.dAdvanceEnabled = true;
+            this.clickAdvanceEnabled = false;
+            break;
+        case 11:
+            this.dialog.setText(
+                "Parece que se ha apartado para que no puedas seguir golpeandolo. Pulsa [D] para desplazarte a la casilla en tu derecha.",
+                true
+            )
+            this.dAdvanceEnabled = true;
+            this.clickAdvanceEnabled = false;
             break;
         }
 
+            //this.dialog.toggleWindow()
 
     }
 }

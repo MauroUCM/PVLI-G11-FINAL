@@ -92,11 +92,6 @@ export default class GameBoard extends Phaser.GameObjects.Container {
     }
 
     setupEvents() {
-
-        // this.toggleKey.on("down",()=>{
-        //     this.refresh();
-        // }) 
-
         EventDispatch.on(Event.GET_GAMEBOARD,(callback)=>{
             callback.boardCallback(this);
         })

@@ -414,8 +414,9 @@ export class Dragon extends Phaser.GameObjects.Container {
     /**
      * Limpieza cuando se destruye el dragón
      */
-    destroy(fromScene) {
+    destroy() {
         // Limpiar eventos
+        super.destroy();
         EventDispatch.off(Event.GET_DRAGON);
         EventDispatch.off(Event.MOVE_DRAGON);
         EventDispatch.off(Event.CHECK_DRAGON_COLLISION);
