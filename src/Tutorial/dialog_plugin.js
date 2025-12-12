@@ -43,7 +43,7 @@ export default class DialogText{
 		// texto que se renderizará en la ventana
 		this.dialog;
 		this.graphics;
-		this.closeBtn;
+		//this.closeBtn;
 		
 		//Crea la ventana de dialogo
 		this._createWindow();
@@ -104,7 +104,7 @@ export default class DialogText{
 
 	// Consigue el alto del juego (en funcion del tamaño de la escena) 
 	_getGameHeight() {
-		return this.scene.sys.game.config.height;
+		return this.scene.sys.game.config.height/2;
 	}
 
 	// Calcula las dimensiones y pos de la ventana en funcion del tamaño de la pantalla de juego

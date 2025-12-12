@@ -1,11 +1,13 @@
-    import GameBoard from "../Board/GameBoard.js";
+import GameBoard from "../Board/GameBoard.js";
 import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 import EventDispatch from "../Event/EventDispatch.js";
 import Event from "../Event/Event.js";
 // import { InputManager } from "../Input/InputManager.js";
-import SubmarineView from "../Submarine/SubmarineViewObject.js";
+import SubmarineView from "../Scene/SubmarineViewObject.js";
 import { GameLoopMachine } from "../State/GameloopMachine/GameLoopMachine.js";
 import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMachine.js";
+import DialogText from "../Tutorial/dialog_plugin.js";
+
 // import { ResourceManager } from "../Resources/ResourceManager.js";
 // import { SubmarineInventory } from "../Resources/SubmarineInventory.js";
 
@@ -24,9 +26,11 @@ export class GameScreen extends Phaser.Scene{
         this.tablero;
     }
     
-    init(){
+    init(datos){
         console.log("init");
         this.tablero;
+        this.tutorialToggle = datos.tutorial;
+        console.log("Tutorial activado: " + this.tutorialToggle);
     }
     
     preload(){
@@ -109,8 +113,31 @@ export class GameScreen extends Phaser.Scene{
 
         EventDispatch.on(Event.UPDATE_PLAYER_ACTION_TEXT,(state)=>{
             playerActionText.setText(`Fase actual: ${state}`)
+           // this.submarineView.onDistance(this.tablero.submarines.red, this.tablero.submarines.blue)
              this.submarineView.renderView();
         })
+
+        if(this.tutorialToggle){
+            this.setUpControls();
+            this.tutorialStep = 0;
+            this.dialog = new DialogText(this, {
+                borderThickness: 4,
+                borderColor: 0xcb3234,
+                borderAlpha: 1,
+                windowAlpha: 0.6,
+                windowColor: 0xff6961,
+                windowHeight: 150,
+                padding: 32,
+                closeBtnColor: 'darkgoldenrod',
+                dialogSpeed: 4,
+                fontSize: 24,
+                fontFamily: "pixel",
+            });
+            this.updateTutorial();
+            this.tablero.submarines.red.setNewPosition(2, 6);
+            this.tablero.submarines.blue.setNewPosition(4, 6);
+        }
+
     }
 
      refresh() {
@@ -164,10 +191,17 @@ export class GameScreen extends Phaser.Scene{
 
     }
 
+    playChain(){
+        this.chain.play();
+    }
+
     createHeader()
     {
         this.background = this.add.rectangle(0, 0, 1600, 60, 0x00CC9966, 1);
         this.background.setOrigin(0, 0);
+        // this.container.add(this.background);
+
+
     }
     createPanel()
     {
@@ -187,6 +221,38 @@ export class GameScreen extends Phaser.Scene{
             fontSize:40,
             color: '#412e1fff'
         })
+
+
+    }
+
+        setUpControls(){
+
+        this.input.on('pointerdown', () =>
+        {
+            this.tutorialStep++;
+            console.log("Paso del tutorial num.: " + this.tutorialStep);
+            this.updateTutorial();
+
+        }, this);
+    }
+
+    //Estados del tutorial
+    updateTutorial(){
+        switch(this.tutorialStep){
+        case 0:
+            this.dialog.setText(
+            "¡Bienvenido a tu entrenamiento introductorio, soldado! Aqui aprenderas las bases que toda persona que aspire a ser un capitan decente debe conocer. Haz click con el boton izquierdo para seguir.",
+            true);
+            break;
+        case 1:
+            this.dialog.setText(
+            "En la tabla que tienes en frente verás 2 submarinos",
+            true);            
+            break;
+        case 2:
+            this.dialog.toggleWindow();
+            break;
+        }
 
 
     }
