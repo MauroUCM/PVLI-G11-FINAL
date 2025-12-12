@@ -58,6 +58,9 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         this.add(this.sub);
         this.sub.setAlpha(0)
 
+        this.tablero.huds.red.container.setAlpha(0);
+        this.tablero.huds.blue.container.setAlpha(0);
+
         this.renderView();
 
     }
@@ -263,10 +266,18 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
     
     refresh() {
         this.active = !this.active;
+
+        
         if (this.active) {
             this.setVisible(true);
+            this.tablero.huds.red.container.setAlpha(1);
+            this.tablero.huds.blue.container.setAlpha(1);
         }
-        else this.setVisible(false);
+        else {this.setVisible(false)
+            this.tablero.huds.red.container.setAlpha(0);
+            this.tablero.huds.blue.container.setAlpha(0);
+        };
+
          
         // this.render()
     }
