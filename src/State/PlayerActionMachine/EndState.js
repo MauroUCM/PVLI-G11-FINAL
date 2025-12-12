@@ -5,65 +5,37 @@ import Event from "../../Event/Event.js";
 /**
  * EndState - Fin de turno mejorado
  * 
- * CORRECCIÓN: Ahora bloquea el turno para prevenir acciones adicionales
- * y verifica correctamente la colisión con el dragón
- * 
- * RESPONSABILIDADES:
- * 1. Verificar colisión con el dragón
- * 2. Bloquear el turno actual
- * 3. Pasar al siguiente jugador
- * 
- * @class
+ * Actualiza información tras finalizar el turno de un jugador
+ * Ahora también verifica colisiones con el dragón
  */
 export class EndState extends State {
-    
     constructor(stateMachine) {
         super(stateMachine);
         this._name = "End State";
     }
 
-    /**
-     * Método ejecutado al entrar en este estado
-     */
     onStateEnter() {
-        console.log(" EndState - Finalizando turno");
-        
-        // PASO 1: Obtener el submarino del jugador actual
+        // Obtener el submarino actual
         const currentPlayer = this.stateMachine.context.currentState;
         let currentSubmarine = null;
         
-        EventDispatch.emit(
-            Event.GET_SUBMARINE, 
-            currentPlayer.id === 1 ? "red" : "blue", 
-            {
-                callBack: (sub) => {
-                    currentSubmarine = sub;
-                }
+        EventDispatch.emit(Event.GET_SUBMARINE, currentPlayer.id === 1 ? "red" : "blue", {
+            callBack: (sub) => {
+                currentSubmarine = sub;
             }
-        );
+        });
         
-        // PASO 2: Verificar colisión con el dragón
+        // Verificar colisión con dragón
         if (currentSubmarine) {
             this.checkDragonCollision(currentSubmarine);
         }
         
-        // PASO 3: BLOQUEAR el turno para prevenir más acciones
-        this.stateMachine.lockTurn();
-        console.log(" Turno finalizado y bloqueado");
-        
-        // PASO 4: Pedir al GameLoopMachine que pase al siguiente jugador
-        const gameLoop = this.stateMachine.context; // la máquina principal
-
-        // EJECUTAR CAMBIO DE JUGADOR
-        gameLoop.transition(gameLoop.stateList.checkState);
+        // Continuar con la transición normal
+        this.transition();
     }
     
     /**
-     *  Verifica si el submarino está cerca del dragón
-     * 
-     *  CORREGIDO: Ahora con logging detallado para debugging
-     * 
-     * @param {SubmarineComplete} submarine - El submarino a verificar
+     * Verifica si el submarino está cerca del dragón
      */
     checkDragonCollision(submarine) {
         let collisionData = {
@@ -75,6 +47,8 @@ export class EndState extends State {
         EventDispatch.emit(Event.CHECK_DRAGON_COLLISION, submarine, collisionData);
         
         if (collisionData.collision) {
+            console.log('¡Submarino cerca del dragón!');
+            
             // Pausar la escena actual
             this.stateMachine.scene.scene.pause();
             
@@ -84,22 +58,14 @@ export class EndState extends State {
                 dragonPosition: collisionData.dragonPosition,
                 callingScene: 'GameScreen'
             });
-        } else {
-            console.log(`No hay colisión - Dragón no está cerca del submarino`);
         }
     }
     
-    /**
-     *  Método ejecutado al salir de este estado
-     */
     onStateExit() {
-        // Pasar al siguiente jugador (ejecutado por GameLoopMachine)
+        // Pasar al siguiente jugador
         this.stateMachine.context.currentState.transition();
     }
     
-    /**
-     *  Transición de vuelta al estado de movimiento
-     */
     transition() {
         this.stateMachine.transition(this.stateMachine.stateList.moveState);
     }
