@@ -1,45 +1,61 @@
-/**
- * ExitZoneSystem.js
- * 
- * Sistema para crear y gestionar las zonas de salida
- * Según GDD 5.1.2: "En las esquinas opuestas a la esquina donde inicias"
- */
+import EventDispatch from "../Event/EventDispatch.js";
+import Event from "../Event/Event.js";
 
+/**
+ * ExitZoneSystem
+ * 
+ * Sistema que gestiona las zonas de salida del mapa
+ * 
+ * - relocateZones() mantiene posición relativa en esquinas
+ * - destroy() elimina tweens antes de destruir sprites
+ * - animateZoneRelocation() con efectos visuales
+ */
 export class ExitZoneSystem {
+    /**
+     * @param {GameBoard} board - Referencia al tablero del juego
+     */
     constructor(board) {
         this.board = board;
+        
+        // Zonas de salida (coordenadas en vértices)
         this.zones = {
             red: null,
             blue: null
         };
         
-        this.zoneSprites = {
-            red: null,
-            blue: null
-        };
+        // Sprites visuales de las zonas
+        this.zoneSprites = {};
+        
+        console.log("ExitZoneSystem inicializado");
     }
 
-    /**
-     * Crea las zonas de salida basándose en las posiciones iniciales de los submarinos
+   /**
+     * Crea las zonas de salida en las esquinas FIJAS del tablero
      */
     createExitZones() {
+        // Obtener dimensiones del tablero en coordenadas de vértices
         const w = this.board.config.boardWidth - 1;
         const h = this.board.config.boardHeight - 1;
         
-        // Obtener posiciones iniciales de los submarinos
-        const sub1Pos = this.board.submarines.red.position;
-        const sub2Pos = this.board.submarines.blue.position;
+        console.log("=== CREANDO ZONAS DE SALIDA ===");
+        console.log(`  Dimensiones tablero: ${w} x ${h} (en vértices)`);
         
-        // Zona de salida ROJA (esquina opuesta a spawn de rojo)
-        // Si rojo está en (2,2) (esquina superior izquierda), su salida es esquina inferior derecha
+        // SIMPLIFICADO: Salidas FIJAS en esquinas opuestas a spawns
+        // Las 4 esquinas del tablero son:
+        // Superior Izquierda: (0, 0)
+        // Superior Derecha: (w*2, 0)
+        // Inferior Izquierda: (0, h*2)
+        // Inferior Derecha: (w*2, h*2)
+        
+        // ZONA ROJA: Esquina inferior derecha (opuesta a spawn rojo en superior izquierda)
         this.zones.red = {
-            x: w * 2,  // Esquina opuesta
+            x: w * 2,
             y: h * 2,
             color: 0xff4444,
             label: 'SALIDA\nROJO'
         };
         
-        // Zona de salida AZUL (esquina opuesta a spawn de azul)
+        // ZONA AZUL: Esquina superior izquierda (opuesta a spawn azul en inferior derecha)
         this.zones.blue = {
             x: 0,
             y: 0,
@@ -47,86 +63,74 @@ export class ExitZoneSystem {
             label: 'SALIDA\nAZUL'
         };
         
+        console.log(`  ✓ Zona ROJA creada en: (${this.zones.red.x}, ${this.zones.red.y})`);
+        console.log(`  ✓ Zona AZUL creada en: (${this.zones.blue.x}, ${this.zones.blue.y})`);
+        
         // Visualizar las zonas
         this.visualizeZone(this.zones.red, 'red');
         this.visualizeZone(this.zones.blue, 'blue');
         
-        console.log(`Zonas de salida creadas:`);
-        console.log(`- Rojo: (${this.zones.red.x}, ${this.zones.red.y})`);
-        console.log(`- Azul: (${this.zones.blue.x}, ${this.zones.blue.y})`);
-        
-        // Devolver las zonas para que GameBoard las almacene
         return this.zones;
     }
 
     /**
-     * Visualiza una zona de salida con efectos
+     * Visualiza una zona de salida en el tablero
      */
     visualizeZone(zone, playerColor) {
         const cellSize = this.board.config.cellSize;
         const x = zone.x * cellSize;
         const y = zone.y * cellSize;
         
-        // Container para la zona
+        // Crear container para la zona
         const container = this.board.scene.add.container(x, y);
-        
-        // FONDO CIRCULAR GRANDE 
-        const bgCircle = this.board.scene.add.circle(0, 0, cellSize * 0.9, zone.color, 0.2);
-        bgCircle.setStrokeStyle(4, zone.color, 0.8);
-        
-        //CÍRCULO MEDIO 
-        const midCircle = this.board.scene.add.circle(0, 0, cellSize * 0.6, zone.color, 0.3);
-        
-        // ESTRELLA CENTRAL 
-        const star = this.board.scene.add.star(
-            0, 0,
-            5,                    // 5 puntas
-            cellSize * 0.25,     // radio interno
-            cellSize * 0.5,      // radio externo
-            zone.color,
-            1
-        );
-        
-        //TEXTO 
-        const text = this.board.scene.add.text(0, 0, zone.label, {
-            fontSize: '14px',
-            fill: '#ffffff',
-            fontStyle: 'bold',
-            align: 'center',
-            stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(0.5);
-        
-        // Añadir todo al container
-        container.add([bgCircle, midCircle, star, text]);
-        
-        // Añadir al board
         this.board.add(container);
-        container.setDepth(50); // Por encima del tablero, debajo de submarinos
+        container.setDepth(50);
         
-        // ANIMACIONES 
+        // Círculo exterior (grande, transparente)
+        const outerCircle = this.board.scene.add.circle(
+            0, 0, 
+            cellSize * 1.5, 
+            zone.color, 
+            0.2
+        );
+        container.add(outerCircle);
         
-        // Pulsación del círculo exterior
-        this.board.scene.tweens.add({
-            targets: bgCircle,
-            scale: 1.2,
-            alpha: 0.1,
-            duration: 2000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
+        // Círculo medio (pulsante)
+        const midCircle = this.board.scene.add.circle(
+            0, 0, 
+            cellSize * 1.0, 
+            zone.color, 
+            0.4
+        );
+        container.add(midCircle);
         
-        // Rotación de la estrella
-        this.board.scene.tweens.add({
-            targets: star,
-            angle: 360,
-            duration: 4000,
-            repeat: -1,
-            ease: 'Linear'
-        });
+        // Círculo interior (sólido)
+        const innerCircle = this.board.scene.add.circle(
+            0, 0, 
+            cellSize * 0.6, 
+            zone.color, 
+            0.8
+        );
+        container.add(innerCircle);
         
-        // Pulsación del círculo medio
+        // Texto de la zona
+        const text = this.board.scene.add.text(
+            0, 0, 
+            zone.label,
+            {
+                fontSize: '14px',
+                fontFamily: 'Arial',
+                color: '#ffffff',
+                fontStyle: 'bold',
+                align: 'center',
+                stroke: '#000000',
+                strokeThickness: 3
+            }
+        );
+        text.setOrigin(0.5);
+        container.add(text);
+        
+        // Animación de pulsación del círculo medio
         this.board.scene.tweens.add({
             targets: midCircle,
             scale: 1.1,
@@ -153,11 +157,116 @@ export class ExitZoneSystem {
                submarine.position.y === zone.y;
     }
 
-    /**
-     * Reubica las zonas de salida (usado cuando el mapa se cierra)
+   /**
+     * Elimina una zona de salida completamente
+     * 
+     * @param {string} zoneName - 'red' o 'blue'
      */
-    relocateZones(newBounds) {
-        console.log("Reubicando zonas de salida...");
+    removeZone(zoneName) {
+        console.log(` Eliminando zona de salida: ${zoneName}`);
+        
+        // 1. Detener tweens del sprite
+        const sprite = this.zoneSprites[zoneName];
+        if (sprite && this.board.scene) {
+            this.board.scene.tweens.killTweensOf(sprite);
+            
+            // Si es un contenedor, detener tweens de sus hijos
+            if (sprite.list && Array.isArray(sprite.list)) {
+                sprite.list.forEach(child => {
+                    this.board.scene.tweens.killTweensOf(child);
+                });
+            }
+        }
+        
+        // 2. Destruir sprite
+        if (sprite && sprite.destroy) {
+            sprite.destroy();
+        }
+        
+        // 3. Limpiar referencias
+        delete this.zoneSprites[zoneName];
+        this.zones[zoneName] = null;
+        
+        console.log(`  ✓ Zona ${zoneName} eliminada`);
+    }
+
+    /**
+     *Verifica si una zona está en área cerrada y la elimina
+     * 
+     * @param {string} zoneName - 'red' o 'blue'
+     * @param {number} closedRings - Número de anillos cerrados
+     */
+    checkAndRemoveIfClosed(zoneName, closedRings) {
+        const zone = this.zones[zoneName];
+        if (!zone) {
+            return; // Ya eliminada
+        }
+        
+        // Calcular si está en zona cerrada
+        const offset = closedRings * 2;
+        const logic = this.board.matrix.logic.matrix;
+        const maxX = (logic.length - 1 - closedRings) * 2;
+        const maxY = (logic[0].length - 1 - closedRings) * 2;
+        const minX = offset * 2;
+        const minY = offset * 2;
+        
+        // Si la zona está fuera del área válida, eliminarla
+        if (zone.x < minX || zone.x > maxX || zone.y < minY || zone.y > maxY) {
+            console.log(`   Zona ${zoneName} en área cerrada - ELIMINANDO`);
+            this.removeZone(zoneName);
+        }
+    }
+
+    /**
+     * Anima el movimiento de una zona a su nueva posición
+     */
+    animateZoneRelocation(zoneName, newX, newY) {
+        const sprite = this.zoneSprites[zoneName];
+        if (!sprite) {
+            console.warn(` No se encontró sprite para zona ${zoneName}`);
+            return;
+        }
+        
+        const cellSize = this.board.config.cellSize;
+        const newPosX = this.board.config.x + newX * cellSize;
+        const newPosY = this.board.config.y + newY * cellSize;
+        
+        // Efecto de "teletransporte"
+        this.board.scene.tweens.add({
+            targets: sprite,
+            x: newPosX,
+            y: newPosY,
+            scale: { from: 1, to: 1.5, to: 1 },
+            alpha: { from: 1, to: 0.3, to: 1 },
+            duration: 800,
+            ease: 'Back.easeInOut',
+            onStart: () => {
+                this.board.scene.cameras.main.flash(200, 255, 255, 0);
+            },
+            onComplete: () => {
+                // Partículas al llegar
+                for (let i = 0; i < 12; i++) {
+                    const angle = (Math.PI * 2 * i) / 12;
+                    const particle = this.board.scene.add.circle(
+                        newPosX, newPosY, 5,
+                        zoneName === 'red' ? 0xff4444 : 0x4444ff, 1
+                    );
+                    this.board.add(particle);
+                    particle.setDepth(300);
+                    
+                    this.board.scene.tweens.add({
+                        targets: particle,
+                        x: newPosX + Math.cos(angle) * 60,
+                        y: newPosY + Math.sin(angle) * 60,
+                        alpha: 0,
+                        scale: 0,
+                        duration: 600,
+                        ease: 'Cubic.easeOut',
+                        onComplete: () => particle.destroy()
+                    });
+                }
+            }
+        });
     }
 
     /**
@@ -169,11 +278,9 @@ export class ExitZoneSystem {
         
         // Efecto de éxito
         const flash = this.board.scene.add.circle(
-            container.x, 
-            container.y, 
-            this.board.config.cellSize * 2, 
-            0xffff00, 
-            0.8
+            container.x, container.y,
+            this.board.config.cellSize * 2,
+            0xffff00, 0.8
         );
         this.board.add(flash);
         flash.setDepth(200);
@@ -191,11 +298,8 @@ export class ExitZoneSystem {
         for (let i = 0; i < 20; i++) {
             const angle = (Math.PI * 2 * i) / 20;
             const particle = this.board.scene.add.star(
-                container.x, 
-                container.y,
-                5, 5, 10,
-                0xffff00, 
-                1
+                container.x, container.y,
+                5, 5, 10, 0xffff00, 1
             );
             this.board.add(particle);
             particle.setDepth(201);
@@ -213,13 +317,51 @@ export class ExitZoneSystem {
         }
     }
 
-    /**
-     * Destruye las zonas de salida
+   /**
+     * Destruye las zonas de salida COMPLETAMENTE
      */
     destroy() {
-        Object.values(this.zoneSprites).forEach(sprite => {
-            if (sprite) sprite.destroy();
-        });
+        console.log(" Destruyendo ExitZoneSystem...");
+        
+        // 1. Detener TODOS los tweens primero
+        if (this.board && this.board.scene) {
+            const scene = this.board.scene;
+            
+            // Detener tweens de todos los sprites de zona
+            for (const [key, sprite] of Object.entries(this.zoneSprites)) {
+                if (sprite) {
+                    // Detener tweens específicos de este sprite
+                    scene.tweens.killTweensOf(sprite);
+                    
+                    // Si es un contenedor, detener tweens de sus hijos
+                    if (sprite.list && Array.isArray(sprite.list)) {
+                        sprite.list.forEach(child => {
+                            scene.tweens.killTweensOf(child);
+                        });
+                    }
+                }
+            }
+        }
+        
+        // 2. Destruir sprites después de detener tweens
+        for (const [key, sprite] of Object.entries(this.zoneSprites)) {
+            if (sprite && sprite.destroy) {
+                console.log(`  Destruyendo sprite de zona ${key}`);
+                try {
+                    sprite.destroy();
+                } catch (e) {
+                    console.error(`  Error destruyendo sprite ${key}:`, e);
+                }
+            }
+        }
+        
+        // 3. Limpiar referencias
+        this.zoneSprites = {};
+        this.zones = {
+            red: null,
+            blue: null
+        };
+        
+        console.log("  ✓ ExitZoneSystem destruido completamente");
     }
 }
-

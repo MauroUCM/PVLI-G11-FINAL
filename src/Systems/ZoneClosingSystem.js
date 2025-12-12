@@ -95,7 +95,7 @@ export class ZoneClosingSystem {
         
         // Texto de advertencia
         const warning = scene.add.text(400, 300, 
-            `⚠️ ADVERTENCIA ⚠️\n\n` +
+            ` ADVERTENCIA \n\n` +
             `El mapa empezará a cerrarse\n` +
             `en ${this.config.warningTurns} turnos!\n\n` +
             `Muévete hacia el centro`, 
@@ -129,7 +129,7 @@ export class ZoneClosingSystem {
         // Efecto de pantalla (flash naranja)
         scene.cameras.main.flash(300, 255, 170, 0, false);
         
-        console.log(`⚠️ WARNING: El mapa se cerrará en ${this.config.warningTurns} turnos!`);
+        console.log(`WARNING: El mapa se cerrará en ${this.config.warningTurns} turnos!`);
     }
 
     /**
@@ -139,7 +139,7 @@ export class ZoneClosingSystem {
         const scene = this.board.scene;
         
         const msg = scene.add.text(400, 300,
-            `🚨 CIERRE DE ZONA ACTIVADO 🚨\n\n` +
+            `CIERRE DE ZONA ACTIVADO \n\n` +
             `El mapa se reduce cada ${this.config.interval} turnos\n` +
             `¡Evita las zonas rojas!`,
             {
@@ -164,7 +164,7 @@ export class ZoneClosingSystem {
         // Flash rojo
         scene.cameras.main.flash(500, 255, 0, 0, false);
         
-        console.log("🚨 CIERRE DE ZONA ACTIVADO");
+        console.log("CIERRE DE ZONA ACTIVADO");
     }
 
     /**
@@ -378,28 +378,52 @@ export class ZoneClosingSystem {
     }
 
     /**
-     * Reubica las zonas de salida si están en zona cerrada
+     * Reubica las zonas de salida cuando el perímetro se cierra
      */
     relocateExitZones() {
-        if (!this.board.exitZones) return;
+        // Verificación robusta de la estructura completa
+        if (!this.board) {
+            console.warn("Board no existe");
+            return;
+        }
         
-        // Verificar si las zonas de salida están en zona cerrada
-        const redInClosed = this.isInClosedZone(
-            this.board.exitZones.red.x,
-            this.board.exitZones.red.y
-        );
+        if (!this.board.exitZones) {
+            console.warn("board.exitZones no existe");
+            return;
+        }
+    
+        // Verificar que las zonas individuales existen
+        if (!this.board.exitZones.red || !this.board.exitZones.blue) {
+            console.warn(" Zonas de salida individuales no existen");
+            console.log("   exitZones.red:", this.board.exitZones.red);
+            console.log("   exitZones.blue:", this.board.exitZones.blue);
+            return;
+        }
         
-        const blueInClosed = this.isInClosedZone(
-            this.board.exitZones.blue.x,
-            this.board.exitZones.blue.y
-        );
+        // Verificar que las zonas tienen coordenadas
+        if (typeof this.board.exitZones.red.x === 'undefined' || 
+            typeof this.board.exitZones.red.y === 'undefined') {
+            console.warn(" Zona roja no tiene coordenadas válidas");
+            return;
+        }
         
-        //  Implementar reubicación
-        if (redInClosed || blueInClosed) {
-            console.log("⚠️ Zonas de salida en zona cerrada - reubicación necesaria");
-            // Mover a la esquina más cercana del área válida
+        if (typeof this.board.exitZones.blue.x === 'undefined' || 
+            typeof this.board.exitZones.blue.y === 'undefined') {
+            console.warn("Zona azul no tiene coordenadas válidas");
+            return;
+        }
+        
+        console.log(" Verificando zonas de salida...");
+        console.log(`   Zona roja: (${this.board.exitZones.red.x}, ${this.board.exitZones.red.y})`);
+        console.log(`   Zona azul: (${this.board.exitZones.blue.x}, ${this.board.exitZones.blue.y})`);
+        
+        //Verificar y ELIMINAR zonas de salida si están en área cerrada
+        if (this.board.exitZoneSystem) {
+            this.board.exitZoneSystem.checkAndRemoveIfClosed('red', this.closedRings);
+            this.board.exitZoneSystem.checkAndRemoveIfClosed('blue', this.closedRings);
         }
     }
+
 
     /**
      * Destruye el sistema

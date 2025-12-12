@@ -96,13 +96,15 @@ export class GameScreen extends Phaser.Scene{
             let text = `Round ${round}`
             roundText.setText(text)
             this.roundTextAnimation.setText(text);
-            
+             this.submarineView.renderView();
             this.chain.restart();            
         })
         
         EventDispatch.on(Event.UPDATE_PLAYER_TEXT,(player)=>{
             if (this.tablero.currentTurn == "red") playerText.setText(`Turno de China`);
             else if (this.tablero.currentTurn == "blue")playerText.setText(`Turno de Japon`);
+             this.submarineView.renderView();
+          
         })
 
         EventDispatch.on(Event.UPDATE_PLAYER_ACTION_TEXT,(state)=>{

@@ -148,16 +148,17 @@ export class SubmarineComplete extends Phaser.GameObjects.Image {
     }
 
     canMoveTo(newX, newY) {
-        if(this.board.matrix[newX][newY].submarine != null){
-            console.log("No se puede mover a esa direccion!")
-            return false;   
-        }
+        // if(this.board.matrix[newX][newY].submarine != null){
+        //     console.log("No se puede mover a esa direccion!")
+        //     return false;   
+        // }
 
-        else return (
+        return (
             newX >= 0 &&
             newY >= 0 &&
             newX <= this.board.matrix.length - 1 &&
-            newY <= this.board.matrix[0].length - 1
+            newY <= this.board.matrix[0].length - 1 &&
+            this.board.matrix[newX][newY].submarine == null
         );
     }
 

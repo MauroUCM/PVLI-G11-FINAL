@@ -1,6 +1,6 @@
 ## Este proyecto es un trabajo universitario
 
-# Proyecto G11
+# Pacific Tactics
 
 # Redes sociales
 [Twitter](https://x.com/DeepCodeStudio)
