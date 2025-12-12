@@ -33,10 +33,10 @@ export class GraphicSquare extends Phaser.GameObjects.Image{
     render(){
         if(this.square.dragon != null){
             this.setDisplaySize(this.cellSize*1,this.cellSize*1);
-            this.setAlpha(1);
+            this.setAlpha(0);
             console.log(`Dragon square: ${this.x} ${this.y}`)
         }
-        else this.setAlpha(0.01);
+        else this.setAlpha(0.00);
         this.setDisplaySize(this.cellSize*2,this.cellSize*2);
         
     }
