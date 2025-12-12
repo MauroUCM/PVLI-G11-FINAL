@@ -39,10 +39,6 @@ export class GameOverScene extends Phaser.Scene {
         this.winner = data.winner;
         this.reason = data.reason;
         this.stats = data.stats;
-        
-        console.log("=== FIN DE JUEGO ===");
-        console.log(`   Ganador: ${this.winner}`);
-        console.log(`   Razón: ${this.reason}`);
     }
 
     /**
@@ -51,8 +47,6 @@ export class GameOverScene extends Phaser.Scene {
     create() {
         const w = this.cameras.main.width;
         const h = this.cameras.main.height;
-        
-        console.log("Creando pantalla de Game Over...");
         
         // PASO 1: Fondo oscuro
         const overlay = createOverlay(this, 0.95);
@@ -110,8 +104,6 @@ export class GameOverScene extends Phaser.Scene {
         
         // PASO 7: Efecto de celebración
         this.createCelebrationEffect(w/2, h/2, winnerColor);
-        
-        console.log("Pantalla de Game Over creada");
     }
     
     /**
@@ -122,8 +114,6 @@ export class GameOverScene extends Phaser.Scene {
      */
     createStatsPanel(w, h) {
         const panelY = 280;
-        
-        console.log("Creando panel de estadísticas...");
         
         // Panel semi-transparente
         const panel = createStyledPanel(this, w/2, panelY + 80, 500, 180);
@@ -171,8 +161,6 @@ export class GameOverScene extends Phaser.Scene {
      */
     createButtons(w, h) {
         const buttonY = h - 120;
-        
-        console.log("Creando botones...");
     
         // BOTÓN REVANCHA con soporte de teclado (R)
         const revanchaBtn = createStyledButton(
@@ -273,7 +261,6 @@ export class GameOverScene extends Phaser.Scene {
      * @param {Number} color - Color de las partículas
      */
     createCelebrationEffect(x, y, color) {
-        console.log("Creando efecto de celebración...");
         
         // Partículas que caen desde arriba
         for (let i = 0; i < 30; i++) {

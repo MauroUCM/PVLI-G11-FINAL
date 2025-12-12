@@ -25,8 +25,6 @@ export class Menu2 extends Phaser.Scene {
         const w = this.cameras.main.width;
         const h = this.cameras.main.height;
         
-        console.log("Creando menú principal...");
-        
         // Fondo oscuro para mejor contraste
         this.add.rectangle(w/2, h/2, w, h, 0x0a1f2e, 1);
         
@@ -118,12 +116,5 @@ export class Menu2 extends Phaser.Scene {
         );
         helpText.setOrigin(0.5);
         helpText.setColor('#aaaaaa'); // Gris claro para mejor visibilidad
-        
-        console.log("Menú principal creado");
-        
-        // VERIFICACIÓN: Imprimir estado de los botones
-        console.log("Estado de botones:");
-        console.log(`  Start label visible: ${startBtn.label.visible}`);
-        console.log(`  Start label color: ${startBtn.label.style.color}`);
     }
 }

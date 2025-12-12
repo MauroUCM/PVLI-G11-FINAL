@@ -53,12 +53,6 @@ export class FireStateWindow extends Phaser.Scene {
         // Asignar dimensiones del canvas
         this.screenWidth = this.sys.game.canvas.width;
         this.screenHeight = this.sys.game.canvas.height;
-        
-        console.log("FireStateWindow iniciado");
-    }
-
-    preload(){
-        // No hay assets que cargar
     }
 
     /**
@@ -71,10 +65,6 @@ export class FireStateWindow extends Phaser.Scene {
      */
     create(data){
         this.data = data;
-        
-        console.log("   Creando ventana de selección de disparo...");
-        console.log(`   Jugador: ${data.currentPlayer}`);
-        
         // FONDO OSCURO usando estilos unificados
         const overlay = createOverlay(this, 0.7);
         // overlay.setDepth(1000);
@@ -92,8 +82,6 @@ export class FireStateWindow extends Phaser.Scene {
         const screenWidth = this.screenWidth;
         const screenHeight = this.screenHeight;
         
-        console.log("Creando PopUp...");
-        
         // Container principal del PopUp
         this.popUp = this.add.container(screenWidth/2, screenHeight/2);
         
@@ -110,7 +98,6 @@ export class FireStateWindow extends Phaser.Scene {
         
         // Determinar teclas según el jugador
         const buttonKeys = data.currentPlayer == 1 ? ['A', 'D'] : ['LEFT', 'RIGHT'];
-        console.log(`   Teclas asignadas: ${buttonKeys.join(', ')}`);
         
         // BOTÓN DISTANCIA 1 con soporte de teclado
         let distance1Button = createStyledButton(
@@ -154,8 +141,6 @@ export class FireStateWindow extends Phaser.Scene {
             distance1Button.keyListener,
             distance2Button.keyListener
         ];
-        
-        console.log("PopUp creado correctamente");
     }
 
     /**
@@ -164,13 +149,11 @@ export class FireStateWindow extends Phaser.Scene {
      * @param {Number} distance - Distancia elegida (1 o 2)
      */
     parse(distance){
-        console.log(`Distancia seleccionada: ${distance}`);
         
         // LIMPIAR todos los listeners de teclado
         this.keyListeners.forEach((listener, index) => {
             if (listener) {
                 listener.off('down');
-                console.log(`Listener ${index + 1} limpiado`);
             }
         });
         

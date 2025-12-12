@@ -128,8 +128,6 @@ export class ZoneClosingSystem {
         
         // Efecto de pantalla (flash naranja)
         scene.cameras.main.flash(300, 255, 170, 0, false);
-        
-        console.log(`WARNING: El mapa se cerrará en ${this.config.warningTurns} turnos!`);
     }
 
     /**
@@ -175,12 +173,8 @@ export class ZoneClosingSystem {
         
         // No cerrar si se alcanzó el tamaño mínimo
         if (currentSize <= this.config.minSize) {
-            console.log(`Tamaño mínimo alcanzado (${this.config.minSize}x${this.config.minSize})`);
             return;
         }
-        
-        console.log(`Cerrando anillo ${this.closedRings + 1}...`);
-        
         // Cerrar el borde
         const closedPositions = this.closeBorder();
         this.closedZones.push(closedPositions);
@@ -194,8 +188,6 @@ export class ZoneClosingSystem {
         
         // Mostrar efecto
         this.showClosingEffect();
-        
-        console.log(`Mapa reducido a ${this.getCurrentMapSize()}x${this.getCurrentMapSize()}`);
     }
 
     /**
@@ -329,8 +321,6 @@ export class ZoneClosingSystem {
                 // Aplicar daño
                 sub.loseHealth(this.config.damagePerTurn);
                 
-                console.log(`⚠️ ${sub.name} atrapado en zona cerrada! -${this.config.damagePerTurn} HP`);
-                
                 // Efecto visual de daño
                 this.showDamageEffect(sub);
                 
@@ -412,11 +402,6 @@ export class ZoneClosingSystem {
             console.warn("Zona azul no tiene coordenadas válidas");
             return;
         }
-        
-        console.log(" Verificando zonas de salida...");
-        console.log(`   Zona roja: (${this.board.exitZones.red.x}, ${this.board.exitZones.red.y})`);
-        console.log(`   Zona azul: (${this.board.exitZones.blue.x}, ${this.board.exitZones.blue.y})`);
-        
         //Verificar y ELIMINAR zonas de salida si están en área cerrada
         if (this.board.exitZoneSystem) {
             this.board.exitZoneSystem.checkAndRemoveIfClosed('red', this.closedRings);

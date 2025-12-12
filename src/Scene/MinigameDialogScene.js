@@ -50,8 +50,6 @@ export class MinigameDialogScene extends Phaser.Scene {
         const screenWidth = this.cameras.main.width;
         const screenHeight = this.cameras.main.height;
         
-        console.log("Creando interfaz del diálogo del dragón...");
-        
         // PASO 1: FONDO OSCURO SEMITRANSPARENTE
         const overlay = createOverlay(this, 0.75);
         overlay.setDepth(1000);
@@ -152,19 +150,13 @@ export class MinigameDialogScene extends Phaser.Scene {
             noButton,
             helpText
         };
-        
-        console.log("Interfaz del diálogo creada correctamente");
-        console.log(`   Botón SÍ: ancho ~${yesButton.bg.width}px`);
-        console.log(`   Botón NO: ancho ~${noButton.bg.width}px`);
     }
 
     /**
      * Inicia el minijuego del dragón
      */
     startMinigame() {
-        console.log("¡Iniciando minijuego del dragón!");
-        
-        // 🔧 LIMPIAR listeners de teclado antes de cerrar
+        // LIMPIAR listeners de teclado antes de cerrar
         if (this.uiElements.yesButton.keyListener) {
             this.uiElements.yesButton.keyListener.off('down');
         }
@@ -186,7 +178,6 @@ export class MinigameDialogScene extends Phaser.Scene {
      * Rechaza el minijuego y vuelve al juego
      */
     decline() {
-        console.log("Minijuego rechazado por el jugador");
         
         // 🔧 LIMPIAR listeners de teclado
         if (this.uiElements.yesButton.keyListener) {
@@ -205,7 +196,6 @@ export class MinigameDialogScene extends Phaser.Scene {
             alpha: 0,
             duration: 200,
             onComplete: () => {
-                console.log("Cerrando diálogo y volviendo al juego");
                 this.scene.stop();
                 this.scene.resume(this.callingScene);
             }

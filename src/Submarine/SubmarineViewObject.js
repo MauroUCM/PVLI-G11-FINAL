@@ -245,8 +245,6 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         let isTarget1 = attacker.isTarget(target.position.x, target.position.y, 1)
 
         let isTargetDir1 = isTarget1 && attacker.isTargetDir(target.position.x, target.position.y, 1, direction)
-        
-        console.log("ON_DISTANCE_1", isTargetDir1, direction)
 
         return isTargetDir1;
     }
@@ -256,8 +254,6 @@ export default class SubmarineView extends Phaser.GameObjects.Container{
         let isTarget2 = attacker.isTarget(target.position.x, target.position.y, 2)
         
         let isTargetDir2 = isTarget2 &&  attacker.isTargetDir(target.position.x, target.position.y, 2, direction) 
-        console.log("ON_DISTANCE_2", isTargetDir2, direction)
-
 
         return isTargetDir2;
     }

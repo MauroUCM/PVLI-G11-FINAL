@@ -178,8 +178,6 @@ export function createStyledButton(scene, x, y, text, onClick, isPrimary = true,
     const textWidth = label.width;
     const buttonWidth = Math.max(minWidth, textWidth + (paddingX * 2));
     
-    console.log(`Botón "${text}": ancho calculado = ${buttonWidth}px (texto: ${textWidth}px)`);
-    
     //  Fondo del botón con ancho calculado
     const bg = scene.add.rectangle(x, y, buttonWidth, buttonHeight, color, 1);
     bg.setStrokeStyle(UIStyles.dimensions.buttonBorderWidth, 0xffffff);

@@ -11,9 +11,6 @@ import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMa
 
 // AZUL = JAPON | ROJO = CHINA !!!
 
-//TODO
-// - Arreglar tween
-
 export class GameScreen extends Phaser.Scene{
 
     chain
@@ -25,13 +22,10 @@ export class GameScreen extends Phaser.Scene{
     }
     
     init(){
-        console.log("init");
         this.tablero;
     }
     
     preload(){
-        console.log("preload");
-        
         this.load.image("Square","Page/img/Profile/Lappland.jpeg")
         this.load.image("BG","assets/GameBoard_BG.jpg")
         this.load.image("Submarine","assets/submarino.png")
@@ -120,7 +114,6 @@ export class GameScreen extends Phaser.Scene{
             this.submarineView.setVisible(true);
         }
         else this.submarineView.setVisible(false);
-        console.log("Toggled submarine view visibility");
         
     }
 

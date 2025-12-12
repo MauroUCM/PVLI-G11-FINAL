@@ -11,9 +11,6 @@ import { ExitZoneSystem } from "../Systems/ExitZoneSystem.js";
 import { ZoneClosingSystem } from "../Systems/ZoneClosingSystem.js";
 import config from "./config.json" with {type:"json"}
 
-//TODO
-//Hacer limpieza del los eventos, ir poniendo comentarios a las cosas
-
 export default class GameBoard extends Phaser.GameObjects.Container {
     /**
      * @param {*} scene El nombre de la escena
@@ -35,8 +32,6 @@ export default class GameBoard extends Phaser.GameObjects.Container {
         this.add(this.GRAPHIC)
 
         this.toggleKey = this.scene.input.keyboard.addKey('N');
-
-        
 
         this.config = config;
 
@@ -97,7 +92,6 @@ export default class GameBoard extends Phaser.GameObjects.Container {
         this.setupEvents();
 
         this.render();
-        console.log("Board created with resources and HUDs")
         scene.add.existing(this);
     }
 

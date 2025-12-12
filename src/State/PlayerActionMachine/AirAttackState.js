@@ -54,7 +54,6 @@ export class AirAttackState extends State {
         
         // Verificar si el ataque aéreo está disponible
         if (!currentSubmarine || !currentSubmarine.canUseAerialAttack()) {
-            console.log(`Ataque aéreo en cooldown: ${currentSubmarine.aerialCooldown} turnos`);
             this.showCooldownMessage(currentSubmarine.aerialCooldown);
             
             // Saltar este estado
@@ -84,7 +83,6 @@ export class AirAttackState extends State {
         });
         
         this.cancelKey.on("down", () => {
-            console.log("Ataque aéreo cancelado");
             this.deactivateAirAttackSelection();
             this.transition();
         });
@@ -112,7 +110,7 @@ export class AirAttackState extends State {
         const scene = this.stateMachine.scene;
         
         const msg = scene.add.text(400, 300,
-            `⏱️ ATAQUE AÉREO EN COOLDOWN\n\n` +
+            `ATAQUE AÉREO EN COOLDOWN\n\n` +
             `Disponible en: ${cooldown} turno${cooldown === 1 ? '' : 's'}`,
             {
                 fontSize: '24px',
@@ -154,7 +152,7 @@ export class AirAttackState extends State {
         
         // TÍTULO
         const title = scene.add.text(400, 50,
-            '🎯 SELECCIONAR OBJETIVO DE BOMBARDEO 🎯',
+            'SELECCIONAR OBJETIVO DE BOMBARDEO',
             {
                 fontSize: '24px',
                 fill: '#ff0000',
@@ -308,8 +306,6 @@ export class AirAttackState extends State {
     executeAirAttack(submarine) {
         if (!this.selectedSquare) return;
         
-        console.log(`Ejecutando ataque aéreo en casilla (${this.selectedSquare.position.x}, ${this.selectedSquare.position.y})`);
-        
         // Usar ataque aéreo (activa cooldown)
         submarine.useAerialAttack();
         
@@ -337,7 +333,7 @@ export class AirAttackState extends State {
         
         // Mensaje de lanzamiento
         const msg = scene.add.text(400, 300,
-            '🚀 BOMBARDEO LANZADO 🚀\n\n' +
+            'BOMBARDEO LANZADO \n\n' +
             'Impactará al final de la ronda',
             {
                 fontSize: '28px',
