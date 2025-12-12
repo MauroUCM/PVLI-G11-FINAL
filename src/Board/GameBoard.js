@@ -111,8 +111,8 @@ export default class GameBoard extends Phaser.GameObjects.Container {
          * - red: China (jugador 1) - spawn superior izquierda
          */
         this.submarines = {
-            blue: new SubmarineComplete(scene, 0, 0, this.matrix.logic, this,"blue",2),   
-            red:  new SubmarineComplete(scene, 5, 5, this.matrix.logic, this,"red",1)  
+            blue: new SubmarineComplete(scene, 4, 3, this.matrix.logic, this,"blue",2),   
+            red:  new SubmarineComplete(scene, 1, 5, this.matrix.logic, this,"red",1)  
         };
 
         this.submarines.red.orientation = Orientation.W;
