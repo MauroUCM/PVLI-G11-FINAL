@@ -1,744 +1,1477 @@
-# **PVLI G11**
+# **PACIFIC TACTICS**
 
-# **Documento de diseño PVLI**
+## **DOCUMENTO DE DISEÑO DEL JUEGO (GDD)**
 
-[1.Resumen](#Resumen)
 
-[2\. Concepto del juego](#2)
+**Versión:** 2.0 (Actualizada \- Implementación Real)  
+**Fecha:** Diciembre 2025  
+**Equipo:** PVLI Grupo 11 \- Deep Code Studio  
+**Estado:** Implementado y Jugable
 
-[2.1 Descripción General](#2.1)
+[**1\. RESUMEN**](#1.-resumen)
 
-[2.2 Género](#2.2)
+[1.1 Concepto General](#1.1-concepto-general)
 
-[2.3 Pilares de Diseño](#2.3)
+[1.2 Características Principales](#1.2-características-principales)
 
-[2.4 Experiencia de Juego Deseada](#2.4)
+[1.3 Especificaciones Rápidas](#1.3-especificaciones-rápidas)
 
-[3\. Narrativa y Contexto (esto es antiguo ya)](#3)
+[**2\. CONCEPTO DEL JUEGO**](#2.-concepto-del-juego)
 
-[**4\. Gameplay**](#4)
+[2.1 Descripción General](#2.1-descripción-general)
 
-[4.1 Requisitos Mínimos](#4.1)
+[2.2 Género](#2.2-género)
 
-[4.2 Condiciones de Victoria](#4.2)
+[2.3 Pilares de Diseño](#2.3-pilares-de-diseño)
 
-[4.3 estructura de Turno (Core Loop)](#4.3)
+[2.4 Experiencia de Juego Deseada](#2.4-experiencia-de-juego-deseada)
 
-[**5\. Mecánicas**](#5)
+[**3\. NARRATIVA Y CONTEXTO**](#3.-narrativa-y-contexto)
 
-[5.1 El Tablero de Juego](#5.1)
+[3.1 Ambientación](#3.1-ambientación)
 
-[5.1.1 Estructura](#5.1.1)
+[3.2 Premisa](#3.2-premisa)
 
-[5.1.2 Elementos en el Mapa](#5.1.2)
+[3.3 Tono](#3.3-tono)
 
-[5.2 Sistema de Orientación](#5.2)
+[**4\. GAMEPLAY CORE**](#4.-gameplay-core)
 
-[5.3 Sistema de Movimiento](#5.3)
+[4.1 Requisitos del Sistema](#4.1-requisitos-del-sistema)
 
-[5.4 Sistema de Combate](#5.4)
+[4.2 Estructura del Core Loop](#4.2-estructura-del-core-loop)
 
-[5.4.1 Disparo Normal (Cañones)](#5.4.1)
+[4.3 Progresión Detallada de un Turno](#4.3-progresión-detallada-de-un-turno)
 
-[5.4.2 Ataque Aéreo (Bombardeo)](#5.4.2)
+[**5\. MECÁNICAS DEL JUEGO**](#5.-mecánicas-del-juego)
 
-[5.5 Sistema de Vida](#5.5)
+[5.1 El Tablero de Juego](#5.1-el-tablero-de-juego)
 
-[5.6 Sistema de Recursos](#5.6)
+[5.1.1 Estructura](#5.1.1-estructura)
 
-[//5.7 Obstáculos en el mapa](#5.7)
+[5.1.2 Elementos en el Mapa](#5.1.2-elementos-en-el-mapa)
 
-[5.8 Dragon (NPC)](#5.8)
+[5.2 Sistema de Orientación](#5.2-sistema-de-orientación)
 
-[**6\. Sistemas del Juego**](#6)
+[5.3 Sistema de Movimiento](#5.3-sistema-de-movimiento)
 
-[6.1 Sistema de Visión](#6.1)
+[5.4 Sistema de Combate](#5.4-sistema-de-combate)
 
-[6.2 Sistema de Mapa Anotable](#6.2)
+[5.4.1 Disparo Normal (Cañones)](#5.4.1-disparo-normal-\(cañones\))
 
-[6.3 Sistema de Cierre de Zona](#6.3)
+[5.4 Sistema de Vida](#5.4-sistema-de-vida)
 
-[**7\. Interfaz y Controles**](#7)
+[5.5 Sistema de Recursos](#5.5-sistema-de-recursos)
 
-[7.1 Pantalla Dividida](#7.1)
+[**6\. SISTEMAS DEL JUEGO**](#6.-sistemas-del-juego)
 
-[7.2 Vista de Interfaz](#7.2)
+[6.1 Sistema de Turnos](#6.1-sistema-de-turnos)
 
-[7.2.1 Vista Principal (3 Ventanas)](#7.2.1)
+[6.2 Sistema de Eventos](#6.2-sistema-de-eventos)
 
-[7.2.2 Vista de Mapa Completo](#7.2.2)
+[6.3 Sistema de Visibilidad](#6.3-sistema-de-visibilidad)
 
-[7.2.3 Vista de Selección de Ataque Normal](#7.2.3)
+[6.4 Sistema de Zonas de Salida](#6.4-sistema-de-zonas-de-salida)
 
-[7.2.4 Vista de Selección de Ataque Aéreo](#7.2.4)
+[6.5 Sistema de Cierre de Zona](#6.5-sistema-de-cierre-de-zona)
 
-[7.3 HUD (Heads-Up Display)](#7.3)
+[**7\. INTERFAZ DE USUARIO**](#7.-interfaz-de-usuario)
 
-[7.5 Controles](#7.5)
+[7.1 Sistema de Pantalla por Turnos](#7.1-sistema-de-pantalla-por-turnos)
 
-[7.5 Menú principal](#7.5)
+[7.2 HUD (Head-Up Display)](#7.2-hud-\(head-up-display\))
 
-[**8\. Ejemplo de una partida**](#8)
+[7.3 Vista del Submarino](#7.3-vista-del-submarino)
 
-[8.1 Inicio](#8.1-inicio)
+[7.4 Mapa Completo](#7.4-mapa-completo)
 
-[8.2 Progresión detallada de un turno](#8.2)
+[7.5 Sistema de Anotaciones del Mapa](#7.5-sistema-de-anotaciones-del-mapa)
 
-[8.3 Fin de la partida](#8.3)
+[7.6 Elementos Adicionales](#7.6-elementos-adicionales)
 
-[**9\. En desuso**](#9)
+[**8\. MINIJUEGOS**](#8.-minijuegos)
 
-[**9.1 Ideas para limitar el tiempo de juego**](#9.1)
+[8.1 Minijuego del Dragón Vegano (Flappy Bird)](#8.1-minijuego-del-dragón-vegano-\(flappy-bird\))
 
-[**9.2 Posibles detalles**](#9.2)
+[8.2 Minijuego de Reparación](#8.2-minijuego-de-reparación)
 
-[**10\. Prueba en papel**](#10)
+[**9\. CONDICIONES DE VICTORIA**](#9.-condiciones-de-victoria)
 
-[**11. Enlace**](#11)
+[9.1 Victoria por Eliminación](#9.1-victoria-por-eliminación)
 
-<a id="Resumen"></a>
-# **1.Resumen**
+[9.2 Victoria por Escape](#9.2-victoria-por-escape)
 
+[9.3 Victoria por Rendición](#9.3-victoria-por-rendición)
 
-**Título del juego:** \[POR DEFINIR \- Opciones: "Deep Tactics", "Submarine Duel", "Bajo Presión"\]
+[9.4 Pantalla de Victoria](#9.4-pantalla-de-victoria)
 
-**Concepto principal:** Juego multijugador local de estrategia por turnos donde dos jugadores controlan submarinos en un tablero de casillas. La característica principal es la información asimétrica: cada jugador solo puede ver su entorno inmediato (frontal y laterales), creando un intenso juego de deducción psicológica y anticipación de movimientos.
+[**10\. ARQUITECTURA TÉCNICA**](#10.-arquitectura-técnica)
 
-**Plataforma:** Navegador web 
+[10.1 Tecnologías](#10.1-tecnologías)
 
-**Número de jugadores:** 2 jugadores (local)
+[10.2 Estructura General](#10.2-estructura-general)
 
-**Duración estimada de partida:** 10-20 minutos
+[10.3 Configuración](#10.3-configuración)
 
-**Objetivo de victoria:**
+[10.4 Valores Balanceados](#10.4-valores-balanceados)
 
-* Ser el último submarino operativo  
-* Alcanzar la casilla de salida designada
+[10.5 Rendimiento](#10.5-rendimiento)
 
-<a id = "2"></a>
-# **2.Concepto del juego**
+[**11\. CARACTERÍSTICAS ADICIONALES IMPLEMENTADAS**](#11.-características-adicionales-implementadas)
 
-<a id = "2.1"></a>
-### **2.1 Descripción General**
+[11.1 Sistema de Estadísticas de Partida](#11.1-sistema-de-estadísticas-de-partida)
 
-Los jugadores asumen el rol de capitanes de submarinos en una batalla táctica submarina. La limitación de visión y la información oculta sobre la posición enemiga convierten cada partida en un duelo psicológico donde la deducción, el engaño y la planificación estratégica son fundamentales.
+[11.2 Sistema de Revancha](#11.2-sistema-de-revancha)
 
-<a id="2.2"></a>
-### **2.2 Género**
+[**12\. CARACTERÍSTICAS NO IMPLEMENTADAS**](#12.-características-no-implementadas)
 
-* **Género principal:** Estrategia por turnos  
-* **Subgénero:** Juego de información asimétrica/oculta  
-* **Estilo:** Multijugador local competitivo
+[12.1 Mecánicas de Combate No Completadas](#12.1-mecánicas-de-combate-no-completadas)
 
-<a id="2.3"></a>
-### **2.3 Pilares de Diseño**
+[12.2 Sistema de Mapa Anotable Completo](#12.2-sistema-de-mapa-anotable-completo)
 
-1. **Visión Limitada:** Los jugadores solo ven tres direcciones (frontal, lateral izquierda, lateral derecha), nunca su espalda ni una vista general del tablero durante su turno de acción.  
-2. **Información Asimétrica:** Cada jugador conoce únicamente su propio estado (vida, munición, cooldowns) y lo que puede observar directamente. Debe deducir la posición y estado del enemigo.  
-3. **Deducción y Engaño:** El corazón del juego está en inferir la ubicación enemiga mediante sus acciones (ataques aéreos, movimientos deducidos) y en crear patrones de movimiento impredecibles.  
-4. **Múltiples Caminos a la Victoria:** Los jugadores pueden ganar destruyendo al enemigo o alcanzando su zona de escape, creando dilemas estratégicos.  
-5. **Rejugabilidad:** La información oculta hace cada partida única
+[12.3 Minijuegos No Implementados](#12.3-minijuegos-no-implementados)
 
-<a id="2.4"></a>
-### **2.4 Experiencia de Juego Deseada**
+[12.4 Elementos del Mapa](#12.4-elementos-del-mapa)
+
+[12.5 Mecánicas de Colocación](#12.5-mecánicas-de-colocación)
+
+[12.6 Sistema de Recolección](#12.6-sistema-de-recolección)
+
+[12.7 Visibilidad y Detección](#12.7-visibilidad-y-detección)
+
+[12.8 Guardado y Persistencia](#12.8-guardado-y-persistencia)
+
+[12.9 Contenido Adicional](#12.9-contenido-adicional)
+
+[CONCLUSIÓN](#conclusión)
+
+# 
+
+
+# **1\. RESUMEN** <a id="1.-resumen"></a>
+
+## **1.1 Concepto General** <a id="1.1-concepto-general"></a>
+
+**Pacific Tactics** es un juego de estrategia por turnos para 2 jugadores donde cada uno controla un submarino en un tablero de 5x5 casillas. Los jugadores deben localizar y destruir el submarino enemigo o alcanzar su zona de escape, todo mientras gestionan recursos limitados y navegan con información visual restringida.
+
+## **1.2 Características Principales** <a id="1.2-características-principales"></a>
+
+* **Información Asimétrica:** Visión limitada a 3 direcciones (frontal y laterales)  
+* **Sistema de Turnos Alternados:** Cada jugador juega su turno por separado  
+* **Combate Táctico:** Dos tipos de munición y ataques aéreos estratégicos  
+* **Gestión de Recursos:** 4 tipos de recursos para potenciar habilidades  
+* **Múltiples Caminos a la Victoria:** Destrucción o escape  
+* **Minijuegos Integrados:** 2 minijuegos completos con físicas  
+* **NPC Dragón:** Elemento neutral que otorga recompensas
+
+## **1.3 Especificaciones Rápidas** <a id="1.3-especificaciones-rápidas"></a>
+
+| Aspecto | Especificación |
+| ----- | ----- |
+| **Jugadores** | 2 (local, pantalla compartida alternada) |
+| **Duración Partida** | 10-20 minutos |
+| **Tamaño Tablero** | 5x5 casillas (9x9 vértices) |
+| **Plataforma** | Navegador web (Phaser 3\) |
+| **Género** | Estrategia por turnos, táctica |
+| **Público** | 12+ años |
+
+# 
+
+# **2\. CONCEPTO DEL JUEGO** <a id="2.-concepto-del-juego"></a>
+
+## **2.1 Descripción General** <a id="2.1-descripción-general"></a>
+
+Dos submarinos enemigos se enfrentan en aguas profundas. Ninguno conoce la posición exacta del otro. Los jugadores deben usar su visión limitada, deducción lógica y recursos estratégicos para localizar y eliminar al enemigo, o alternativamente, alcanzar su zona de escape para ganar por huida.
+
+El juego combina elementos de:
+
+* **Deducción:** Inferir la posición enemiga mediante pistas visuales  
+* **Táctica:** Gestionar recursos y elegir momentos para atacar  
+* **Estrategia:** Planificar rutas y decidir entre agresión o huida  
+* **Habilidad:** Completar minijuegos para obtener ventajas
+
+## **2.2 Género** <a id="2.2-género"></a>
+
+**Género Principal:** Estrategia por turnos  
+ **Subgéneros:**
+
+* Táctica naval  
+* Información asimétrica  
+* Gestión de recursos  
+* Deducción espacial
+
+## **2.3 Pilares de Diseño** <a id="2.3-pilares-de-diseño"></a>
+
+#### **1\. Visión Limitada** <a id="1.-visión-limitada"></a>
+
+Los jugadores solo ven tres direcciones: frontal, lateral izquierda y lateral derecha. **Nunca ven su espalda** ni tienen vista cenital durante el turno de acción. Esta limitación crea tensión constante y obliga a la planificación cuidadosa.
+
+#### **2\. Información Asimétrica** <a id="2.-información-asimétrica"></a>
+
+Cada jugador conoce únicamente:
+
+* Su propia posición y orientación  
+* Su vida, munición y recursos  
+* Lo que puede ver directamente  
+* Sus propias anotaciones en el mapa
+
+Debe deducir:
+
+* Posición del enemigo  
+* Estado del enemigo  
+* Intenciones del enemigo
+
+#### **3\. Deducción y Engaño** <a id="3.-deducción-y-engaño"></a>
+
+El corazón del juego está en:
+
+* Inferir ubicación enemiga mediante ataques aéreos  
+* Crear patrones de movimiento impredecibles  
+* Marcar posiciones sospechosas en el mapa  
+* Anticipar movimientos del oponente
+
+#### **4\. Múltiples Caminos a la Victoria** <a id="4.-múltiples-caminos-a-la-victoria"></a>
+
+Los jugadores pueden:
+
+* **Destruir:** Reducir HP enemigo a 0  
+* **Escapar:** Alcanzar su zona de salida  
+* **Forzar error:** Provocar que el enemigo se quede sin recursos
+
+#### **5\. Rejugabilidad** <a id="5.-rejugabilidad"></a>
+
+La información oculta, posiciones iniciales y aparición aleatoria de recursos hacen cada partida única.
+
+## **2.4 Experiencia de Juego Deseada** <a id="2.4-experiencia-de-juego-deseada"></a>
 
 Los jugadores deben sentir:
 
-* **Tensión constante** al no saber dónde está exactamente el enemigo  
-* **Satisfacción intelectual** al deducir correctamente la posición del oponente  
-* **Momentos dramáticos** cuando se encuentran cara a cara inesperadamente  
-* **Dilemas tácticos** entre ser agresivo o cauteloso, entre atacar o huir hacia la salida
+* **Tensión constante:** No saber dónde está el enemigo  
+* **Satisfacción intelectual:** Deducir correctamente posiciones  
+* **Momentos dramáticos:** Encuentros cara a cara inesperados  
+* **Dilemas tácticos:** ¿Atacar o huir? ¿Gastar recursos o guardarlos?  
+* **Control sobre el destino:** Las decisiones importan
 
-<a id="3"></a>
-# **3\. Narrativa, Contexto y Estética (esto es antiguo ya)**
-China y Japón se enfrentan en una dura guerra de la cual tú formas parte como timonel de un submarino. La única información que tienes sobre la posición de tus adversarios es tu vista frontal, lateral derecha y lateral izquierda de las profundidades marinas. Tendrás la posibilidad de realizar anotaciones en un mapa compuesto por hexágonos, moviéndote de
+# **3\. NARRATIVA Y CONTEXTO** <a id="3.-narrativa-y-contexto"></a>
 
-vértice a vértice, para posteriormente comunicar las coordenadas a la torre de control en las que quieres disparar munición.
+## **3.1 Ambientación** <a id="3.1-ambientación"></a>
 
-<a id="3.1"></a>
-### **3.1 Estilo gráfico**
+**Contexto Histórico:** Guerra naval submarina de mediados del siglo XX  
+ **Facciones:**
 
-	Se usarán unos gráficos pseudo 3D como en Myst. Modelos 3D hechos en Blender pero se usarán fotografías de estos como sprites y spritesheets.
+* **Japón** (Submarino Azul)  
+* **China** (Submarino Rojo)
 
-<a id="4"></a>
-# **4\. Gameplay**
+## **3.2 Premisa** <a id="3.2-premisa"></a>
 
-<a id="4.1"></a>
-### **4.1 Requisitos Mínimos**
+Eres el comandante de un submarino en una misión crítica. Las aguas están oscuras y la visibilidad es limitada. Tu sonar detectó presencia enemiga en el área, pero no conoces su ubicación exacta. Tu misión: destruir al enemigo o alcanzar la zona de extracción con vida.
+
+## **3.3 Tono** <a id="3.3-tono"></a>
+
+* Tenso y estratégico  
+* Realista en limitaciones (sin vista omnisciente)  
+* Accesible y dinámico  
+* Con toques de fantasía (dragón vegano)
+
+# **4\. GAMEPLAY CORE** <a id="4.-gameplay-core"></a>
+
+## **4.1 Requisitos del Sistema** <a id="4.1-requisitos-del-sistema"></a>
+
+**Requisitos Mínimos:**
 
 * 2 jugadores físicamente presentes  
 * 1 ordenador con navegador web moderno  
-* Pantalla compartida (ambos jugadores tienen que ser capaces de ver la misma pantalla)
+* Pantalla compartida (mínimo 800x600)  
+* Ratón y teclado
 
-<a id="4.2"></a>
-### **4.2 Condiciones de Victoria**
+**Navegadores Compatibles:**
 
-Un jugador gana cuando:
+* Chrome 90+  
+* Firefox 88+  
+* Edge 90+  
+* Safari 14+
 
-1. **Victoria por eliminación:** El submarino enemigo es destruido (vida llega a 0\)  
-2. **Victoria por escape:** Alcanza su zona de salida en el mapa
+## **4.2 Estructura del Core Loop** <a id="4.2-estructura-del-core-loop"></a>
 
-<a id="4.3"></a>
-### **4.3 estructura de Turno (Core Loop)**
+**INICIO DE PARTIDA**  
+    **↓**  
+**COLOCACIÓN INICIAL (posiciones fijas)**  
+    **↓**  
+**┌─────────────────────────────────┐**  
+**│   LOOP PRINCIPAL DE RONDA                                    │**  
+**├─────────────────────────────────┤**  
+**│                                                                                                  │**  
+**│  TURNO JUGADOR 1 (CHINA)                                      │**  
+**│  ├─ Fase 1: Consulta de Mapa                                      │**  
+**│  ├─ Fase 2: Movimiento                                                 │**  
+**│  ├─ Fase 3: Acción (Ataque)                                          │**  
+**│  └─ Fase 4: Fin de Turno                                               │**  
+**│                                                                                                  │**  
+**│  TURNO JUGADOR 2 (JAPÓN)                                    │**  
+**│  ├─ Fase 1: Consulta de Mapa                                    │**  
+**│  ├─ Fase 2: Movimiento                                               │**  
+**│  ├─ Fase 3: Acción (Ataque)                                        │**  
+**│  └─ Fase 4: Fin de Turno                                             │**  
+**│                                                                                                │**  
+**│  RESOLUCIÓN DE EFECTOS                                      │**  
+**│  └─ Ataques aéreos, recursos                                    │**  
+**│                                                                                               │**  
+**└────────────────────────────────┘**  
+    **↓**  
+**¿CONDICIÓN DE VICTORIA?**  
+    **├─ SÍ → FIN DE PARTIDA**
 
-**Por turno, cada jugador:**
+    **└─ NO → NUEVA RONDA**
 
-1. Puede consultar el mapa completo en cualquier momento  
-2. Decide si moverse (y en qué dirección)  
-3. Decide si atacar (disparo normal o ataque aéreo, si está disponible) o recoger un recurso  
-4. Puede hacer anotaciones en el mapa para estrategia futura
+## **4.3 Progresión Detallada de un Turno** <a id="4.3-progresión-detallada-de-un-turno"></a>
 
-**Una ronda se completa cuando ambos jugadores han realizado su turno.**
+#### **FASE 1: Consulta de Información** <a id="fase-1:-consulta-de-información"></a>
 
-**Progresión detallada de un turno:**
+El jugador puede:
 
-Cada turno de un jugador sigue esta secuencia:
+* **Consultar el mapa completo** presionando tecla M  
+  * Muestra el tablero completo sin niebla de guerra  
+  * Visibles: bordes, zonas de salida, dragón, anotaciones propias  
+  * NO visible: posición del enemigo  
+* **Ver su HUD** con información propia  
+  * Vida actual (HP/MaxHP)  
+  * Munición disponible (Tipo 1 y Tipo 2\)  
+  * Cooldown de ataque aéreo  
+  * Inventario de recursos  
+* **Vista del submarino** (3 ventanas)  
+  * Frontal, lateral izquierda, lateral derecha  
+  * Alcance de visión: 2-3 casillas
 
-**Fase 1: Consulta de Información**
+#### **FASE 2: Movimiento (Obligatorio Decidir)** <a id="fase-2:-movimiento-(obligatorio-decidir)"></a>
 
-* El jugador puede consultar el **mapa completo anotable** siempre que estés en tu trono  
-* Este mapa muestra el tablero completo con anotaciones propias, pero NO la posición del enemigo  
-* Sirve para orientarse y recordar información deducida en turnos anteriores
+El jugador DEBE elegir una de estas opciones:
 
-**Fase 2: Movimiento (Obligatorio decidir)**
+1. **Movimiento Frontal**   
+   * Avanza 1 casilla hacia adelante  
+   * Mantiene su orientación actual  
+   * Tecla: **↑** o **W**  
+2. **Movimiento Lateral Izquierdo**   
+   * Avanza 1 casilla a la izquierda  
+   * Rota 90° a la izquierda  
+   * Tecla: **←** o **A**  
+3. **Movimiento Lateral Derecho**   
+   * Avanza 1 casilla a la derecha  
+   * Rota 90° a la derecha  
+   * Tecla: **→** o **D**  
+4. **Permanecer Quieto**  
+   * No se mueve ni cambia orientación  
+   * Mantiene posición actual  
+   * Tecla: **↓** o **S**
 
-El jugador debe elegir una de estas opciones:
+**Importante:**
 
-* **Permanecer quieto** en su posición actual  
-* **Moverse hacia adelante:** Avanza una casilla manteniendo su orientación  
-* **Moverse lateral izquierdo:** Avanza una casilla hacia la izquierda Y rota su orientación 90° a la izquierda  
-* **Moverse lateral derecho:** Avanza una casilla hacia la derecha Y rota su orientación 90° a la derecha
+* **No existe movimiento hacia atrás**  
+* **El submarino siempre mira hacia adelante**  
+* **Colisión con bordes:** No puedes moverte fuera del tablero  
+* R**ecolección automática:** Si pasas por un recurso, lo recoges
 
-**Importante:** No existe movimiento hacia atrás. El submarino siempre mira hacia adelante.
+#### **FASE 3: Acción (Opcional)** <a id="fase-3:-acción-(opcional)"></a>
 
-**Fase 3: Ataque y Recolección (Opcional)**
+Después de moverse, el jugador puede:
 
-Después de moverse, el jugador puede decidir si atacar o recoger un recurso:
+**Opción A: Disparo Normal (Cañones)** 
 
-* **Disparo Normal (Cañones):** Si tiene munición  
-* **Ataque Aéreo (Bombardeo):** Si el cooldown ha terminado, puede marcar cualquier casilla del mapa  
-* **Recoger recurso:** No sabes cuál es hasta que lo coges
+* Requiere: Munición disponible  
+* Tipos disponibles:  
+  * **Munición Tipo 1:** Alcance 1 casilla (15 balas iniciales)  
+  * **Munición Tipo 2:** Alcance 2 casillas (15 balas iniciales)  
+* Daño: 20 HP por impacto  
+* Condición: Enemigo debe estar en rango Y visible  
+* Tecla: **Espacio** o **Enter**
 
-**Fase 4: Fin del Turno**
+**Opción B: Usar Recurso** Si tienes recursos en el inventario:
 
-* Se muestra feedback de las acciones realizadas, pero no de ninguna coordenada exacta  
-* Pasa el turno al siguiente jugador
+* **Repair Kit:** Recupera 30 HP (máximo 100\)  
+* **Cooldown Reducer:** Reduce 1 turno el cooldown aéreo  
+* **Ammunition Extra:** Añade 5 balas de cada tipo  
+* **Movement Limiter:** (se lanza contra el enemigo si está en rango)
 
-**Nota:** Una **ronda** se completa cuando ambos jugadores han realizado su turno. Los efectos de ataques aéreos se resuelven al final de cada ronda.
+**Opción C: No Hacer Nada** Simplemente terminar el turno sin acción.
 
-<a id="5"></a>
-# **5\. Mecánicas**
+#### **FASE 4: Fin del Turno** <a id="fase-4:-fin-del-turno"></a>
 
-<a id="5.1"></a>
-### **5.1 El Tablero de Juego**
+El sistema ejecuta:
 
-<a id="5.1.1"></a>
-#### **5.1.1 Estructura**
+1. Aplicar efectos de fin de turno  
+   * Daño por fugas (si las hay)  
+   * Reducir cooldowns  
+   * Reducir duraciones de efectos  
+2. Actualizar HUD  
+3. Cambiar a pantalla del siguiente jugador  
+4. Mostrar "Turno de \[Jugador\]"
 
-* **Tipo:** Cuadrícula de casillas cuadradas  
-* **Tamaño sugerido:** 10x10 casillas **\[POR DEFINIR\]**  
-* **Límites:** El mapa tiene bordes sólidos; no se puede salir de la zona de juego  
-* **Movimiento:** Los submarinos se mueven de vértice a vértice entre casillas (cada vértice representa una posición válida)
+**Una ronda se completa cuando ambos jugadores han jugado su turno.**
 
-<a id="5.1.2"></a>
-#### **5.1.2 Elementos en el Mapa**
+Al final de la ronda:
 
-**Zonas de Salida (2 en total, una por jugador):**
+* **Se resuelven ataques aéreos**  
+* **El dragón puede moverse**  
+* **Se incrementa el contador de ronda**
 
-* Cada jugador tiene su propia zona de salida  
-* Ubicación: En lados opuestos del mapa para mantener equidad, siempre en las esquinas opuestas a la esquina donde inicias  
-* Condición: Al alcanzar tu zona de salida, ganas instantáneamente  
-* Visibilidad: Ambas zonas son visibles en el mapa completo para ambos jugadores
+# **5\. MECÁNICAS DEL JUEGO** <a id="5.-mecánicas-del-juego"></a>
 
-**Recursos Dispersos:** Los recursos aparecen en casillas específicas del mapa y se recogen automáticamente al pasar por encima:
+## **5.1 El Tablero de Juego** <a id="5.1-el-tablero-de-juego"></a>
 
-1. **Reductor de Cooldown Aéreo**   
-   * Reduce 1 turno el tiempo de espera del próximo ataque aéreo  
-2. **Limitador de Movimiento Enemigo**   
-   * Al usarse: El oponente solo puede moverse en dos direcciones durante su próximo turno (frontal \+ una lateral aleatoria)  
-   * Uso: Manual desde el inventario  
-3. **Kit de Reparación**   
-   * Restaura **\[POR DEFINIR: 25-50 HP\]**  
-   * Uso: Automático al recogerlo si estás dañado, o se almacena para uso manual posterior
+### **5.1.1 Estructura** <a id="5.1.1-estructura"></a>
 
+**Tipo:** Cuadrícula de casillas cuadradas  
+**Tamaño:** 5x5 casillas (9x9 vértices)  
+**Sistema de Coordenadas:**
 
-<a id="5.2"></a>
-### **5.2 Sistema de Orientación**
+* Casillas: Coordenadas impares (1,1), (1,3), (3,1), etc.  
+* Vértices: Coordenadas pares (0,0), (2,2), (4,4), etc.  
+* Los submarinos se mueven de vértice a vértice 
 
-* El submarino siempre mira hacia una de las **cuatro direcciones cardinales**: Norte, Sur, Este u Oeste  
-* La orientación determina qué ve el jugador y hacia dónde puede disparar  
-* **Rotar orientación:**  
-  * Movimiento frontal: NO cambia orientación  
-  * Movimiento lateral (izquierdo/derecho): Rota automáticamente 90° en esa dirección
+**Límites:** El mapa tiene bordes sólidos \- no se puede salir de la zona de juego
+
+**Dimensiones Visuales:**
+
+* Tamaño de celda: 40px  
+* Tamaño total visual: \~320x320px  
+* Posición en pantalla: (250, 100\)
+
+### **5.1.2 Elementos en el Mapa** <a id="5.1.2-elementos-en-el-mapa"></a>
+
+#### **Zonas de Salida (2 en total)** <a id="zonas-de-salida-(2-en-total)"></a>
+
+**Características:**
+
+* **Cantidad:** 1 por jugador  
+* **Ubicación:** Esquinas opuestas del tablero  
+* **Visibilidad:** Siempre visibles para ambos jugadores  
+* **Función:** Al alcanzarla con tu submarino y al terminar la ronda → **Victoria Instantánea**  
+* **Tamaño:** 1 vértice
+
+#### **Recursos Dispersos** <a id="recursos-dispersos"></a>
+
+**Cantidad en Mapa:** 8 recursos aleatorios por partida  
+ **Aparición:** Distribuidos aleatoriamente al inicio  
+ **Recolección:** **Automática** al pasar por encima
+
+**Tipos de Recursos:**
+
+| Recurso | Efecto |
+| ----- | ----- |
+| **Cooldown Reducer** | Reduce 1 turno el cooldown aéreo |
+| **Repair Kit** | Activa minijuego → Recupera hasta 30 HP |
+| **Ammunition Extra** | \+5 balas Tipo 1, \+5 balas Tipo 2 |
+| **Movement Limiter** | Lanza contra enemigo (si visible) → Restringe su movimiento 2 turnos |
+
+#### **Dragón (NPC Neutral)** <a id="dragón-(npc-neutral)"></a>
+
+**Concepto:** Un dragón vegano que limpia el océano y ayuda a submarinos
+
+**Características:**
+
+* **Movimiento:** Se mueve por el tablero cada vez que un jugador se mueve   
+* **Función:** Activa minijuego cuando te encuentras con él  
+* **Recompensa:** Recursos según puntuación en el minijuego  
+* **Visibilidad:** Solo visible cuando está en tu campo de visión  
+* **Tamaño:** Ocupa 1 casilla completa
+
+**Interacción:**
+
+1. Te mueves a un vértice adyacente al dragón  
+2. Se activa automáticamente el **Minijuego del Dragón Vegano**  
+3. Completas el minijuego (estilo Flappy Bird)  
+4. Recibes recompensa según tu puntuación  
+5. El dragón se mueve a otra posición
+
+## **5.2 Sistema de Orientación** <a id="5.2-sistema-de-orientación"></a>
+
+**Rotación:**
+
+* Movimiento lateral izquierdo: **\-90°**  
+* Movimiento lateral derecho: **\+90°**  
+* La orientación determina qué ves en tus 3 ventanas
 
 **Ejemplo:**
 
-* Submarino mirando al Norte  
-* Jugador elige moverse lateral derecho  
-* Resultado: El submarino se mueve una casilla hacia el Este Y ahora mira hacia el Este
- 
-<a id="5.3"></a>
-### **5.3 Sistema de Movimiento**
+Si estás orientado al ESTE (90°):  
+├─ Vista Frontal: Mira hacia el ESTE  
+├─ Vista Lateral Izq: Mira hacia el NORTE
 
-Cada turno, el jugador puede:
+└─ Vista Lateral Der: Mira hacia el SUR
 
-* **Quedarse quieto** en su posición actual  
-* **Moverse una casilla** hacia adelante, lateral izquierdo o lateral derecho
+## **5.3 Sistema de Movimiento** <a id="5.3-sistema-de-movimiento"></a>
 
 **Restricciones:**
 
-* No se puede salir de los límites del mapa  
-* **\[POR DEFINIR\]** Qué ocurre si dos submarinos intentan ocupar el mismo espacio:  
-  * Opción A: El movimiento se bloquea  
-  * Opción B: Ambos submarinos son destruidos  
-  * Opción C: Se decide aleatoriamente quién sobrevive  
-  * Opción D: Se activa un mini-juego de combate cuerpo a cuerpo (o otro tipo de minijuego)
+* Solo 3 direcciones disponibles por turno  
+* Siempre avanzas 1 casilla  
+* No puedes retroceder  
+* No puedes salir del tablero
 
+**Movimientos Específicos:**
 
-<a id="5.4"></a>
-### **5.4 Sistema de Combate**
+#### **Movimiento Frontal**  <a id="movimiento-frontal"></a>
 
-#### **5.4.1 Disparo Normal (Cañones)**
+**Antes: Posición (X, Y), Orientación O**
 
-**Características:**
+**Después: Posición (X \+ dx, Y \+ dy), Orientación O**
 
-* **Alcance:** 2 alcances, 1 casilla o 2, en la dirección frontal del submarino  
-* **Ejecución:** Instantánea tras seleccionar el punto de impacto  
-* **Frecuencia:** Disponible cada turno (sin cooldown)  
-* **Munición:** 1 por cada turno  
-* **Daño:** **\[PARÁMETRO POR DEFINIR\]** (ej. 25 HP) pero el de menos alcance tiene más daño que el de más alcance
+* No cambia orientación  
+* Avanza en la dirección actual
 
-**Mecánica de Selección:**
+#### **Movimiento Lateral Izquierdo**  <a id="movimiento-lateral-izquierdo"></a>
 
-* El jugador ve un overlay en su vista frontal mostrando el área de ataque  
-* Puede seleccionar cualquier vértice dentro de las dos distancias  
-* El daño se aplica si hay un submarino enemigo en ese vértice
+**Antes: Posición (X, Y), Orientación O**
 
-**Ventajas:**
+**Después: Posición (X \+ dx\_izq, Y \+ dy\_izq), Orientación (O \- 90°)**
 
-* Sin restricciones de uso  
-* Feedback inmediato  
-* No hay daño colateral
+* Rota 90° a la izquierda  
+* Avanza en la nueva dirección
 
-**Desventajas:**
+#### **Movimiento Lateral Derecho**  <a id="movimiento-lateral-derecho"></a>
 
-* Alcance muy limitado  
-* Requiere saber/deducir la posición enemiga con precisión  
-* Solo frontal (vulnerable por los flancos y espalda)
+**Antes: Posición (X, Y), Orientación O**
 
-<a id="5.4.2"></a>
-#### **5.4.2 Ataque Aéreo (Bombardeo)**
+**Después: Posición (X \+ dx\_der, Y \+ dy\_der), Orientación (O \+ 90°)**
 
-**Características:**
+* Rota 90° a la derecha  
+* Avanza en la nueva dirección
 
-* **Alcance:** Cualquier casilla del mapa completo  
-* **Área de efecto:** Los cuatro vértices de la casilla seleccionada  
-* **Ejecución:** Se ejecuta al **final de la ronda**, después de que ambos jugadores hayan completado sus turnos  
-* **Frecuencia:** 3 turnos de cooldown. Al principio de la partida el ataque aéreo está desactivado por 2 turnos  
-* **Daño:** **\[PARÁMETRO POR DEFINIR\]** (ej. 40 HP)  
-* **Daño propio:** SÍ \- también te afecta si estás en el área de efecto
+**Efectos Especiales:**
 
-**Mecánica de Selección:**
+**Movement Limiter** (si te afecta):
 
-* El jugador abre el mapa completo  
-* Selecciona una casilla objetivo  
-* Se marca con un indicador temporal  
-* Al final de la ronda, explota en esa ubicación
+* Durante 2 turnos después de ser impactado  
+* Solo puedes moverte frontalmente  
+* No puedes girar izquierda/derecha  
+* El efecto se muestra en tu HUD
 
-**Ventajas:**
+## **5.4 Sistema de Combate** <a id="5.4-sistema-de-combate"></a>
 
-* Alcance ilimitado  
-* Área de efecto (mayor probabilidad de impacto)  
-* Útil para controlar zonas o forzar movimiento enemigo
+### **5.4.1 Disparo Normal (Cañones)**  <a id="5.4.1-disparo-normal-(cañones)"></a>
 
-**Desventajas:**
+**Munición Tipo 1 (Corto Alcance):**
 
-* Cooldown largo entre usos  
-* Ejecución retrasada (el enemigo puede moverse antes de que impacte)  
-* Puede dañarte a ti mismo si calculas mal  
-* Revela tu estrategia al enemigo (deduce dónde crees que está)
+* **Alcance:** 1 casilla  
+* **Cantidad Inicial:** 15 balas  
+* **Daño:** 20 HP  
+* **Recarga:** \+5 con Ammunition Extra  
+* **Uso:** Enemigos cercanos, combate directo
 
-### 
+**Munición Tipo 2 (Largo Alcance):**
 
-<a id="5.5"></a>
-### **5.5 Sistema de Vida**
+* **Alcance:** 2 casillas  
+* **Cantidad Inicial:** 15 balas  
+* **Daño:** 20 HP  
+* **Recarga:** \+5 con Ammunition Extra  
+* **Uso:** Enemigos lejanos, mayor versatilidad
 
-**\[POR DEFINIR\]**
+**Requisitos para Disparar:**
 
-**Sistema de Daño con Fugas**
-
-* Vida inicial: 100 HP  
-* Los disparos causan daño inmediato Y crean fugas progresivas  
-* Las fugas causan \[X HP por turno\] adicional  
-* Los kits de reparación detienen las fugas y restauran HP  
-* Añade presión temporal y gestión de recursos  
-* Sistema de fugas: "Los disparos causan fugas, tienes X tiempo para arreglarlo"  
-* ¿Cómo funciona exactamente? ¿Daño progresivo? ¿Turno perdido para reparar?
-
-<a id="5.6"></a>
-### **5.6 Sistema de Recursos**
-
-Los jugadores pueden recoger recursos moviéndose sobre ellos:
-
-1. **Reductor de Cooldown Aéreo**  
-   * Reduce el tiempo de espera para el próximo ataque aéreo  
-2. **Limitador de Movimiento Enemigo**  
-   * Al usarse, el oponente solo puede moverse en dos direcciones durante su próximo turno  
-3. **Munición Extra** *(si se implementa munición limitada)*  
-   * Incrementa los disparos disponibles  
-4. **Materiales de reparación del submarino**  
-   * Repara el submarino
-
-Los materiales son visibles en el mapa, más el tipo de recurso no lo es, todos son iguales de aspecto en el mapa:
-
-* Cuando se coge se asigna de forma random el tipo de recurso 
-
-//O
-
-* Cuando se coge se puede craftear el tipo de recurso que quieras
-
-**\[POR DEFINIR\]**
-
-* Cantidad de cada recurso en el mapa  
-* Si reaparecen tras ser recogidos  
-* Si hay diferentes tipos de materiales para arreglar un submarino dañado, que cada uno recupere x cantidad de vida, o todos recuperan lo mismo, y cuanto recuperarían.
-
-<a id="5.7"></a>
-### **//5.7 Obstáculos en el mapa**
-
-En el mapa puede haber obstáculos, que pueden ocupar casillas (los cuatro vértices) o un solo vértice.  
-Los obstáculos son visibles en el mapa general, los jugadores pueden consultarlo en su turno.
-
-Si el submarino choca con un obstáculo  
-Si un disparo normal acierta un obstáculo destruye el obstáculo?  
-Si un ataque aéreo acierta un obstáculo destruye el obstáculo?
-
-<a id="5.8"></a>
-### **5.8 Dragon (NPC)**
-
-**Concepto:** Un elemento neutral que se mueve por el mapa siguiendo una ruta predefinida.
-
-**Características:**
-
-* **Comportamiento:** Sigue una ruta circular o en patrón específico por el mapa  
-* **Función:** Repara submarinos dañados que se encuentre en su camino  
-* **Cantidad de reparación:** **\[POR DEFINIR: 30-40 HP?\]**  
-* **Velocidad:** Se mueve 1 casilla cada **\[POR DEFINIR: 2-3 turnos?\]**  
-* **Visibilidad:** Solo visible cuando está en tu campo de visión
-
-**Implicación Estratégica:**
-
-* Los jugadores pueden planear rutas para interceptar al dragón  
-* Crea puntos de encuentro predecibles donde ambos submarinos pueden coincidir  
-* Añade una capa adicional de gestión de riesgo/recompensa
-
-**\[POR DEFINIR \- IMPORTANTE\]**
-
-* Ruta exacta del dragón en el tablero  
-* ¿Es completamente predecible o tiene elementos aleatorios?  
-* ¿Qué pasa si ambos submarinos están en la ruta del dragón al mismo tiempo?
-
-<a id="6"></a>
-# **6\. Sistemas del Juego**
-
-<a id="6.1"></a>
-### **6.1 Sistema de Visión**
-
-**Visión Limitada del Submarino:**
-
-Cada jugador ve únicamente tres "ventanas" que representan su campo de visión:
-
-1. **Vista Frontal (Central):** Lo que hay directamente adelante  
-2. **Vista Lateral Izquierda:** Lo que hay a la izquierda  
-3. **Vista Lateral Derecha:** Lo que hay a la derecha
-
-**Importante:** NUNCA se ve lo que hay detrás del submarino.
-
-**¿Qué se muestra en cada ventana?**
-
-* Casillas vacías (agua oscura)  
-* Submarino enemigo (si está en esa dirección)  
-* Recursos en el suelo  
-* Límites del mapa  
-* Dragón reparador
-
-**Alcance visual:**  2 casillas, de delante y de los laterales, todas rectas, ninguna diagonal
- 
-<a id="6.2"></a>
-### **6.2 Sistema de Mapa Anotable**
-
-Cada jugador tiene acceso a un **mapa completo del tablero** que puede consultar en cualquier momento durante su turno.
-
-**Características del Mapa:**
-
-**Información mostrada por defecto:**
-
-* Estructura completa del tablero (todas las casillas)  
-* Límites del mapa  
-* Zonas de salida (ambas)  
-* Recursos visibles, pero todos iguales
-
-**Información NO mostrada:**
-
-* Posición actual del enemigo y la tuya  
-* Movimientos del enemigo  
-* Estado del enemigo (vida, recursos)
-
-**Sistema de Anotaciones:** Los jugadores pueden hacer **marcas personales** en el mapa:
-
-* Marcar casillas con colores diferentes  
-* Añadir símbolos (ejemplo: "enemigo visto aquí", "peligro", "objetivo")  
-* Estas anotaciones son públicas ya que la pantalla se comparte  
-* Persisten entre turnos
-
-**Propósito estratégico:**
-
-* Recordar dónde se vio al enemigo la última vez  
-* Triangular posible posición enemiga según ataques aéreos recibidos  
-* Planificar rutas de movimiento  
-* Marcar zonas peligrosas o estratégicas
-
-
-<a id="6.3"></a>
-### **6.3 Sistema de Cierre de Zona**
-
-Para evitar partidas eternas y forzar el enfrentamiento:
+1. Tener munición del tipo adecuado  
+2. Enemigo dentro del rango  
+3. Enemigo visible en tus ventanas de vista  
+4. Línea de visión clara
 
 **Mecánica:**
 
-* A partir del turno **\[POR DEFINIR: Ej. turno 15-20\], O**  a partir de **X \[POR DEFINIR: Ej. turno 10-15\]**  turnos sin enfrentamientos, el mapa comienza a cerrarse, antes de esto los jugadores recibirán un warning de que en **X** turnos el mapa se reducirá.  
-* Cada **\[POR DEFINIR: 2-3 turnos\]**, una fila o columna exterior del tablero se vuelve inaccesible  
-* Los submarinos no pueden entrar en zonas cerradas  
-* Si un submarino se queda atrapado en una zona que se cierra, recibe **\[POR DEFINIR: 20-30 HP de daño\]** por turno hasta moverse
+1. Presionas tecla de disparo  
+2. Se abre ventana de selección de tipo de munición  
+3. Seleccionas Tipo 1 o Tipo 2  
+4. Si el enemigo está en rango: **IMPACTO** (daño instantáneo)  
+5. Si está fuera de rango: **FALLO** (munición perdida)
 
-**Patrón de cierre:** 
+## **5.4 Sistema de Vida** <a id="5.4-sistema-de-vida"></a>
 
-* Cierre simétrico toda la fila exterior se vuelve inaccesible, la casilla de salida se reubica con el cierre poniéndose en el mismo sitio pero en el espacio reducido.
+**Especificaciones:**
 
-![image9.jpg (1999×1172)](https://raw.githubusercontent.com/A2stedB/PVLI-G11/8ec30b404dcf98a054692907836a1d144d89ee0f/Documentacion/images/image9.jpg)
+* **HP Máximo:** 100  
+* **HP Inicial:** 100  
+* **Muerte:** HP \= 0 → Victoria del enemigo
 
-**Tamaño mínimo:** El mapa NO puede reducirse más allá de **\[POR DEFINIR: 4x4 casillas\]**
+**Fuentes de Daño:**
 
+| Fuente | Daño | Frecuencia |
+| ----- | ----- | ----- |
+| Disparo Tipo 1 | 20 HP | Por impacto |
+| Disparo Tipo 2 | 20 HP | Por impacto |
+| Ataque Aéreo | 30 HP | Por impacto |
+| Fugas (Leaks) | Variable | Por turno |
 
-<a id="7"></a>
-# **7\. Interfaz y Controles**
+**Sistema de Fugas:**
 
-<a id="7.1"></a>
-### **7.1 Pantalla Dividida**
+* Si recibes daño, puedes desarrollar fugas  
+* Las fugas causan daño adicional cada turno  
+* Cantidad: leakDamagePerTurn (variable)  
+* Se reparan usando **Repair Kit** (minijuego)
 
-**Filosofía de diseño:** Toda la información se muestra en una sola pantalla física dividida en dos mitades (una por jugador).
+**Recuperación de HP:**
 
-**Entre turnos:**
+* **Repair Kit:** Activa minijuego → Hasta \+30 HP  
+* Máximo siempre 100 HP (no puede exceder)
 
-* Pantalla de transición: "Turno de Jugador X \- Presiona cualquier tecla"
+**Indicador Visual:**
 
-<a id="7.2"></a>
-### **7.2 Vista de Interfaz**
+* Barra de vida en HUD  
+* Color: Verde (\>66%), Amarillo (33-66%), Rojo (\<33%)  
+* Número exacto mostrado: "HP: 80/100"
 
-<a id="7.2.1"></a>
-#### **7.2.1 Vista Principal (3 Ventanas)**
+## **5.5 Sistema de Recursos** <a id="5.5-sistema-de-recursos"></a>
 
-**Ventana Central (Frontal) \- La más grande:**
+**Gestión de Inventario:**
 
-* Muestra lo que hay directamente adelante  
-* Alcance: \[2-3\] casillas de profundidad  
-* Aquí aparecen enemigos, recursos, límites
+* **Capacidad:** Ilimitada  
+* **Uso:** Manual (excepto recolección que es automática)  
+* **Visibilidad:** Mostrado en HUD
 
-**Ventanas Laterales (Izquierda y Derecha):**
+#### **Recurso 1: Repair Kit**  <a id="recurso-1:-repair-kit"></a>
 
-* Más pequeñas que la frontal  
-* Muestran vistas perpendiculares  
-* Mismo alcance que la frontal
+**Función:** Repara el submarino
 
-**Estilo visual:**
+**Uso:**
 
-![image3.jpg (1999×1500)](https://raw.githubusercontent.com/A2stedB/PVLI-G11/8ec30b404dcf98a054692907836a1d144d89ee0f/Documentacion/images/image3.jpg)
+1. En el estado reservado para utilizar el kit, decidir si usarlo o no  
+2. Se activa **Minijuego de Reparación**  
+3. Según tu puntuación: recuperas hasta 30 HP  
+4. Las fugas se reparan automáticamente
 
-![image2.jpg (1999×1500)](https://raw.githubusercontent.com/A2stedB/PVLI-G11/8ec30b404dcf98a054692907836a1d144d89ee0f/Documentacion/images/image2.jpg)
+**Minijuego:**
 
+* Tipo: Reparación de fugas con mecánicas de física  
+* Duración: \~30 segundos  
+* Objetivo: Sellar el máximo de fugas posible  
+* Recompensa: HP proporcional al éxito
 
-<a id="7.2.2"></a>
-#### **7.2.2 Vista de Mapa Completo**
-* **Activación:** Botón "Mapa" o tecla \[M\]
+#### **Recursos No Funcionales (Scripts Existen)** <a id="recursos-no-funcionales-(scripts-existen)"></a>
 
-**Funcionalidades:**
+##### **Cooldown Reducer**  <a id="cooldown-reducer"></a>
 
-* Click en casillas para añadir/quitar anotaciones  
-* Selector de tipo de marca (colores, símbolos)  
-* Borrador de anotaciones
+**Estado:** Script implementado pero NO integrado
 
-![image13.jpg (1999×1500)](https://raw.githubusercontent.com/A2stedB/PVLI-G11/refs/heads/main/Documentacion/images/image13.jpg)
+**Razón:**
 
+* No existe sistema de ataque aéreo activo  
+* El recurso no tiene utilidad en el juego actual  
+* Código presente en carpeta de recursos
 
-<a id="7.2.3"></a>
-#### **7.2.3 Vista de Selección de Ataque Normal**
+##### **Ammunition Extra**  <a id="ammunition-extra"></a>
 
-**Activación:** Botón "Atacar \- Cañones" durante fase de ataque
+**Estado:** Script implementado pero NO integrado
+
+**Razón:**
+
+* No está en el flujo de juego  
+* Las municiones se usan pero no se recargan con este recurso  
+* Código presente en carpeta de recursos
+
+# **6\. SISTEMAS DEL JUEGO** <a id="6.-sistemas-del-juego"></a>
+
+## **6.1 Sistema de Turnos** <a id="6.1-sistema-de-turnos"></a>
+
+**Implementación:** Máquinas de Estado
+
+**Estructura:**
+
+* Cada jugador tiene fases definidas  
+* Movimiento → Acción → Fin de Turno  
+* Los turnos alternan entre jugadores  
+* Una ronda \= 2 turnos (uno por jugador)
+
+**Flujo:**
+
+**INICIO TURNO**  
+    **↓**  
+**\[Fase Movimiento\]**  
+    **↓**  
+**\[Fase Acción\]**  
+    **↓**  
+**\[Fin Turno\]**  
+    **↓**
+
+**CAMBIO DE JUGADOR**
+
+## **6.2 Sistema de Eventos** <a id="6.2-sistema-de-eventos"></a>
+
+**Implementación:** Patrón Observer
+
+**Ventajas:**
+
+* Comunicación desacoplada entre sistemas  
+* Fácil extensión de funcionalidad  
+* Separación clara de responsabilidades
+
+**Eventos Principales:**
+
+* Movimiento de submarino  
+* Disparo de arma  
+* Uso de recurso  
+* Fin de turno  
+* Actualización de UI
+
+## **6.3 Sistema de Visibilidad** <a id="6.3-sistema-de-visibilidad"></a>
+
+**Vista del Submarino:**
+
+* 3 Ventanas simultáneas  
+* Ventana Central (Frontal) \- Más grande  
+* Ventanas Laterales (Izq/Der) \- Más pequeñas
+
+**Alcance:** 2 casillas por dirección
+
+**Elementos Visibles:**
+
+* Submarino enemigo (si está en rango)  
+* Recursos (si están en rango)  
+* Dragón (si está en rango)  
+* Bordes del tablero
+
+## **6.4 Sistema de Zonas de Salida** <a id="6.4-sistema-de-zonas-de-salida"></a>
+
+**Características:**
+
+* Cada jugador tiene 1 zona  
+* Ubicadas en esquinas opuestas  
+* Visibles en todo momento  
+* Tamaño: 1 vértice
+
+**Victoria por Escape:**
+
+* Submarino alcanza su zona  
+* Victoria inmediata  
+* No necesita destruir al enemigo
+
+## **6.5 Sistema de Cierre de Zona** <a id="6.5-sistema-de-cierre-de-zona"></a>
+
+**Concepto:**
+
+* Mapa se reduce progresivamente  
+* Fuerza encuentros entre jugadores  
+* Tamaño mínimo: 4x4
+
+**Descripción completa del funcionamiento:**
+
+* Activación en turno 15  
+* Advertencia en turno 12  
+* Cierra cada 3 turnos  
+* Daño de 25 HP por turno en zona cerrada  
+*  Efectos visuales (zonas rojas, flashes)  
+* Eliminación automática de zonas de salida
+
+# **7\. INTERFAZ DE USUARIO** <a id="7.-interfaz-de-usuario"></a>
+
+## **7.1 Sistema de Pantalla por Turnos** <a id="7.1-sistema-de-pantalla-por-turnos"></a>
+
+**Diseño:** Vista alternada por jugador
+
+Durante el turno de un jugador:
+
+* Solo se muestra su información  
+* Su HUD es visible  
+* El HUD del otro jugador está oculto  
+* Texto indica de quién es el turno
+
+Al cambiar de turno:
+
+* Transición visual  
+* Se oculta info del jugador anterior  
+* Se muestra info del jugador actual  
+* Texto actualiza "Turno de \[Jugador\]"
+
+**Ventajas:**
+
+* Mejor información asimétrica  
+* Evita "screen peeking"  
+* Pantalla menos saturada  
+* Más clara y legible
+
+## **7.2 HUD (Head-Up Display)** <a id="7.2-hud-(head-up-display)"></a>
+
+**Ubicación:** Esquina inferior derecha
+
+**Información Mostrada:**
+
+#### **Identificación** <a id="identificación"></a>
+
+* Nombre del jugador (Japón/China)  
+* Color del submarino
+
+#### **Vida** <a id="vida"></a>
+
+* HP actual/máximo  
+* Barra visual con colores  
+* Verde/Amarillo/Rojo según %
+
+#### **Munición** <a id="munición"></a>
+
+* Munición Tipo 1: cantidad  
+* Munición Tipo 2: cantidad
+
+#### **Inventario** <a id="inventario"></a>
+
+* Cooldown Reducers: cantidad  
+* Repair Kits: cantidad  
+* Ammunition Extra: cantidad  
+* Movement Limiters: cantidad
+
+#### **Estado** <a id="estado"></a>
+
+* Efectos activos (si los hay)  
+* Turnos restantes de efectos
+
+## **7.3 Vista del Submarino** <a id="7.3-vista-del-submarino"></a>
+
+**Distribución:**
+
+┌─────────────────────────────────┐
+
+│        \[Lateral\]         \[Frontal\]               \[Lateral\]               │
+
+│         \[Izq.   \]          \[(Grande)\]               \[Der.   \]                 │
+
+└─────────────────────────────────┘
+
+**Tamaños:**
+
+* Ventana Central: Más grande  
+* Ventanas Laterales: Más pequeñas
+
+**Contenido:**
+
+* Frontal: Lo que hay adelante  
+* Laterales: Vistas perpendiculares  
+* Alcance: 2-3 casillas cada una
+
+## **7.4 Mapa Completo** <a id="7.4-mapa-completo"></a>
+
+**Acceso:** Tecla M
 
 **Muestra:**
 
-* Overlay sobre la vista frontal  
-* Rectángulo de 2x4 casillas iluminado mostrando alcance  
-* Cursor para seleccionar punto de impacto específico  
-* Feedback visual si hay objetivo válido en el área
+* Todo el tablero  
+* Zonas de salida (ambas)  
+* Dragón (si está activo)  
+* Recursos visibles  
+* NO muestra: Posición del enemigo
 
-![image10.png (1999×1500)](https://raw.githubusercontent.com/A2stedB/PVLI-G11/refs/heads/main/Documentacion/images/image10.png)
+**Función:** Orientación y estrategia
 
-<a id="7.2.4"></a>
-#### **7.2.4 Vista de Selección de Ataque Aéreo**
+## **7.5 Sistema de Anotaciones del Mapa** <a id="7.5-sistema-de-anotaciones-del-mapa"></a>
 
-**Activación:** Botón "Atacar \- Bombardeo" durante fase de ataque (si cooldown completado)
+**Estado:** Implementado pero con funcionalidad limitada
 
-**Muestra:**
+**Funcionamiento Actual:**
 
-* Mapa completo con overlay  
-* Cursor para seleccionar casilla objetivo  
-* Previsualización del área de efecto (4 vértices de la casilla)  
-* Advertencia si tu propia posición está en el área de efecto
+* Con el mapa abierto, click en casilla  
+* La casilla se marca visualmente  
+* Click de nuevo: desmarca
 
-![image4.png (1999×1500)](https://raw.githubusercontent.com/A2stedB/PVLI-G11/refs/heads/main/Documentacion/images/image4.png)
+**Limitaciones:**
 
-<a id="7.3"></a>
-### **7.3 HUD (Heads-Up Display)**
-**Elementos permanentes en pantalla:**
+* Funcionalidad básica  
+* Sin diferentes tipos de marcadores  
+* Sin colores distintos  
+* Sin notas de texto  
+* Puede tener problemas de funcionamiento
 
-**Barra de Vida:**
+**Usos Teóricos:**
 
-Vida: ████████░░░ 80/100 HP
+* Marcar donde viste al enemigo  
+* Marcar posibles ubicaciones  
+* Planificar rutas
 
-**Contadores**
+## **7.6 Elementos Adicionales** <a id="7.6-elementos-adicionales"></a>
 
-Contador general de turnos: por cada turno realizado se suma uno 
+**Texto de Ronda:**
 
-Contador reducción de mapa: es el contador general de turnos menos la cantidad de turnos sin ataque directo
+* Muestra número de ronda actual  
+* Animación al cambiar  
+* Centro superior de pantalla
 
-Contador de bombas aéreas: sólo activas
+**Texto de Turno:**
 
-**Estado de Ataque Aéreo:**
+* "Turno de China" / "Turno de Japón"  
+* Color correspondiente  
+* Superior izquierda
 
-Bombardeo: Cooldown 2 turnos
+**Texto de Fase:**
 
-// O
+* Indica fase actual del turno  
+* "Movimiento" / "Disparo" / etc.  
+* Inferior izquierda
 
-Bombardeo: DISPONIBLE
+# **8\. MINIJUEGOS** <a id="8.-minijuegos"></a>
 
-**Inventario de Recursos:**
+## **8.1 Minijuego del Dragón Vegano (Flappy Bird)** <a id="8.1-minijuego-del-dragón-vegano-(flappy-bird)"></a>
 
-Recursos: \[Herramientas x2\] \[Limitadores demovimiento x1\] \[Reductor de cooldown x0\]
+**Estado:** Completamente implementado
 
-**Indicador de Orientación:**
+#### **Concepto** <a id="concepto"></a>
 
-Mirando hacia: ⬆ NORTE
+Un dragón vegano baja al océano para recoger basura. El jugador controla al dragón esquivando obstáculos mientras recolecta basura.
 
-**\[POR DEFINIR\]**
+#### **Activación** <a id="activación"></a>
 
-* ¿Minimap permanente en esquina? (probablemente NO, para mantener información limitada)  
-* ¿Indicador de turno actual / número de ronda?  
-* ¿Historial de eventos últimos turnos?
+* Al encontrarte con el Dragón NPC  
+* Transición automática  
+* Pantalla de diálogo
 
+#### **Mecánicas** <a id="mecánicas"></a>
 
-<a id="7.5"></a>
-### **7.5 Controles**
+**Controles:**
 
-**\[POR DEFINIR \- CRÍTICO para implementación\]**
+* Barra espaciadora / Click: Aletear (impulso arriba)  
+* Gravedad constante hacia abajo  
+* Física similar a Flappy Bird
 
-**Propuesta A \- Control por Teclado:**
+**Objetivo:**
 
-**Jugador 1:**
+* Recoger máximo de basura  
+* No chocar con obstáculos  
+* Aguantar el tiempo máximo
 
-* Movimiento: W (adelante), A (lateral izq), D (lateral der), S (quieto)  
-* Atacar cañones: Espacio  
-* Atacar aéreo: Q  
-* Abrir mapa: Tab  
-* Confirmar selección: Enter
+**Elementos:**
 
-**Jugador 2:**
+* Basura: \+1 punto cada una  
+* Obstáculos: Fin del minijuego al chocar  
+* Fondo: Scrolling horizontal  
+* Timer: Límite de tiempo
 
-* Movimiento: Flechas (↑ adelante, ← lateral izq, → lateral der, ↓ quieto)  
-* Atacar cañones: Num0  
-* Atacar aéreo: Num1  
-* Abrir mapa: Num2  
-* Confirmar selección: NumEnter
+**Dificultad:**
 
-**Propuesta B \- Control por Ratón:**
+* Velocidad aumenta  
+* Más obstáculos  
+* Menos espacio entre tuberías
 
-* Todo mediante clicks en botones en pantalla  
-* Más intuitivo para no-gamers  
-* Permite jugar en tablets/móviles en el futuro
+#### **Recompensas** <a id="recompensas"></a>
 
-**Propuesta C \- Híbrido:**
+Según puntuación:
 
-* Movimiento y acciones principales: Teclado  
-* Selecciones en mapa: Ratón
+* 0-5 puntos: 1 recurso aleatorio  
+* 6-10 puntos: 2 recursos  
+* 11-20 puntos: 3 recursos  
+* 21+ puntos: 4 recursos
 
-<a id="7.5"></a>
-### **7.5 Menú principal**
-**\[POR DEFINIR \- "como se ve el menú"\]**
+#### **Fin** <a id="fin"></a>
 
-Propuesta de opciones:
+* Victoria: Tiempo completado  
+* Derrota: Choque con obstáculo  
+* Retorno: Vuelve al juego con recompensas
 
-* **Nueva Partida**  
-  * Seleccionar número de jugadores  
-  * Configurar reglas opcionales  
-* **Reglas del Juego**  
-* **Créditos**  
-* **Salir**
+## **8.2 Minijuego de Reparación** <a id="8.2-minijuego-de-reparación"></a>
 
-<a id="8"></a>
-# **8\. Ejemplo de una partida**
+**Estado:** Completamente implementado
 
-<a id="8.1"></a>
-### **8.1 Inicio**
+#### **Concepto** <a id="concepto-1"></a>
 
-Los jugadores colocan su submarino en el mapa, el otro jugador no debe saber la posición de donde está colocado. Tras colocar ambos el submarino se elige aleatoriamente quien empieza el turno.
+El submarino tiene fugas que deben repararse antes de que se inunde.
 
-### 
+#### **Activación** <a id="activación-1"></a>
 
-### **8.2 Progresión detallada de un turno**
+* Al usar Repair Kit del inventario  
+* Transición a escena de minijuego
 
-En cualquier momento del turno podrás abrir el mapa para orientarte. En tu pantalla se
+#### **Mecánicas** <a id="mecánicas-1"></a>
 
-mostrará la munición de daño singular de la que dispones (cañones) y la comunicación con la torre de control. Lo primero que harás es decidir si moverte y, de ser así, en qué dirección.
+**Objetivo:**
 
-Una vez completada esta fase, si avistas a otro jugador y tienes armas del suficiente alcance podrás decidir si dispararle. A su vez puedes planear ataques aéreos desde la torre de control a casillas en específico.
+* Sellar máximo de fugas posibles  
+* Contra reloj (30 segundos)  
+* Cada fuga sellada \= HP restaurado
 
-Una ronda se da por finalizada cuando ambos jugadores han realizado su turno.
+**Elementos:**
 
+* Fugas: Agujeros en el casco  
+* Click para sellar  
+* Nivel de agua: Sube constantemente  
+* Timer: 30 segundos
 
-<a id="8.3"></a>
-### **8.3 Fin de la partida**
+**Progresión:**
 
-Una partida llega a su fin cuando solo queda un submarino en pie, o un jugador ha alcanzado el objetivo para ganar  
- 
-<a id="9"></a>
-# **9\. En desuso**
+* Segundos 0-10: Fugas lentas  
+* Segundos 11-20: Fugas medias  
+* Segundos 21-30: Fugas rápidas
 
-<a id="9.1"></a>
-### **9.1 Ideas para limitar el tiempo de juego**
+#### **Curación** <a id="curación"></a>
 
-Motivar los jugadores a enfrentarse con objetos en el mapa, por ejemplo más munición extra, o objeto que permite saber la ubicación actual no exacta del rival.
+HP Recuperado \= (Fugas Selladas × 5\) \+ Bonificaciones
 
-La zona del juego va cerrando con el paso de turno, por ejemplo a partir del turno 10 de una partida empieza a disminuir el tamaño del mapa cada 2 turnos hasta un tamaño mínimo.
+**Bonificaciones:**
 
-Establecer una “salida” para ambos como otro objetivo para conseguir la victoria, o otros objetivos para conseguir la victoria.
+* 3 fugas seguidas: \+5 HP  
+* Antes de 20 segundos: \+10 HP  
+* Todas las fugas: \+15 HP  
+* Máximo: 30 HP
 
-<a id="9.2"></a>
-### **9.2 Posibles detalles**
+#### **Fin** <a id="fin-1"></a>
 
-En el mapa puede haber obstáculos, que incrementa un poco la jugabilidad para que no sea tan aburrido.
+* Tiempo terminado: Aplica curación  
+* Todas fugas selladas: Victoria perfecta  
+* Retorno automático tras resumen
 
-Anticipar ataque para turnos posteriores
+# **9\. CONDICIONES DE VICTORIA** <a id="9.-condiciones-de-victoria"></a>
 
-¿Qué pasa si ambos chocan entre sí?
+## **9.1 Victoria por Eliminación**  <a id="9.1-victoria-por-eliminación"></a>
 
-<a id="10"></a>
-# **10\. Prueba en papel** 
+**Condición:** Reducir HP del enemigo a 0
 
-![image6.jpg (1999×1500)](https://raw.githubusercontent.com/A2stedB/PVLI-G11/refs/heads/main/Documentacion/images/image6.jpg)
+**Métodos:**
 
-<a id="11"></a>
-# **11\. Enlace**
+* Disparos normales (20 HP cada uno)  
+* Combinación de múltiples disparos  
+* Acumulación de daño progresivo
 
-* **Repositorio:[A2stedB/PVLI-G11: PVLI Grupo 11](https://github.com/A2stedB/PVLI-G11)**  
-* **Web: [Proyecto XI](https://a2stedb.github.io/PVLI-G11/)**  
-* **Twitter:[x.com/DeepCodeStudio](https://x.com/DeepCodeStudio)**
+**Cálculo:**
+
+* 5 disparos normales \= 100 HP  
+* Combinación óptima depende de munición disponible
+
+## **9.2 Victoria por Escape**  <a id="9.2-victoria-por-escape"></a>
+
+**Condición:** Alcanzar tu zona de salida
+
+**Características:**
+
+* Victoria instantánea  
+* No necesitas destruir al enemigo  
+* Válida si estás en desventaja  
+* Requiere planificación de ruta
+
+**Situaciones Típicas:**
+
+* HP bajo: Preferir escape que combate  
+* Sin munición: Solo puedes escapar  
+* Enemigo bloqueando: Desviar primero  
+* Carrera: Ambos intentando escapar
+
+## **9.3 Victoria por Rendición** <a id="9.3-victoria-por-rendición"></a>
+
+**Casos sin salida:**
+
+* Enemigo en zona de salida y tú bloqueado  
+* Sin munición Y enemigo entre tú y tu salida  
+* HP crítico sin recursos
+
+**Mecánica:**
+
+* No hay botón formal  
+* Acuerdo entre jugadores
+
+## **9.4 Pantalla de Victoria** <a id="9.4-pantalla-de-victoria"></a>
+
+**Elementos:**
+
+* Ganador mostrado (Japón/China)  
+* Tipo de victoria (Eliminación/Escape)  
+* Estadísticas de la partida  
+* Opciones: Jugar de nuevo, Menú, Salir
+
+# 
+
+# **10\. ARQUITECTURA TÉCNICA** <a id="10.-arquitectura-técnica"></a>
+
+## **10.1 Tecnologías** <a id="10.1-tecnologías"></a>
+
+**Motor:** Phaser 3
+
+* Framework HTML5 para juegos 2D  
+* Sistema de física Arcade  
+* Gestión de escenas
+
+**Lenguajes:**
+
+* JavaScript (ES6+)  
+* HTML5  
+* CSS3
+
+**Patrones de Diseño:**
+
+* State Machine (turnos y acciones)  
+* Observer (sistema de eventos)  
+* Composition (entidades del juego)  
+* Publisher-Subscriber(bus de evento)
+
+## **10.2 Estructura General** <a id="10.2-estructura-general"></a>
+
+El proyecto está organizado en módulos:
+
+* Tablero y lógica espacial  
+* Submarinos y sus sistemas  
+* Máquinas de estado  
+* Sistema de recursos  
+* Minijuegos  
+* Escenas de Phaser  
+* Sistema de eventos
+
+## **10.3 Configuración** <a id="10.3-configuración"></a>
+
+**Parámetros del Juego:**
+
+* Tablero: 5x5 casillas  
+* Recursos en mapa: 8  
+* HP inicial: 100  
+* Munición inicial: 15 de cada tipo
+
+**Pantalla:**
+
+* Resolución: 800x600  
+* Renderizado pixel-perfect  
+* Auto-centrado horizontal
+
+## **10.4 Valores Balanceados** <a id="10.4-valores-balanceados"></a>
+
+**Vida y Daño:**
+
+* HP Máximo: 100  
+* Disparo normal: 20 HP  
+* Curación (Repair Kit): Hasta 30 HP
+
+**Munición:**
+
+* Tipo 1/2 inicial: 15 balas cada uno  
+* Recarga: \+5 de cada tipo
+
+**Recursos:**
+
+* Cantidad en mapa: 8  
+* Distribución: Aleatoria
+
+**Efectos:**
+
+* Movement Limiter: 2 turnos
+
+**Minijuegos:**
+
+* Dragón: \~60 segundos  
+* Reparación: 30 segundos
+
+## **10.5 Rendimiento** <a id="10.5-rendimiento"></a>
+
+**Objetivo:** 60 FPS constante
+
+**Optimizaciones:**
+
+* Sprites reutilizables  
+* Actualización solo de elementos visibles  
+* Estados bien definidos  
+* Eventos desacoplados
+
+**Requisitos Mínimos:**
+
+* Navegador moderno con WebGL  
+* Procesador dual core  
+* 2 GB RAM
+
+# **11\. CARACTERÍSTICAS ADICIONALES IMPLEMENTADAS** <a id="11.-características-adicionales-implementadas"></a>
+
+Estas características fueron implementadas durante el desarrollo pero NO estaban en el GDD original:
+
+## **11.1 Sistema de Estadísticas de Partida** <a id="11.1-sistema-de-estadísticas-de-partida"></a>
+
+**Implementado**
+
+**Descripción:** El juego guarda y muestra estadísticas al final de cada partida.
+
+**Características:**
+
+* Contador de disparos realizados  
+* HP restante de cada jugador  
+* Recursos utilizados  
+* Rondas jugadas  
+* Tipo de victoria
+
+**Uso:**
+
+* Se muestra en pantalla de victoria  
+* Disponible para opción de revancha  
+* NO persistente entre sesiones
+
+**Pantalla de Victoria:**
+
+* Muestra todas las estadísticas  
+* Permite analizar la partida  
+* Base para decisión de revancha
+
+## **11.2 Sistema de Revancha** <a id="11.2-sistema-de-revancha"></a>
+
+**Implementado**
+
+**Descripción:** Los jugadores pueden jugar una revancha inmediata manteniendo el contexto.
+
+**Características:**
+
+* Botón "Revancha" en pantalla victoria  
+* Reinicia partida rápidamente  
+* Mantiene jugadores y configuración  
+* Nueva distribución de recursos
+
+**Ventajas:**
+
+* Partidas rápidas consecutivas  
+* No volver al menú  
+* Mejora experiencia multijugador local
+
+**Limitaciones:**
+
+* No guarda historial de revancha  
+* No contador de partidas ganadas
+
+# **12\. CARACTERÍSTICAS NO IMPLEMENTADAS** <a id="12.-características-no-implementadas"></a>
+
+Estas características estaban planeadas en el GDD original pero NO se implementaron:
+
+## **12.1 Mecánicas de Combate No Completadas** <a id="12.1-mecánicas-de-combate-no-completadas"></a>
+
+### **Sistema de Ataque Aéreo (Bombardeo)** <a id="sistema-de-ataque-aéreo-(bombardeo)"></a>
+
+**Planeado:**
+
+* Bombardeo de cualquier casilla  
+* Cooldown 2-3 turnos  
+* Daño: 30 HP  
+* Sin línea de visión  
+* Predicción posición enemiga
+
+**Estado:**
+
+* NO implementado  
+* Recurso Cooldown Reducer sin utilidad
+
+**Impacto:**
+
+* Elimina opción táctica de ataque sin visión  
+* Reduce complejidad estratégica
+
+## **12.2 Sistema de Mapa Anotable Completo** <a id="12.2-sistema-de-mapa-anotable-completo"></a>
+
+### **Anotaciones Limitadas** <a id="anotaciones-limitadas"></a>
+
+**Planeado:**
+
+* Sistema completo de marcadores  
+* Diferentes símbolos (X, ?, \!, peligro)  
+* Colores por tipo  
+* Notas de texto  
+* Separado por jugador  
+* Historial
+
+**Estado Actual:**
+
+* Quitado del juego para no generar confusión.
+
+**Impacto:**
+
+* Reduce capacidad de rastrear info  
+* Menos profundidad estratégica
+
+## **12.3 Minijuegos No Implementados** <a id="12.3-minijuegos-no-implementados"></a>
+
+### **Esquivar Minas** <a id="esquivar-minas"></a>
+
+**Concepto:** Endless runner esquivando minas  
+**Dificultad:** Baja  
+**Recompensa:** Recursos
+
+### **Impacto Preciso (Angry Birds)** <a id="impacto-preciso-(angry-birds)"></a>
+
+**Concepto:** Torpedos con ángulo y fuerza  
+**Dificultad:** Media  
+**Recompensa:** Munición extra
+
+### **Sumo Submarino** <a id="sumo-submarino"></a>
+
+**Concepto:** Empujar enemigo fuera de ring  
+**Dificultad:** Media  
+**Recompensa:** Recursos variados
+
+### **Proyectiles Rebotantes** <a id="proyectiles-rebotantes"></a>
+
+**Concepto:** Disparos rebotan en paredes  
+**Dificultad:** Alta  
+**Recompensa:** Munición especial
+
+### **Carrera con Obstáculos** <a id="carrera-con-obstáculos"></a>
+
+**Concepto:** Esquivar rocas cayendo  
+**Dificultad:** Baja  
+**Recompensa:** Mejoras velocidad
+
+**Impacto Total:** Solo 2 de 7 minijuegos (28%)
+
+## **12.4 Elementos del Mapa** <a id="12.4-elementos-del-mapa"></a>
+
+### **Obstáculos Estáticos** <a id="obstáculos-estáticos"></a>
+
+**Planeado:**
+
+* Rocas, arrecifes, estructuras  
+* 3-5 por mapa  
+* Bloquean movimiento y visión  
+* Posiblemente destructibles
+
+**Estado:** No implementado
+
+**Impacto:** Reduce complejidad táctica
+
+### **Obstáculos Dinámicos** <a id="obstáculos-dinámicos"></a>
+
+**Planeado:**
+
+* Elementos móviles  
+* Corrientes afectan movimiento  
+* Zonas visibilidad reducida
+
+**Estado:** No implementado
+
+## **12.5 Mecánicas de Colocación** <a id="12.5-mecánicas-de-colocación"></a>
+
+### **Colocación Inicial Libre** <a id="colocación-inicial-libre"></a>
+
+**Planeado:**
+
+* Jugadores eligen posición  
+* Turnos alternos colocación  
+* Estrategia desde inicio
+
+**Implementado:** Posiciones fijas
+
+**Impacto:** Menos control inicial
+
+## **12.6 Sistema de Recolección** <a id="12.6-sistema-de-recolección"></a>
+
+### **Recolección Manual** <a id="recolección-manual"></a>
+
+**Planeado:**
+
+* Opción recoger o dejar  
+* Decisión estratégica  
+* Negar recursos al enemigo
+
+**Implementado:** Completamente automática
+
+**Impacto:** Elimina decisión táctica
+
+## **12.7 Visibilidad y Detección** <a id="12.7-visibilidad-y-detección"></a>
+
+### **Sistema de Ocultación Completo** <a id="sistema-de-ocultación-completo"></a>
+
+**Planeado:**
+
+* Enemigo completamente oculto  
+* Detección por proximidad  
+* Pistas indirectas (sonidos, estela)
+
+**Implementado:** Sistema visual básico
+
+### **Pantalla Dividida Simultánea** <a id="pantalla-dividida-simultánea"></a>
+
+**Planeado Original:**
+
+* Ambos ven a la vez  
+* Pantalla dividida
+
+**Implementado:** Sistema alternado
+
+## **12.8 Guardado y Persistencia** <a id="12.8-guardado-y-persistencia"></a>
+
+### **Sistema de Guardado de Partidas** <a id="sistema-de-guardado-de-partidas"></a>
+
+**Planeado:**
+
+* Guardar partidas en progreso  
+* Continuar desde menú  
+* Múltiples slots
+
+**Estado:**
+
+* Guarda stats para revancha  
+* Muestra stats en victoria  
+* NO se puede continuar desde menú  
+* NO guarda partidas en progreso
+
+**Implementado:**
+
+* Sistema temporal de estadísticas  
+* Solo durante sesión activa  
+* Se pierde al cerrar
+
+### **Estadísticas Persistentes** <a id="estadísticas-persistentes"></a>
+
+**Planeado:**
+
+* Historial victorias/derrotas  
+* Estadísticas acumuladas  
+* Récords personales  
+* Progreso general
+
+**Estado:** No implementado
+
+## **12.9 Contenido Adicional** <a id="12.9-contenido-adicional"></a>
+
+### **Tutorial** <a id="tutorial"></a>
+
+**Planeado:**
+
+* Tutorial interactivo completo  
+* Todas las mecánicas  
+* Práctica guiada  
+* Tips estratégicos
+
+**Implementado:** Tutorial básico limitado
+
+### **Menú de Configuración** <a id="menú-de-configuración"></a>
+
+**Planeado:**
+
+* Ajustes volumen  
+* Opciones gráficas  
+* Controles  
+* Preferencias
+
+**Implementado:** Menú básico
+
+# **CONCLUSIÓN** <a id="conclusión"></a>
+
+**Pacific Tactics** es un juego completamente funcional y jugable que implementa exitosamente el core gameplay principal. Con mecánicas de deducción, combate táctico y gestión de recursos, ofrece una experiencia estratégica única.
+
+## **Estado Actual** <a id="estado-actual"></a>
+
+**Completamente Implementado:**
+
+* Sistema de turnos alternados  
+* Movimiento con 4 opciones (incluyendo quieto)  
+* Combate con 2 tipos de munición  
+* 2 recursos funcionales (Repair Kit, Movement Limiter)  
+* 2 minijuegos completos con física  
+* Sistema de vida y daño  
+* Zonas de escape  
+* Sistema de cierre de zona progresivo  
+* Dragón NPC  
+* Interfaz completa  
+* Sistema estadísticas de partida  
+* Sistema de revancha
+
+**Parcialmente Implementado:**
+
+* Tutorial (básico)  
+* Menú (básico)
+
+**Scripts Existen Pero No Integrados:**
+
+* Cooldown Reducer (sin ataque aéreo)  
+* Ammunition Extra (sin integración)
+
+**No Implementado:**
+
+* Ataque aéreo/bombardeo  
+* 5 minijuegos adicionales  
+* Obstáculos en el mapa  
+* Sistema completo de anotaciones  
+* Guardado de partidas en progreso  
+* Estadísticas persistentes
+
+## **Conclusión Final** <a id="conclusión-final"></a>
+
+El juego cumple su promesa principal: ofrecer combate submarino táctico con información asimétrica. La base es sólida y el gameplay es divertido.
+
+Durante el desarrollo se añadieron mejoras no planeadas (estadísticas, revancha) que enriquecen la experiencia, mientras que algunas características planeadas (ataque aéreo, minijuegos extra) quedaron sin implementar por limitaciones de tiempo.
+
+**El juego está listo para jugar y disfrutar en su estado actual.**
+
