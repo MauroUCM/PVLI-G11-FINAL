@@ -202,4 +202,12 @@ export class SubmarineHUD {
     setPosition(x, y) {
         this.container.setPosition(x, y);
     }
+
+    refreshHUD() {
+        if (this.container.visible) {
+            this.container.setVisible(false);
+        } else {
+            this.container.setVisible(true);
+        }
+    }
 }

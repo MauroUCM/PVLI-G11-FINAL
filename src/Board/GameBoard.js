@@ -2,7 +2,7 @@ import LogicBoard from "../Board/LogicBoard.js"
 import { GraphicVertex } from "../Board/GraphicVertex.js";
 import { GraphicSquare } from "../Board/GraphicSquare.js";
 import EventDispatch from "../Event/EventDispatch.js"
-import { SubmarineComplete} from "../Submarine/SubmarineComplete.js";
+import { Orientation, SubmarineComplete} from "../Submarine/SubmarineComplete.js";
 import Event from "../Event/Event.js";
 import { ResourceManager_Complete } from "../Resources/ResourceManager.js";
 import { SubmarineHUD } from "../Submarine/SubmarineHUD.js";
@@ -111,28 +111,12 @@ export default class GameBoard extends Phaser.GameObjects.Container {
          * - red: China (jugador 1) - spawn superior izquierda
          */
         this.submarines = {
-            blue: new SubmarineComplete(
-                scene, 1, 2,                // Posición inicial (vértice)
-                this.matrix.logic,          // Referencia al tablero lógico
-                this,                       // Referencia al GameBoard
-                "blue",                     // Nombre/color
-                2                           // ID del jugador
-            ),                     
-            red:  new SubmarineComplete(scene, 2, 2, 
-                this.matrix.logic, 
-                this,
-                "red",
-                1
-            )  
+            blue: new SubmarineComplete(scene, 0, 0, this.matrix.logic, this,"blue",2),   
+            red:  new SubmarineComplete(scene, 5, 5, this.matrix.logic, this,"red",1)  
         };
 
-        // ZONAS DE SALIDA 
-        /**
-         * Sistema de zonas de escape
-         * Crea zonas en esquinas opuestas a los spawns:
-         * - Zona roja: Esquina inferior derecha
-         * - Zona azul: Esquina superior izquierda
-         */
+        this.submarines.red.orientation = Orientation.W;
+
         this.exitZoneSystem = new ExitZoneSystem(this);
         this.exitZones = this.exitZoneSystem.createExitZones();
 
