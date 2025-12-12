@@ -31,12 +31,6 @@ export class Dragon extends Phaser.GameObjects.Container {
         // Posicionar aleatoriamente
         this.randomSpawn(randomSpawn, position);
 
-        // this.invisibleBG = new Phaser.GameObjects.Image(board.scene,(this.position.x),(this.position.y),"Square").setAlpha(0.3);
-        // this.invisibleBG.setDisplaySize(board.config.cellSize*2,board.config.cellSize*2)
-        // this.invisibleBG.setOrigin(0.5,0.5);
-        // console.log(`Dragon t: ${this.x} ${this.y}`)
-        
-
         // Añadir al tablero
         this.setDepth(150); // Por encima de todo
         
@@ -290,7 +284,6 @@ export class Dragon extends Phaser.GameObjects.Container {
                 y = Phaser.Math.Between(0, (this.board.config.boardHeight - 1) * 2);
             } while (y % 2 === 0);
             
-            console.log('Dragon spawn at:', x, y);
             this.square = this.board.matrix.logic.matrix[x][y];
             this.position = this.square.position;
             this.square.dragonEnter(this);
@@ -318,7 +311,6 @@ export class Dragon extends Phaser.GameObjects.Container {
         });
 
         this.setPosition(targetX,targetY);
-        console.log(`Dragon t: ${this.x} ${this.y}`)
 
     }
 
@@ -354,8 +346,6 @@ export class Dragon extends Phaser.GameObjects.Container {
         this.square = this.board.matrix.logic.matrix[x][y];
         this.square.dragonEnter(this);
         this.position = this.square.position;
-        
-        console.log(`Dragon moved to ${this.position.position}`);
         
         // Actualizar posición visual
         this.updateVisualPosition();
@@ -425,7 +415,5 @@ export class Dragon extends Phaser.GameObjects.Container {
         EventDispatch.off(Event.GET_DRAGON);
         EventDispatch.off(Event.MOVE_DRAGON);
         EventDispatch.off(Event.CHECK_DRAGON_COLLISION);
-        
-        super.destroy(fromScene);
     }
 }

@@ -1,13 +1,11 @@
 import { Vertex } from "../Board/Vertex.js";
 
 export class GraphicVertex extends Phaser.GameObjects.Graphics{
-    constructor(scene,graphic,cellSize,v,offsetX,offsetY){
+    constructor(scene,graphic,cellSize,v){
         super(scene,v);
         this.graphic = graphic;
         this.cellSize = cellSize;
         this.vertex= v;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
 
         scene.add.existing(this);
     }

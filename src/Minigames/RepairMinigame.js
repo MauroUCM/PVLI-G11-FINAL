@@ -72,8 +72,6 @@ export class RepairMinigame extends Phaser.Scene {
         // FÍSICA MODIFICADA (flotación) 
         this.physics.world.gravity.y = -50; // Gravedad negativa para flotación
         
-        console.log("RepairMinigame creado - esperando countdown");
-        
         // INICIAR COUNTDOWN
         this.startCountdown();
     }
@@ -151,7 +149,6 @@ export class RepairMinigame extends Phaser.Scene {
      * Inicia el juego después del countdown
      */
     startGame() {
-        console.log("¡Juego de reparación iniciado!");
         this.gameStarted = true;
         
         // GENERACIÓN DE OBJETOS
@@ -327,8 +324,6 @@ export class RepairMinigame extends Phaser.Scene {
      */
     repairLeak(leak) {
         if (leak.repaired) return;
-        
-        console.log(`Fuga ${leak.id} reparada!`);
         
         leak.repaired = true;
         this.leaksRepaired++;

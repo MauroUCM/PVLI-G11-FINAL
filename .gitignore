@@ -4,3 +4,5 @@ token.json
 .bat
 
 .vs
+types/
+.vscode/

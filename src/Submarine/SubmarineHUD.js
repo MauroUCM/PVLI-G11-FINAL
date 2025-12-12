@@ -32,26 +32,28 @@ export class SubmarineHUD {
     createHUD() {
         const style = {
             fontSize: '14px',
-            color: '#443521ff',
+            color: '#aaaaaaff',
             fontFamily: 'Arial'
         };
 
         const smallStyle = {
             fontSize: '12px',
-            color: '#443521ff',
+            color: '#aaaaaaff',
             fontFamily: 'Arial'
         };
 
         // Fondo hud
-        this.background = this.scene.add.rectangle(0, 0, 280, 180, 0x00CC9966, 1);
-        this.background.setOrigin(0, 0);
+        this.background = this.scene.add.image(112, 80, "Panel");
+       this.background.setDisplaySize(330,370);
+      //this.background.setOrigin(0, 0);
+       this.background.setAngle(90);
         this.container.add(this.background);
 
    
         // Nombre del jugador
         this.playerNameText = this.scene.add.text(10, 10, this.playerName, {
             fontSize: '16px',
-            color: '#553c28ff',
+            color: '#aaaaaaff',
             fontFamily: 'Arial',
             fontStyle: 'bold'
         });
@@ -199,5 +201,13 @@ export class SubmarineHUD {
      */
     setPosition(x, y) {
         this.container.setPosition(x, y);
+    }
+
+    refreshHUD() {
+        if (this.container.visible) {
+            this.container.setVisible(false);
+        } else {
+            this.container.setVisible(true);
+        }
     }
 }

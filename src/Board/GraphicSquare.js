@@ -8,10 +8,8 @@ export class GraphicSquare extends Phaser.GameObjects.Image{
      * @param {*} scene 
      * @param {Square} s 
      */
-    constructor(scene,square,texture,cellSize,offsetX,offsetY){
+    constructor(scene,square,texture,cellSize){
         super(scene,(square.position.x*cellSize),square.position.y*cellSize,texture)
-        // this.offsetX = offsetX;
-        // this.offsetY = offsetY;
         this.cellSize = cellSize;
 
         this.square = square;
@@ -35,26 +33,18 @@ export class GraphicSquare extends Phaser.GameObjects.Image{
     render(){
         if(this.square.dragon != null){
             this.setDisplaySize(this.cellSize*1,this.cellSize*1);
-            this.setAlpha(1);
+            this.setAlpha(0);
             console.log(`Dragon square: ${this.x} ${this.y}`)
         }
-        else this.setAlpha(0.01);
+        else this.setAlpha(0.00);
         this.setDisplaySize(this.cellSize*2,this.cellSize*2);
-        // if(this.square.active){
-        //     this.setAlpha(1);
-        // }
-        // else{
-        //     this.setAlpha(0.01);
-        // }
         
     }
 
     addEvent(){
         this.on("pointerdown",()=>{
             this.square.active = !this.square.active
-            // console.log(this.square.position.x + " " + this.square.position.y)
             this.render();
-            // console.log(this.square.active);
         })
     }
     Update(){

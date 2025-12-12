@@ -1,7 +1,5 @@
 import { GameScreen } from "./Scene/GameScreen.js";
-import { Menu } from "./Scene/Menu.js";	
 import { Menu2 } from "./Scene/MenuV2.js";
-import { Submarine_View } from "./Scene/Submarine_View.js";
 import { Flappy_Dragon } from "./Minigames/MGFlappyDragon.js";
 import { TutorialScene } from "./Scene/TutorialScene.js";
 import { FireStateWindow } from "./Scene/FireStateWindow.js";
@@ -33,7 +31,6 @@ let config = {
 
 	scene: [
 		Menu2, 
-		Submarine_View, 
 		GameScreen, 
 		Flappy_Dragon,          
 		FireStateWindow,

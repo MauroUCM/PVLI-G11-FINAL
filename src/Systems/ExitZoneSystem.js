@@ -25,8 +25,6 @@ export class ExitZoneSystem {
         
         // Sprites visuales de las zonas
         this.zoneSprites = {};
-        
-        console.log("ExitZoneSystem inicializado");
     }
 
    /**
@@ -36,9 +34,6 @@ export class ExitZoneSystem {
         // Obtener dimensiones del tablero en coordenadas de vértices
         const w = this.board.config.boardWidth - 1;
         const h = this.board.config.boardHeight - 1;
-        
-        console.log("=== CREANDO ZONAS DE SALIDA ===");
-        console.log(`  Dimensiones tablero: ${w} x ${h} (en vértices)`);
         
         // SIMPLIFICADO: Salidas FIJAS en esquinas opuestas a spawns
         // Las 4 esquinas del tablero son:
@@ -62,9 +57,6 @@ export class ExitZoneSystem {
             color: 0x4444ff,
             label: 'SALIDA\nAZUL'
         };
-        
-        console.log(`  ✓ Zona ROJA creada en: (${this.zones.red.x}, ${this.zones.red.y})`);
-        console.log(`  ✓ Zona AZUL creada en: (${this.zones.blue.x}, ${this.zones.blue.y})`);
         
         // Visualizar las zonas
         this.visualizeZone(this.zones.red, 'red');
@@ -346,7 +338,6 @@ export class ExitZoneSystem {
         // 2. Destruir sprites después de detener tweens
         for (const [key, sprite] of Object.entries(this.zoneSprites)) {
             if (sprite && sprite.destroy) {
-                console.log(`  Destruyendo sprite de zona ${key}`);
                 try {
                     sprite.destroy();
                 } catch (e) {

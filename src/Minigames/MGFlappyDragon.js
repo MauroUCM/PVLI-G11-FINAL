@@ -185,7 +185,6 @@ export class Flappy_Dragon extends Phaser.Scene {
      * Inicia el juego después del countdown
      */
     startGame() {
-        console.log("🎮 ¡Juego iniciado!");
         this.gameStarted = true;
         
         // Habilitar física del dragón

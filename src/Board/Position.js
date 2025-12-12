@@ -1,4 +1,6 @@
-
+/**
+ * Clase generica que representa una posicion
+ */
 export class Position{
     constructor(x,y){
         this.x = x;

@@ -19,13 +19,10 @@ export class TutorialScene extends Phaser.Scene{
     }
     
     init(){
-        console.log("init");
         this.tablero;
     }
     
     preload(){
-        console.log("preload");
-        
         this.load.image("Square","Page/img/Profile/Lappland.jpeg")
         this.load.image("BG","assets/GameBoard_BG.jpg")
         this.load.image("Submarine","assets/submarino.png")
