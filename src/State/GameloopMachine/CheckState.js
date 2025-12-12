@@ -35,12 +35,6 @@ export class CheckState extends State {
      *  Método ejecutado al entrar en este estado
      */
     onStateEnter() {
-        //  PASO 1: DESBLOQUEAR turnos para la nueva ronda
-        // const playerActionMachine = this.stateMachine.scene.playerActionMachine;
-        // if (playerActionMachine) {
-        //     playerActionMachine.unlockTurn();
-        //     console.log(" Nueva ronda - Turnos desbloqueados");
-        // }
         
         // PASO 2: RESOLVER ATAQUES AÉREOS PENDIENTES
         this.resolveAirAttacks();

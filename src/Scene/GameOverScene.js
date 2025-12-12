@@ -181,27 +181,9 @@ export class GameOverScene extends Phaser.Scene {
             buttonY,
             '↻ REVANCHA',
             () => {
-                // console.log("=== INICIANDO REVANCHA ===");
-                
-                // // CRÍTICO: Detener TODOS los tweens y timers de Game Over
-                // console.log("  Deteniendo tweens de Game Over...");
-                // this.tweens.killAll();
-                // this.time.removeAllEvents();
-                
-                // console.log("  Cerrando Game Over...");
-                // this.scene.stop('GameOver');
-                
-                // const gameScreen = this.scene.get('GameScreen');
-                
-                // if (gameScreen && typeof gameScreen.restartGame === 'function') {
-                //     console.log("  Llamando a restartGame()...");
-                //     gameScreen.restartGame();
-                // } else {
-                //     console.error(" No se pudo reiniciar GameScreen");
-                // }
                 this.scene.stop(this);
                 this.scene.start("GameScreen")
-                    },
+                },
             true,
             'R'
         );

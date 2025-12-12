@@ -3,7 +3,7 @@ import { SubmarineComplete } from "../Submarine/SubmarineComplete.js";
 import EventDispatch from "../Event/EventDispatch.js";
 import Event from "../Event/Event.js";
 // import { InputManager } from "../Input/InputManager.js";
-import SubmarineView from "../Scene/SubmarineViewObject.js";
+import SubmarineView from "../Submarine/SubmarineViewObject.js";
 import { GameLoopMachine } from "../State/GameloopMachine/GameLoopMachine.js";
 import { PlayerActionMachine } from "../State/PlayerActionMachine/PlayerActionMachine.js";
 // import { ResourceManager } from "../Resources/ResourceManager.js";
@@ -109,14 +109,8 @@ export class GameScreen extends Phaser.Scene{
 
         EventDispatch.on(Event.UPDATE_PLAYER_ACTION_TEXT,(state)=>{
             playerActionText.setText(`Fase actual: ${state}`)
-           // this.submarineView.onDistance(this.tablero.submarines.red, this.tablero.submarines.blue)
              this.submarineView.renderView();
         })
-
-        //Toogle Submarine View - Board con M
-        // this.toggleKey.on("down",()=>{
-        //     this.refresh();
-        // }) 
     }
 
      refresh() {
@@ -170,17 +164,10 @@ export class GameScreen extends Phaser.Scene{
 
     }
 
-    playChain(){
-        this.chain.play();
-    }
-
     createHeader()
     {
         this.background = this.add.rectangle(0, 0, 1600, 60, 0x00CC9966, 1);
         this.background.setOrigin(0, 0);
-        // this.container.add(this.background);
-
-
     }
     createPanel()
     {

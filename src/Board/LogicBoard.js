@@ -50,6 +50,5 @@ export default class LogicBoard{
         else {
             this.matrix[x][y] = null;
         }
-        //console.log("Creando vertices en: " + x + " " + y + + " " + this.matrix[x][y].tipo)
     }
 }

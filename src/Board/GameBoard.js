@@ -213,69 +213,7 @@ export default class GameBoard extends Phaser.GameObjects.Container {
 
         this.swapHUDS();
     }
-
-    //Esto ya no se utiliza
-
-    // showShootPopup(attacker, target, callback) {
-    //     const scene = this.scene; 
-    //     let popup2 = null;
-
-    //     const overlay = scene.add.rectangle(400, 300, 800, 600, 0x000000, 0.6)
-    //         .setScrollFactor(0)
-    //         .setDepth(1000);
-
-    //     const panel = scene.add.rectangle(400, 300, 300, 220, 0xffffff, 1)
-    //         .setStrokeStyle(2, 0x000000)
-    //         .setScrollFactor(0)
-    //         .setDepth(1001);
-
-    //     const popup = scene.add.container(0, 0, [overlay, panel]).setDepth(1002);
-
-    //     const boton = (text, y, action) => {
-    //         const btn = scene.add.text(400, y, text, { fontSize: '20px', color: '#000' })
-    //             .setOrigin(0.5)
-    //             .setScrollFactor(0)
-    //             .setInteractive({ useHandCursor: true })
-    //             .setDepth(1003)
-    //             .on("pointerdown", () => action());
-    //         popup.add(btn);
-    //     };
-
-    //     boton("Derecha", 260, () => choose("right"));
-    //     boton("Izquierda", 290, () => choose("left"));
-    //     boton("Delante", 320, () => choose("front"));
-    //     boton("No disparar", 350, () => close(null, null));
-
-    //     const choose = (direction) => {
-    //         popup.removeAll(true);
-    //         popup.destroy(true); 
-
-    //         const overlay2 = scene.add.rectangle(400, 300, 800, 600, 0x000000, 0.6).setDepth(1000);
-    //         const panel2 = scene.add.rectangle(400, 300, 300, 160, 0xffffff, 1).setStrokeStyle(2, 0x000000).setDepth(1001);
-
-    //         popup2 = scene.add.container(0, 0, [overlay2, panel2]).setDepth(1002);
-
-    //         const boton2 = (label, y, dist) => {
-    //             const btn = scene.add.text(400, y, label, { fontSize: "20px", color: "#000" })
-    //                 .setOrigin(0.5)
-    //                 .setInteractive({ useHandCursor: true })
-    //                 .setDepth(1003)
-    //                 .on("pointerdown", () => close(direction, dist));
-
-    //             popup2.add(btn);
-    //         };
-
-    //         boton2("Distancia 1", 290, 1);
-    //         boton2("Distancia 2", 330, 2);
-    //     };
-
-    //     const close = (direction, distance) => {
-    //         if (popup) popup.destroy(true);
-    //         if (popup2) popup2.destroy(true); 
-    //         callback(direction, distance);
-    //     };
-    // }
-
+    
     /**
      * Update llamado cada frame
      */
@@ -318,19 +256,7 @@ export default class GameBoard extends Phaser.GameObjects.Container {
              attacker.isTargetDir(target.position.x, target.position.y, 2, direction) && 
              attacker.canShoot(distance);
         
-             return isTargetDir1 && isTargetDir2;
-        //  if (distance == 1) {
-        //      attacker.shoot(distance);
-        //      if (isTargetDir1) {
-        //          target.loseHealth(5);
-        //      }
-        //  }
-        //  if (distance == 2) {
-        //      attacker.shoot(distance);
-        //      if (isTargetDir2 || isTargetDir1) {
-        //          target.loseHealth(2);
-        //      }
-        //  }
+         return isTargetDir1 && isTargetDir2;
     }
    
 }
