@@ -284,7 +284,6 @@ export class Dragon extends Phaser.GameObjects.Container {
                 y = Phaser.Math.Between(0, (this.board.config.boardHeight - 1) * 2);
             } while (y % 2 === 0);
             
-            console.log('Dragon spawn at:', x, y);
             this.square = this.board.matrix.logic.matrix[x][y];
             this.position = this.square.position;
             this.square.dragonEnter(this);
@@ -312,7 +311,6 @@ export class Dragon extends Phaser.GameObjects.Container {
         });
 
         this.setPosition(targetX,targetY);
-        console.log(`Dragon t: ${this.x} ${this.y}`)
 
     }
 
@@ -348,8 +346,6 @@ export class Dragon extends Phaser.GameObjects.Container {
         this.square = this.board.matrix.logic.matrix[x][y];
         this.square.dragonEnter(this);
         this.position = this.square.position;
-        
-        console.log(`Dragon moved to ${this.position.position}`);
         
         // Actualizar posición visual
         this.updateVisualPosition();

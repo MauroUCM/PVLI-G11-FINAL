@@ -142,8 +142,6 @@ export class ResourceManager_Complete {
             const pos = availablePositions[i];
             this.createRandomResource(pos.x, pos.y);
         }
-
-        console.log(`${count} recursos distribuidos aleatoriamente en el mapa`);
     }
 
     /**
@@ -170,8 +168,6 @@ export class ResourceManager_Complete {
                 positionIndex++;
             }
         }
-
-        console.log("Recursos distribuidos por tipo en el mapa");
     }
 
     /**
@@ -245,8 +241,6 @@ export class ResourceManager_Complete {
         const resource = this.getResourceAt(x, y);
         
         if (resource) {
-            console.log(`Recogiendo recurso en (${x}, ${y})`);
-            
             // Aplicar efecto del recurso
             resource.collect(submarine);
             

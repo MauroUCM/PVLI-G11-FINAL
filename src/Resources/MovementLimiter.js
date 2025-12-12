@@ -27,7 +27,6 @@ export class MovementLimiter extends Resource {
      */
     applyEffect(submarine) {
         submarine.addMovementLimiter(1);
-        console.log("Limitador de movimiento añadido al inventario");
     }
 
     /**
@@ -43,8 +42,6 @@ export class MovementLimiter extends Resource {
             targetSubmarine.movementRestricted = true;
             targetSubmarine.restrictedTurnsRemaining = this.duration;
             targetSubmarine.allowedDirections = ['forward', this.getRandomLateral()];
-            
-            console.log("Limitador de movimiento activado sobre el enemigo");
 
         }
     }

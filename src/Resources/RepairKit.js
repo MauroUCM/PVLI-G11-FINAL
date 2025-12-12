@@ -34,7 +34,6 @@ export class RepairKit extends Resource {
         if (needsRepair && this.autoUse) {
             // Uso automático: Reparar inmediatamente
             this.heal(submarine);
-            console.log(`Kit de reparación usado automáticamente. HP restaurado: ${this.healAmount}`);
         } else {
             // Guardar en inventario para uso manual posterior
             submarine.addRepairKit(1);
@@ -64,10 +63,7 @@ export class RepairKit extends Resource {
         if (submarine.hasLeaks) {
             submarine.hasLeaks = false;
             submarine.leakDamagePerTurn = 0;
-            console.log("Fugas reparadas");
         }
-        
-        console.log(`Reparando submarino: +${actualHeal} HP`);
         return actualHeal;
     }
 

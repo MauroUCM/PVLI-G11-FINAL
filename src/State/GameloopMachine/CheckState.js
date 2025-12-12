@@ -74,7 +74,6 @@ export class CheckState extends State {
 
     /**
      * Verifica todas las condiciones de fin de juego
-     * CON DEBUGGING COMPLETO Y MANEJO ROBUSTO DE ERRORES
      * 
      * @returns {boolean} true si el juego terminó
      */
@@ -87,7 +86,6 @@ export class CheckState extends State {
         });
         
         if (!board) {
-            console.warn("No se pudo obtener el tablero para verificar victoria");
             return false;
         }
         
@@ -123,22 +121,17 @@ export class CheckState extends State {
                 // Acceso directo
                 redZone = board.exitZones.red;
                 blueZone = board.exitZones.blue;
-                console.log(`  Zonas encontradas (acceso directo)`);
             } else if (board.exitZones.zones) {
                 // Acceso a través de propiedad 'zones'
                 redZone = board.exitZones.zones.red;
                 blueZone = board.exitZones.zones.blue;
-                console.log(`  Zonas encontradas (via .zones)`);
             } else if (board.exitZoneSystem && board.exitZoneSystem.zones) {
                 // Acceso a través del sistema
                 redZone = board.exitZoneSystem.zones.red;
                 blueZone = board.exitZoneSystem.zones.blue;
-                console.log(`  Zonas encontradas (via exitZoneSystem)`);
             }
             
             if (redZone && blueZone) {
-                console.log(`   Zona Roja: (${redZone.x}, ${redZone.y})`);
-                console.log(`   Zona Azul: (${blueZone.x}, ${blueZone.y})`);
             } else {
                 console.warn(`  No se encontraron las zonas de escape`);
                 console.log(`   Estructura de board.exitZones:`, board.exitZones);
@@ -149,21 +142,15 @@ export class CheckState extends State {
         
         // Verificar escape del submarino rojo
         if (redZone && this.checkEscapeZone(sub1, redZone)) {
-            console.log("¡Submarino ROJO alcanzó la zona de escape!");
             this.endGame('red', 'escape', board);
             return true;
         }
         
         // Verificar escape del submarino azul
         if (blueZone && this.checkEscapeZone(sub2, blueZone)) {
-            console.log("Submarino AZUL alcanzó la zona de escape!");
             this.endGame('blue', 'escape', board);
             return true;
         }
-        
-        console.log(`   No hay victoria todavía`);
-        console.log(`===================================\n`);
-        
         //  No hay victoria, el juego continúa
         return false;
     }
@@ -202,19 +189,11 @@ export class CheckState extends State {
             return false;
         }
         
-        // Logging detallado
-        console.log(`\n    Verificando zona de escape para ${submarine.name}:`);
-        console.log(`      Posición Submarino: (${subX}, ${subY})`);
-        console.log(`      Posición Zona: (${zoneX}, ${zoneY})`);
-        
         // Verificación de coincidencia
         const xMatch = subX === zoneX;
         const yMatch = subY === zoneY;
         const isInZone = xMatch && yMatch;
-        
-        console.log(`      X coincide: ${xMatch} (${subX} === ${zoneX})`);
-        console.log(`      Y coincide: ${yMatch} (${subY} === ${zoneY})`);
-        
+
         if (isInZone) {
             console.log(` ¡${submarine.name.toUpperCase()} ESTÁ EN LA ZONA DE ESCAPE!`);
         } else {
@@ -264,7 +243,6 @@ export class CheckState extends State {
                 stats: stats
             });
             
-            console.log(" Game Over lanzado correctamente");
         } catch (error) {
             console.error("ERROR al lanzar Game Over:", error);
         }
@@ -318,19 +296,15 @@ export class CheckState extends State {
         
         if (!board) return;
         
-        console.log("Resolviendo ataques aéreos pendientes...");
-        
         // Buscar casillas con ataques pendientes
         board.matrix.logic.matrix.forEach(row => {
             row.forEach(cell => {
                 if (cell && cell.pendingAirAttack) {
-                    console.log(`Bombardeo impactando en (${cell.position.x}, ${cell.position.y})`);
                     
                     // Explotar en los 4 vértices
                     cell.nextPoint.forEach(vertex => {
                         if (vertex && vertex.submarine) {
                             vertex.submarine.loseHealth(cell.pendingAirAttack.damage);
-                            console.log(`${vertex.submarine.name} recibió ${cell.pendingAirAttack.damage} de daño`);
                         }
                     });
                     
