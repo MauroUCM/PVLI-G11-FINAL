@@ -28,6 +28,8 @@ export class GameScreen extends Phaser.Scene{
     }
     
     preload(){
+
+        // cargar imagenes
         this.load.image("Square","Page/img/Profile/Lappland.jpeg")
         this.load.image("BG","assets/GameBoard_BG.jpg")
         this.load.image("Submarine","assets/submarino.png")
@@ -38,39 +40,13 @@ export class GameScreen extends Phaser.Scene{
         this.load.image("sLeft", "assets/Submarine/Submarine_left.png");
         this.load.image("tutorialArrow", "assets/flecha.png")
         this.load.image("Panel", "assets/Panel.png");
+
+        // cargar sonidos
+        
     }
     
     //La dimension de la tabla tiene que ser un numero impar
     create(){
-
-        this.createHeader();
-        this.createPanel();
-        let roundText = this.add.text(370,550,"Round 0",
-        {
-            fontFamily:"Outfit",
-            fontSize:30,
-            color: '#412e1fff'
-        })
-
-        this.roundTextAnimation = this.add.text(-150,300,"Round 0",{fontFamily:"Outfit",fontSize:25})
-
-        let playerText = this.add.text(5,5,"Turno de China",
-        {
-            fontFamily:"Outfit",
-            fontSize:40,
-            color: '#412e1fff'
-        })
-
-        let playerActionText = this.add.text(5,550,"Fase actual:", 
-        {
-            fontFamily:"Outfit",
-            fontSize:30,
-            color: '#412e1fff'
-        })
-
-        this.toggleKey = this.input.keyboard.addKey('M');
-
-        this.createTextTween();
 
         // Maquina de estados y objetos del juego
         this.gameloopMachine = new GameLoopMachine(this);
@@ -86,6 +62,37 @@ export class GameScreen extends Phaser.Scene{
         this.submarineView = new SubmarineView(this,0,0, this.tablero, this.tablero.submarines.red, this.tablero.submarines.blue);
         this.submarineView.setDepth(1); // Pantalla al fondo
         this.tablero.setDepth(0); // Tablero encima
+
+        // Crear ui
+        this.createHeader();
+        this.createPanel();
+        let roundText = this.add.text(370,550,"Round 0",
+        {
+            fontFamily:"Outfit",
+            fontSize:30,
+            color: '#412e1fff'
+        }).setDepth(3)
+
+        this.roundTextAnimation = this.add.text(-150,300,"Round 0",{fontFamily:"Outfit",fontSize:25})
+
+        let playerText = this.add.text(5,5,"Turno de China",
+        {
+            fontFamily:"Outfit",
+            fontSize:40,
+            color: '#412e1fff'
+        }).setDepth(3)
+
+        let playerActionText = this.add.text(5,550,"Fase actual:", 
+        {
+            fontFamily:"Outfit",
+            fontSize:30,
+            color: '#412e1fff'
+        }).setDepth(3)
+
+        this.toggleKey = this.input.keyboard.addKey('M');
+
+        this.createTextTween();
+
 
         // this.submarineView.setVisible(false);
         console.log(this.submarineView.visible)
@@ -111,11 +118,11 @@ export class GameScreen extends Phaser.Scene{
              this.submarineView.renderView();
         })
 
+        // tutorial
         if(this.tutorialToggle) this.createTutorialStuff();
-
     }
 
-     refresh() {
+    refresh() {
         this.submarineView.active = !this.submarineView.active;
         if (this.submarineView.active) {
             this.submarineView.setVisible(true);
@@ -173,6 +180,7 @@ export class GameScreen extends Phaser.Scene{
     {
         this.background = this.add.rectangle(0, 0, 1600, 60, 0x00CC9966, 1);
         this.background.setOrigin(0, 0);
+        this.background.setDepth(2)
         // this.container.add(this.background);
 
 
@@ -183,7 +191,7 @@ export class GameScreen extends Phaser.Scene{
         this.panel.setPosition(0,575);
       
 
-          let divisor = this.add.text(300,565," | ",
+        let divisor = this.add.text(300,565," | ",
         {
             fontFamily:"Outfit",
             fontSize:40,
@@ -274,9 +282,6 @@ export class GameScreen extends Phaser.Scene{
         this.tablero.submarines.red.angle = 0;
         this.tablero.submarines.red.setVisible(true);
         this.tablero.submarines.blue.setVisible(true);
-
-
-
     }
 
     //Estados del tutorial
