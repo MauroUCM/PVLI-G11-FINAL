@@ -16,10 +16,6 @@ export class Menu2 extends Phaser.Scene {
     constructor() {
         super({ key: 'menu2' });
     }
-
-    preload(){
-        this.load.image('menufondo', 'assets/menufondo.jpg');
-    }
     
     create() {
         const w = this.cameras.main.width;
@@ -27,9 +23,6 @@ export class Menu2 extends Phaser.Scene {
         
         // Fondo oscuro para mejor contraste
         this.add.rectangle(w/2, h/2, w, h, 0x0a1f2e, 1);
-        
-        // Fondo (añadirlo si existe la imagen)
-        // this.add.image(w/2, h/2, 'menufondo').setAlpha(0.3);
         
         // TÍTULO del juego
         const title = this.add.text(w/2, 80, 

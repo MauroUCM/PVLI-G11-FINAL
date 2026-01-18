@@ -26,25 +26,7 @@ export class GameScreen extends Phaser.Scene{
         this.tutorialToggle = datos.tutorial;
         console.log("Tutorial activado: " + this.tutorialToggle);
     }
-    
-    preload(){
-
-        // cargar imagenes
-        this.load.image("Square","Page/img/Profile/Lappland.jpeg")
-        this.load.image("BG","assets/GameBoard_BG.jpg")
-        this.load.image("Submarine","assets/submarino.png")
-        this.load.image("SubWindow", "assets/SubWindow.png");
-        this.load.image("sFront", "assets/Submarine/Submarine_front.png");
-        this.load.image("sBack", "assets/Submarine/Submarine_back.png");
-        this.load.image("sRight", "assets/Submarine/Submarine_right.png");
-        this.load.image("sLeft", "assets/Submarine/Submarine_left.png");
-        this.load.image("tutorialArrow", "assets/flecha.png")
-        this.load.image("Panel", "assets/Panel.png");
-
-        // cargar sonidos
         
-    }
-    
     //La dimension de la tabla tiene que ser un numero impar
     create(){
 
@@ -284,6 +266,7 @@ export class GameScreen extends Phaser.Scene{
         this.tablero.submarines.blue.setVisible(true);
     }
 
+    //#region tutorial
     //Estados del tutorial
     updateTutorial(){
         switch(this.tutorialStep){
@@ -393,4 +376,5 @@ export class GameScreen extends Phaser.Scene{
         }
 
     }
+    //#endregion
 }

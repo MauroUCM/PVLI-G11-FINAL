@@ -17,13 +17,6 @@ export class Flappy_Dragon extends Phaser.Scene {
         this.returnScene = data.returnScene || 'GameScreen';
     }
 
-    preload() {
-        this.load.image('fondo1', 'assets/fondo_1.png');
-        this.load.image('fondo2', 'assets/fondo_2.png');
-        this.load.image('fondo3', 'assets/fondo_3.png');
-        this.load.image('suelo', 'assets/suelo.png');
-    }
-
     create() {
         //VARIABLES DEL JUEGO
         this.puntos = 0;
