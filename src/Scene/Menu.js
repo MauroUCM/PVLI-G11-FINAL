@@ -1,20 +1,19 @@
 /**
- * MenuV2
+ * Menu
  * 
  * Menú principal del juego
  * 
  */
 
-// IMPORTAR sistema de estilos
+// Sistema de estilos
 import { 
-    UIStyles, 
     createStyledText, 
     createStyledButton 
 } from '../UIStyles.js';
 
-export class Menu2 extends Phaser.Scene {
+export class Menu extends Phaser.Scene {
     constructor() {
-        super({ key: 'menu2' });
+        super({ key: 'menu' });
     }
     
     create() {
@@ -26,7 +25,7 @@ export class Menu2 extends Phaser.Scene {
         
         // TÍTULO del juego
         const title = this.add.text(w/2, 80, 
-            'SUBMARINE TACTICS', 
+            'PACIFIC TACTICS', 
             {
                 fontSize: '48px',
                 color: '#00ff88',

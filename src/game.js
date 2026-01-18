@@ -1,5 +1,5 @@
 import { GameScreen } from "./Scene/GameScreen.js";
-import { Menu2 } from "./Scene/MenuV2.js";
+import { Menu } from "./Scene/Menu.js";
 import { Flappy_Dragon } from "./Minigames/MGFlappyDragon.js";
 import { FireStateWindow } from "./Scene/FireStateWindow.js";
 import { MinigameDialogScene } from "./Scene/MinigameDialogScene.js";
@@ -31,7 +31,7 @@ let config = {
 
 	scene: [
         Boot,
-		Menu2, 
+		Menu, 
 		GameScreen, 
 		Flappy_Dragon,          
 		FireStateWindow,       

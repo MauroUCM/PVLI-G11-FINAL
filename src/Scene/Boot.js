@@ -42,7 +42,7 @@ export class Boot extends Phaser.Scene {
         });
         //#endregion
 
-        //#region Img Main Game
+        //#region Imgs Main Game
         this.load.image("Square","Page/img/Profile/Lappland.jpeg")
         this.load.image("BG","assets/GameBoard_BG.jpg")
         this.load.image("Submarine","assets/submarino.png")
@@ -53,7 +53,6 @@ export class Boot extends Phaser.Scene {
         this.load.image("sLeft", "assets/Submarine/Submarine_left.png");
         this.load.image("tutorialArrow", "assets/flecha.png")
         this.load.image("Panel", "assets/Panel.png");
-
         // #endregion
 
         //#region Flappy Dragon
@@ -65,7 +64,6 @@ export class Boot extends Phaser.Scene {
     }
     
     create() {
-
-        this.scene.start('menu2')
+        this.scene.start('menu')
     }
 }
